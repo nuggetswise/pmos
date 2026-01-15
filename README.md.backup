@@ -1,0 +1,298 @@
+# PM OS: Business Network + Catalogs (Retail/CPG)
+
+A file-based PM operating system with daily workflow commands, senior PM skills, and automatic learning.
+
+**Full implementation guide:** See `IMPLEMENTATION_COMPLETE.md`
+
+---
+
+## Quick Start
+
+1. **Drop files** into `inputs/` folders (Jira tickets, VOC feedback)
+2. **Run daily commands:** `/ktlo`, `/voc`, `/exec-update` (10-30 min)
+3. **Review outputs** in `outputs/` directories
+
+---
+
+## Daily Commands
+
+| Command | What It Does | Takes ~5-10 min |
+|---------|--------------|-----------------|
+| `/ktlo` | Triage KTLO backlog into prioritized buckets | inputs/jira/*.csv → outputs/ktlo/ |
+| `/voc` | Synthesize VOC themes from customer feedback | inputs/voc/*.csv → outputs/insights/ |
+| `/exec-update` | Generate 1-page stakeholder update | Latest outputs → outputs/exec_updates/ |
+
+## Weekly Commands
+
+| Command | What It Does | Takes ~15-20 min |
+|---------|--------------|------------------|
+| `/charters` | Generate quarterly strategic charters | Truth base + VOC + KTLO → outputs/roadmap/ |
+
+## Senior PM Commands
+
+| Command | What It Does | Use When |
+|---------|--------------|----------|
+| `/stakeholders` | Map stakeholders using power/interest grid | Major initiative or cross-team project |
+| `/gtm` | Create comprehensive GTM launch plan | Product/feature launch planning |
+| `/strategy` | Write 3-5 year product strategy | Annual/bi-annual strategy planning |
+| `/review` | Post-launch retrospective with lessons learned | 30/60/90 days after launch |
+
+---
+
+## All Available Skills
+
+| Skill | Use When... | Inputs | Output |
+|-------|-------------|--------|--------|
+| `building-truth-base` | Starting on a product, need shared understanding | roadmap_deck, product_demo, knowledge_base | outputs/truth_base/ |
+| `synthesizing-voc` | Have customer feedback, need themes | voc (min 3 sources) | outputs/insights/ |
+| `triaging-ktlo` | Jira backlog needs productization | jira export | outputs/ktlo/ |
+| `analyzing-kb-gaps` | Want user pain points via KB | knowledge_base, voc synthesis | outputs/insights/ |
+| `generating-quarterly-charters` | Planning quarter, need strategic bets | truth base, voc, ktlo | outputs/roadmap/ |
+| `writing-prds-from-charters` | Have charter, need executable PRD | charter | outputs/delivery/ |
+
+---
+
+## Folder Structure
+
+### Inputs (drop your files here)
+```
+inputs/
+├── roadmap_deck/     # Strategy slides, PDFs
+├── voc/              # Customer feedback, transcripts, surveys
+├── jira/             # Exported tickets (CSV preferred)
+├── product_demo/     # Demo notes, walkthroughs
+└── knowledge_base/   # KB article exports
+```
+
+### Outputs (skills write here)
+```
+outputs/
+├── truth_base/       # Product understanding
+├── insights/         # VOC synthesis, KB gaps
+├── ktlo/             # KTLO triage reports
+├── roadmap/          # Quarterly charters
+├── delivery/         # PRDs
+├── gtm/              # Go-to-market docs
+└── exec_updates/     # Stakeholder updates
+```
+
+### History (versioned outputs)
+```
+history/
+├── building-truth-base/
+├── synthesizing-voc/
+├── triaging-ktlo/
+├── analyzing-kb-gaps/
+├── generating-quarterly-charters/
+└── writing-prds-from-charters/
+```
+
+### Alerts
+```
+alerts/
+└── stale-outputs.md   # Tracks which outputs need refresh
+```
+
+---
+
+## Memory & History
+
+Every skill run:
+1. Writes current output to `outputs/`
+2. Copies dated version to `history/<skill>/`
+3. Updates `alerts/stale-outputs.md`
+
+**To check past work:**
+- "What did I run last week?" → Claude reads history folders
+- "Show me the previous VOC synthesis" → Claude finds dated files
+
+---
+
+## Staleness Tracking
+
+Each output includes a metadata header tracking its sources:
+
+```yaml
+---
+generated: 2025-01-15 14:30
+skill: synthesizing-voc
+sources:
+  - inputs/voc/interview-1.md (modified: 2025-01-10)
+downstream:
+  - outputs/roadmap/Q1-charters.md
+---
+```
+
+**How it works:**
+1. When a source file is newer than an output, the output is "stale"
+2. When a downstream output is newer than its sources, flag "drift" for review
+3. Claude checks `alerts/stale-outputs.md` at session start
+4. Claude reports: "These outputs may be stale: [list]"
+5. Say "refresh <skill>" to regenerate
+
+**Example:**
+> "VOC synthesis may be stale - inputs/voc/interview-3.md was added after last synthesis. Refresh with `synthesizing-voc`?"
+
+---
+
+## Dependency Graph
+
+```
+TIER 1: Direct from inputs
+────────────────────────────────────────────────
+inputs/voc/*            → outputs/insights/voc-synthesis-*.md
+inputs/jira/*           → outputs/ktlo/ktlo-triage-*.md
+inputs/roadmap_deck/*   → outputs/truth_base/truth-base.md
+inputs/product_demo/*   → outputs/truth_base/truth-base.md
+inputs/knowledge_base/* → outputs/truth_base/truth-base.md
+                        → outputs/insights/kb-gaps-*.md
+
+TIER 2: Depends on Tier 1
+────────────────────────────────────────────────
+outputs/truth_base/*    → outputs/roadmap/Qx-*-charters.md
+outputs/insights/voc-*  → outputs/roadmap/Qx-*-charters.md
+outputs/ktlo/*          → outputs/roadmap/Qx-*-charters.md
+
+TIER 3: Depends on Tier 2
+────────────────────────────────────────────────
+outputs/roadmap/*       → outputs/delivery/prds/*.md
+```
+
+When upstream changes, downstream becomes stale.
+
+---
+
+## Evidence Rules
+
+All outputs follow these rules (enforced by skills):
+
+1. **Never invent** metrics, customers, or quotes
+2. **Every claim tagged:** Evidence / Assumption / Open Question
+3. **Every output includes:** Sources Used section
+4. **Every major claim has:** Claims Ledger entry
+5. **Missing data:** Explicitly stated before proceeding
+
+---
+
+## Common Workflows
+
+| What You Want | Command / Prompt |
+|---------------|------------------|
+| Triage support backlog | `/ktlo` |
+| Analyze customer feedback | `/voc` |
+| Generate exec update | `/exec-update` |
+| Plan the quarter | `/charters` |
+| Map stakeholders | `/stakeholders` |
+| Create GTM plan | `/gtm` |
+| Write product strategy | `/strategy` |
+| Review launch outcomes | `/review` |
+| Build product understanding | "Run building-truth-base" |
+| Find KB gaps | "Run analyzing-kb-gaps" |
+| Write a PRD | "Run writing-prds-from-charters for [charter name]" |
+| Check what's stale | "What outputs are stale?" |
+| See last week's work | "What did I run last week?" |
+| Refresh stale output | "Refresh [skill-name]" |
+| Analyze learning patterns | "Analyze patterns from [skill-name] history" |
+
+---
+
+## Getting Started
+
+### Day 1 (New Role)
+1. Drop any onboarding docs into `inputs/roadmap_deck/`
+2. Add demo notes to `inputs/product_demo/`
+3. Run `building-truth-base`
+4. Review output, note open questions
+
+### Ongoing
+- Drop new VOC/tickets as you get them
+- Run skills when you need their outputs
+- Claude tracks staleness and suggests refreshes
+
+---
+
+## Key Features
+
+### 1. Command-Based Workflow
+Short commands like `/ktlo`, `/voc`, `/charters` invoke local skills. No plugin dependency.
+
+**How it works:**
+- Commands in `commands/*.md` invoke skills in `skills/*/SKILL.md`
+- Simple wrapper: `disable-model-invocation: true` + "Read and follow skills/X/SKILL.md"
+
+### 2. Automatic Learning System
+Mines `history/` directories for patterns, writes to `.claude/rules/learned/` (auto-loaded).
+
+**How it works:**
+- Session hook runs every 7 days (or force with `--force`)
+- Analyzes success/failure patterns from versioned outputs
+- Quantifies confidence: Strong (≥80%), Medium (50-80%), Weak (<50%)
+- Updates `CLAUDE.local.md` with personal preferences
+- System gets smarter over time
+
+### 3. Modular Rules Architecture
+Rules organized in `.claude/rules/` with auto-discovery:
+- **pm-core/**: Evidence rules, metadata standards, decision algorithm
+- **domain/**: Vocabulary (Business Network, Catalogs, CPG terms)
+- **system/**: Staleness protocol, output destinations
+- **pm-workflows/**: Charter and PRD rules (path-specific)
+- **learned/**: Auto-generated patterns from learning system
+
+See `.claude/MODULAR_RULES_VERIFICATION.md` for details.
+
+### 4. Senior PM Coverage
+Beyond IC-level (VOC, KTLO, charters, PRDs) to Senior PM:
+- Stakeholder mapping and alignment tracking
+- GTM/launch planning (market analysis, positioning, enablement)
+- Multi-year product strategy (vision, pillars, capability roadmap, moats)
+- Post-launch retrospectives (lessons learned, process improvements)
+
+---
+
+## Files in This Repo
+
+```
+pm_os_superpowers/
+├── CLAUDE.md                            # Simplified core (27 lines)
+├── README.md                            # This file
+├── IMPLEMENTATION_COMPLETE.md           # Full implementation guide
+├── .claude/
+│   ├── rules/                           # Modular rules (auto-discovered)
+│   │   ├── pm-core/                     # Evidence, metadata, algorithm
+│   │   ├── domain/                      # Vocabulary
+│   │   ├── system/                      # Staleness, destinations
+│   │   ├── pm-workflows/                # Charter and PRD rules
+│   │   └── learned/                     # Auto-generated patterns
+│   └── MODULAR_RULES_VERIFICATION.md    # Rules verification doc
+├── commands/                            # Command wrappers
+│   ├── ktlo.md, voc.md, charters.md     # Daily/weekly commands
+│   ├── exec-update.md                   # Exec updates
+│   └── stakeholders.md, gtm.md, etc.    # Senior PM commands
+├── skills/                              # Skill implementations
+│   ├── triaging-ktlo/
+│   ├── synthesizing-voc/
+│   ├── generating-quarterly-charters/
+│   ├── generating-exec-update/          # New
+│   ├── stakeholder-management/          # New
+│   ├── planning-gtm-launch/             # New
+│   ├── writing-product-strategy/        # New
+│   ├── reviewing-launch-outcomes/       # New
+│   └── learning-from-history/           # New
+├── hooks/                               # Session hooks
+│   ├── session-start.sh                 # Staleness check
+│   └── weekly-learning.sh               # Learning trigger
+├── alerts/
+│   └── stale-outputs.md                 # Dependency tracker
+├── inputs/                              # Your source files
+├── outputs/                             # Current outputs
+└── history/                             # Versioned output trail
+```
+
+---
+
+## Documentation
+
+- **Quick start:** This README
+- **Full guide:** `IMPLEMENTATION_COMPLETE.md`
+- **Modular rules:** `.claude/MODULAR_RULES_VERIFICATION.md`
+- **Implementation plan:** `/Users/singhm/.claude/plans/lovely-soaring-toast.md`

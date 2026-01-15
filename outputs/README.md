@@ -1,0 +1,287 @@
+# Outputs Directory
+
+## Purpose
+
+The `outputs/` directory contains **current active outputs** from all PM skills. Think of this as your "working directory" - the latest analysis, charters, PRDs, and reports you're actively using.
+
+**Why this matters:** Outputs represent the synthesized intelligence from your raw inputs. They're what you share with stakeholders, use for planning, and build upon for downstream work.
+
+## Directory Structure
+
+```
+outputs/
+├── truth_base/       # Product understanding (from building-truth-base)
+├── insights/         # VOC synthesis, KB gap analysis
+├── ktlo/             # KTLO triage reports
+├── roadmap/          # Quarterly charters
+├── delivery/         # PRDs (Product Requirements Documents)
+├── gtm/              # Go-to-market launch plans
+├── strategy/         # Product strategy documents (3-5 year)
+├── exec_updates/     # 1-page stakeholder updates
+├── stakeholders/     # Stakeholder maps
+├── reviews/          # Post-launch retrospectives
+├── decisions/        # Decision tracking logs
+└── learning/         # Learning analysis reports
+```
+
+## Output Types
+
+### Tier 1: Foundation Outputs (from inputs)
+
+| Directory | Skill | Input Source | Purpose |
+|-----------|-------|--------------|---------|
+| `truth_base/` | building-truth-base | roadmap_deck/, product_demo/, knowledge_base/ | Day-1 product understanding |
+| `insights/` | synthesizing-voc | voc/ | Customer themes and pain points |
+| `insights/` | analyzing-kb-gaps | knowledge_base/, voc | Support pain points |
+| `ktlo/` | triaging-ktlo | jira/ | Prioritized maintenance backlog |
+
+### Tier 2: Planning Outputs (from Tier 1)
+
+| Directory | Skill | Input Source | Purpose |
+|-----------|-------|--------------|---------|
+| `roadmap/` | generating-quarterly-charters | truth_base/, insights/, ktlo/ | Strategic bets for the quarter |
+| `exec_updates/` | generating-exec-update | Latest outputs | 1-page stakeholder summary |
+
+### Tier 3: Execution Outputs (from Tier 2)
+
+| Directory | Skill | Input Source | Purpose |
+|-----------|-------|--------------|---------|
+| `delivery/` | writing-prds-from-charters | roadmap/ | Executable feature specs |
+
+### Senior PM Outputs (as needed)
+
+| Directory | Skill | Input Source | Purpose |
+|-----------|-------|--------------|---------|
+| `stakeholders/` | stakeholder-management | User input | Power/interest grid, alignment tracking |
+| `gtm/` | planning-gtm-launch | Charter or spec | Launch plan (market, positioning, enablement) |
+| `strategy/` | writing-product-strategy | Context | 3-5 year vision, pillars, roadmap |
+| `reviews/` | reviewing-launch-outcomes | Launch data | Post-launch retrospective, lessons learned |
+
+## Understanding Output Files
+
+### Metadata Header (YAML)
+
+Every output starts with a metadata block tracking dependencies:
+
+```yaml
+---
+generated: 2026-01-15 14:30
+skill: synthesizing-voc
+sources:
+  - inputs/voc/interview-1.md (modified: 2026-01-10)
+  - inputs/voc/interview-2.md (modified: 2026-01-11)
+downstream:
+  - outputs/roadmap/Q1-2026-charters.md
+---
+```
+
+**What this tells you:**
+- **generated**: When this output was created
+- **skill**: Which PM skill produced it
+- **sources**: What input files were used (and when they were last modified)
+- **downstream**: What other outputs depend on this one
+
+### Claims Ledger
+
+Every output ends with a Claims Ledger tracking evidence:
+
+| Claim | Type | Source |
+|-------|------|--------|
+| "40% of tickets are catalog-related" | Evidence | inputs/jira/tickets.csv:15-42 |
+| "Customers want faster sync" | Evidence | inputs/voc/interview-1.md:89 |
+| "Sync time can be <5 seconds" | Assumption | Needs tech spike validation |
+
+**Claim Types:**
+- **Evidence**: Directly from source files (verifiable)
+- **Assumption**: Inferred, needs validation
+- **Open Question**: Unknown, needs research
+
+## Navigation Guide
+
+### Finding What You Need
+
+**"I need to update stakeholders on this quarter's work"**
+→ Look in `outputs/exec_updates/` for latest 1-pager
+
+**"I want to see what customers are saying"**
+→ Look in `outputs/insights/` for VOC synthesis
+
+**"I need to plan Q2 work"**
+→ Look in `outputs/roadmap/` for quarterly charters
+
+**"I'm writing a PRD for Feature X"**
+→ Look in `outputs/delivery/` for existing PRDs (or create from charter)
+
+**"I need to plan a product launch"**
+→ Look in `outputs/gtm/` for launch plans
+
+**"I want to review how our last launch went"**
+→ Look in `outputs/reviews/` for post-launch retrospectives
+
+### File Naming Conventions
+
+Outputs follow consistent naming:
+
+- **VOC synthesis**: `voc-synthesis-YYYY-MM-DD.md`
+- **KTLO triage**: `ktlo-triage-YYYY-MM-DD.md`
+- **Quarterly charters**: `Q1-YYYY-charters.md`
+- **PRDs**: `prd-feature-name-YYYY-MM-DD.md`
+- **GTM plans**: `gtm-initiative-name-YYYY-MM-DD.md`
+- **Stakeholder maps**: `stakeholder-map-initiative-YYYY-MM-DD.md`
+
+**Latest file = most recent date suffix**
+
+## Staleness Explained
+
+### What is Staleness?
+
+An output is "stale" when its source files have been modified after the output was generated.
+
+**Example:**
+```
+outputs/insights/voc-synthesis-2026-01-15.md (generated Jan 15)
+  ← inputs/voc/interview-1.md (modified Jan 10) ✓ OK
+  ← inputs/voc/interview-2.md (modified Jan 16) ⚠️ STALE
+```
+
+The VOC synthesis is now stale because `interview-2.md` was added/modified **after** the synthesis ran.
+
+### How PM OS Detects Staleness
+
+1. **Session start hook** reads `alerts/stale-outputs.md`
+2. **Compares** output generation time vs source modification times
+3. **Reports** stale outputs: "These outputs may be stale: [list]"
+
+### What to Do When Outputs are Stale
+
+**Option 1: Refresh the output**
+```
+/voc               # Refresh VOC synthesis
+/ktlo              # Refresh KTLO triage
+/charters          # Refresh quarterly charters
+```
+
+**Option 2: Proceed with caution**
+If the new data is minor (typo fixes, small additions), you might not need to refresh immediately.
+
+### Drift Detection
+
+**Drift** occurs when a downstream output is **newer** than its upstream sources.
+
+**Example:**
+```
+outputs/roadmap/Q1-charters.md (generated Jan 20)
+  ← outputs/insights/voc-synthesis.md (generated Jan 15)
+  ← You edit voc-synthesis.md on Jan 22
+```
+
+Now the charter is newer than the VOC synthesis - **drift detected**.
+
+**Options:**
+1. **Reconcile**: Keep charter changes, update VOC to match
+2. **Refresh**: Regenerate charter from updated VOC
+
+## Dependency Flow
+
+Understanding how outputs connect:
+
+```
+TIER 1: Foundation
+────────────────────────────────────
+inputs/voc/*            → outputs/insights/voc-synthesis.md
+inputs/jira/*           → outputs/ktlo/ktlo-triage.md
+inputs/roadmap_deck/*   → outputs/truth_base/truth-base.md
+
+TIER 2: Planning
+────────────────────────────────────
+outputs/truth_base/*    → outputs/roadmap/Q1-charters.md
+outputs/insights/voc-*  → outputs/roadmap/Q1-charters.md
+outputs/ktlo/*          → outputs/roadmap/Q1-charters.md
+
+TIER 3: Execution
+────────────────────────────────────
+outputs/roadmap/*       → outputs/delivery/prds/*.md
+```
+
+**When Tier 1 changes → Tier 2 becomes stale → Tier 3 becomes stale**
+
+## Common Workflows
+
+### Daily Routine (10-30 min)
+
+1. **Check for staleness** (automatic at session start)
+2. **Triage KTLO**: `/ktlo` → Review `outputs/ktlo/`
+3. **Synthesize VOC**: `/voc` → Review `outputs/insights/`
+4. **Generate exec update**: `/exec-update` → Share `outputs/exec_updates/`
+
+### Weekly Planning
+
+1. **Review stale outputs**: Check what needs refreshing
+2. **Generate charters**: `/charters` → Review `outputs/roadmap/`
+3. **Update stakeholders**: Share exec update or charter
+
+### Before Writing a PRD
+
+1. **Check charter is current**: Verify in `outputs/roadmap/`
+2. **Review VOC**: Check `outputs/insights/` for customer context
+3. **Check stakeholder map**: Review `outputs/stakeholders/` if exists
+4. **Write PRD**: "Run writing-prds-from-charters for [charter]"
+
+## Common Issues
+
+### Issue: "Can't find latest output"
+
+**Problem:** Multiple files with different dates.
+
+**Solution:**
+1. Sort by modification time: `ls -lt outputs/insights/`
+2. Latest file = most recent modification time
+3. Or check `alerts/stale-outputs.md` for tracked outputs
+
+### Issue: "Output keeps showing as stale"
+
+**Problem:** Source files are auto-syncing (Dropbox, Drive).
+
+**Solution:**
+1. Check if sync tool is touching files: `ls -lt inputs/voc/`
+2. Pause sync during PM OS usage
+3. Or ignore staleness if files haven't meaningfully changed
+
+### Issue: "Metadata header is missing"
+
+**Problem:** Output was manually edited and metadata removed.
+
+**Solution:**
+1. Re-run the skill to regenerate with metadata
+2. Or manually add YAML header (copy from another output)
+3. Update `alerts/stale-outputs.md` to track dependencies
+
+### Issue: "Claims ledger is empty"
+
+**Problem:** Old output format or manual edit.
+
+**Solution:**
+1. Re-run the skill (modern skills include claims ledger)
+2. Or manually add claims table at end of document
+
+## Best Practices
+
+1. **Don't manually edit outputs** - Regenerate via skills instead
+2. **Check staleness regularly** - Weekly at minimum
+3. **Share outputs, not inputs** - Outputs are synthesized, actionable insights
+4. **Track decisions** - Use `outputs/decisions/` to log major choices
+5. **Version control outputs** - Commit to git for team collaboration
+
+## Integration with History
+
+Every time an output is generated:
+1. **Current output** written to `outputs/[type]/`
+2. **Versioned copy** saved to `history/[skill]/FILENAME-YYYY-MM-DD.md`
+3. **Staleness tracker** updated in `alerts/stale-outputs.md`
+
+**Why this matters:** History enables the learning system to mine patterns and improve over time.
+
+**See also:**
+- [history/README.md](../history/README.md) - Versioned output trail
+- [alerts/README.md](../alerts/README.md) - Staleness tracking details
+- [Main README](../README.md) - Getting started guide

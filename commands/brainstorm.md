@@ -1,6 +1,6 @@
 ---
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores requirements and design before implementation."
+description: "Use before foundational PM work - establishing product understanding and baseline context"
 disable-model-invocation: true
 ---
 
-Invoke the superpowers:brainstorming skill and follow it exactly as presented to you
+Read and follow skills/brainstorming/SKILL.md exactly as presented.
