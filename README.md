@@ -1,159 +1,509 @@
-# Superpowers
+# PM OS Getting Started Guide
 
-Superpowers is a complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
+**A file-based PM operating system for Business Network + Catalogs (Retail/CPG)**
 
-## How it works
+PM OS helps you build evidence-based PM practice with daily workflows, senior PM skills, and automatic learning. Turn raw inputs (Jira tickets, customer feedback) into actionable insights, strategic charters, and executable PRDs - all with built-in staleness tracking and continuous improvement.
 
-It starts from the moment you fire up your coding agent. As soon as it sees that you're building something, it *doesn't* just jump into trying to write code. Instead, it steps back and asks you what you're really trying to do. 
+**Full documentation:** See [IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md) for complete implementation guide.
 
-Once it's teased a spec out of the conversation, it shows it to you in chunks short enough to actually read and digest. 
+---
 
-After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes true red/green TDD, YAGNI (You Aren't Gonna Need It), and DRY. 
+## What is PM OS?
 
-Next up, once you say "go", it launches a *subagent-driven-development* process, having agents work through each engineering task, inspecting and reviewing their work, and continuing forward. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
+PM OS is a **file-based workflow system** that:
+- Transforms raw data (tickets, feedback, docs) → structured insights
+- Maintains evidence discipline (never invent metrics, always cite sources)
+- Tracks dependencies (know when outputs need refreshing)
+- Learns from history (extracts success/failure patterns over time)
+- Provides senior PM coverage (stakeholder mapping, GTM, strategy, reviews)
 
-There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has Superpowers.
+**Why file-based?** No database, no server, no API - just markdown files, skills, and Claude Code. Works offline, version controlled, shareable.
 
+**Core principle:** Evidence before claims, always. Every output cites sources, tags assumptions, and includes a claims ledger.
 
-## Sponsorship
+---
 
-If Superpowers has helped you do stuff that makes money and you are so inclined, I'd greatly appreciate it if you'd consider [sponsoring my opensource work](https://github.com/sponsors/obra).
+## Quick Start (5 Minutes)
 
-Thanks! 
-
-- Jesse
-
-
-## Installation
-
-**Note:** Installation differs by platform. Claude Code has a built-in plugin system. Codex and OpenCode require manual setup.
-
-### Claude Code (via Plugin Marketplace)
-
-In Claude Code, register the marketplace first:
+### 1. Drop Files into `inputs/`
 
 ```bash
-/plugin marketplace add obra/superpowers-marketplace
+# Export Jira tickets to CSV
+inputs/jira/support-tickets-2026-01.csv
+
+# Add customer feedback
+inputs/voc/interview-customer-a-2026-01-15.md
+inputs/voc/survey-results-2026-01.csv
+
+# Add strategy docs (if available)
+inputs/roadmap_deck/Q1-2026-strategy.pdf
 ```
 
-Then install the plugin from this marketplace:
+### 2. Run Your First Command
+
+```
+/ktlo              # Triage KTLO backlog (10 min)
+/voc               # Synthesize VOC themes (10 min)
+/exec-update       # Generate 1-page update (10 min)
+```
+
+### 3. Review Outputs
+
+Check `outputs/` directories:
+- `outputs/ktlo/ktlo-triage-2026-01-15.md` - Prioritized backlog
+- `outputs/insights/voc-synthesis-2026-01-15.md` - Customer themes
+- `outputs/exec_updates/exec-update-2026-01-15.md` - Stakeholder summary
+
+**That's it!** You just ran your first PM OS workflow.
+
+---
+
+## Your First Day
+
+### Step 1: Understand the Folder Structure
+
+PM OS uses a simple input → process → output → history flow:
+
+```
+inputs/          ← Drop source files here (Jira, VOC, docs)
+   ↓
+skills/          ← PM workflows (triaging, synthesis, planning)
+   ↓
+outputs/         ← Current results (insights, charters, PRDs)
+   ↓
+history/         ← Versioned trail (enables learning)
+```
+
+**Why this matters:**
+- **inputs/** = Your evidence (raw data)
+- **outputs/** = Your work products (insights, plans)
+- **history/** = Your evolution (how thinking changed)
+- **skills/** = Your playbook (reusable workflows)
+
+**Deep dives:**
+- [inputs/README.md](inputs/README.md) - How to add source data
+- [outputs/README.md](outputs/README.md) - Understanding your results
+- [history/README.md](history/README.md) - Versioning and learning
+- [skills/README.md](skills/README.md) - PM workflow library
+- [commands/README.md](commands/README.md) - Command shortcuts
+- [.claude/README.md](.claude/README.md) - Configuration and rules
+- [alerts/README.md](alerts/README.md) - Staleness tracking
+
+### Step 2: Export Your First Inputs
+
+#### Jira Tickets (for KTLO Triage)
+
+1. Go to Jira → Issues → Search for your support backlog
+2. Export → CSV
+3. Include columns: Summary, Description, Priority, Status, Created
+4. Save to `inputs/jira/support-backlog-YYYY-MM-DD.csv`
+
+#### Customer Feedback (for VOC Synthesis)
+
+1. Gather interview transcripts, survey results, feedback forms
+2. Convert to markdown or CSV
+3. Save to `inputs/voc/` with descriptive names:
+   - `interview-customer-name-YYYY-MM-DD.md`
+   - `survey-results-YYYY-MM-DD.csv`
+
+**Need at least 3 sources** for meaningful VOC synthesis.
+
+### Step 3: Run Daily Commands
+
+```
+/ktlo              # Triage support backlog into priority buckets
+```
+
+**What happens:**
+1. Reads `inputs/jira/*.csv`
+2. Groups tickets by theme (bugs, requests, tech debt)
+3. Prioritizes into tiers (P0: Now, P1: This quarter, P2: Backlog)
+4. Identifies top 3 patterns
+5. Writes to `outputs/ktlo/ktlo-triage-YYYY-MM-DD.md`
+6. Copies to `history/triaging-ktlo/` (versioned)
+
+```
+/voc               # Synthesize customer feedback themes
+```
+
+**What happens:**
+1. Reads `inputs/voc/*.md` and `*.csv`
+2. Extracts verbatim quotes
+3. Groups into themes (pain points, requests, praise)
+4. Quantifies patterns ("3/7 customers mentioned X")
+5. Writes to `outputs/insights/voc-synthesis-YYYY-MM-DD.md`
+
+```
+/exec-update       # Generate 1-page stakeholder update
+```
+
+**What happens:**
+1. Reads latest outputs (charters, VOC, KTLO)
+2. Summarizes: Top 3 problems, Key metrics, Top 3 risks, Timeline
+3. Writes to `outputs/exec_updates/exec-update-YYYY-MM-DD.md`
+4. **1 page max** - concise for busy stakeholders
+
+### Step 4: Check History
+
+Every time a skill runs, a dated copy is saved to `history/`:
 
 ```bash
-/plugin install superpowers@superpowers-marketplace
+ls history/triaging-ktlo/
+# ktlo-triage-2026-01-15.md
+# ktlo-triage-2026-01-22.md  (after running again)
+
+ls history/synthesizing-voc/
+# voc-synthesis-2026-01-15.md
+# voc-synthesis-2026-01-22.md
 ```
 
-### Verify Installation
+**Why this matters:** History enables learning. After 5+ outputs, the learning system mines patterns:
+- What makes charters get approved?
+- What causes PRDs to need revision?
+- What format do you prefer?
 
-Check that commands appear:
+Patterns are written to `.claude/rules/learned/` and auto-load in future sessions.
 
-```bash
-/help
+### Step 5: Understand Staleness
+
+PM OS tracks dependencies automatically. When source files change, outputs become "stale":
+
+**Example:**
+```
+Day 1: Generate VOC synthesis (uses interview-1.md, interview-2.md)
+Day 3: Add interview-3.md
+Day 4: Session starts → "VOC synthesis is stale (source changed)"
 ```
 
+**What to do:**
 ```
-# Should see:
-# /superpowers:brainstorm - Interactive design refinement
-# /superpowers:write-plan - Create implementation plan
-# /superpowers:execute-plan - Execute plan in batches
+/voc               # Refresh synthesis to include interview-3
 ```
 
-### Codex
+Staleness ensures you never make decisions on outdated data.
 
-Tell Codex:
+---
+
+## Understanding the System
+
+### Folder Structure
+
+| Directory | Purpose | Learn More |
+|-----------|---------|------------|
+| `inputs/` | Source files (Jira, VOC, docs) | [inputs/README.md](inputs/README.md) |
+| `outputs/` | Current work products | [outputs/README.md](outputs/README.md) |
+| `history/` | Versioned output trail | [history/README.md](history/README.md) |
+| `skills/` | PM workflow library (17 skills) | [skills/README.md](skills/README.md) |
+| `commands/` | Quick shortcuts (11 commands) | [commands/README.md](commands/README.md) |
+| `.claude/` | Configuration & rules | [.claude/README.md](.claude/README.md) |
+| `alerts/` | Staleness tracking | [alerts/README.md](alerts/README.md) |
+
+### Dependency Flow (3 Tiers)
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.codex/INSTALL.md
+TIER 1: Foundation (from inputs/)
+────────────────────────────────────
+inputs/voc/*            → outputs/insights/voc-synthesis.md
+inputs/jira/*           → outputs/ktlo/ktlo-triage.md
+inputs/roadmap_deck/*   → outputs/truth_base/truth-base.md
+
+TIER 2: Planning (from Tier 1)
+────────────────────────────────────
+outputs/truth_base/*    → outputs/roadmap/Q1-charters.md
+outputs/insights/voc-*  → outputs/roadmap/Q1-charters.md
+outputs/ktlo/*          → outputs/roadmap/Q1-charters.md
+
+TIER 3: Execution (from Tier 2)
+────────────────────────────────────
+outputs/roadmap/*       → outputs/delivery/prds/*.md
 ```
 
-**Detailed docs:** [docs/README.codex.md](docs/README.codex.md)
+**When Tier 1 changes → Tier 2 becomes stale → Tier 3 becomes stale**
 
-### OpenCode
+**See:** [outputs/README.md](outputs/README.md) for full dependency documentation
 
-Tell OpenCode:
+### Evidence Discipline
+
+Every output follows these rules:
+
+1. **Never invent** metrics, customers, or quotes
+2. **Every claim tagged:** Evidence / Assumption / Open Question
+3. **Every output includes:** Sources Used section + Claims Ledger
+4. **Missing data:** Explicitly stated before proceeding
+
+**Claims Ledger Example:**
+
+| Claim | Type | Source |
+|-------|------|--------|
+| "40% of tickets are catalog-related" | Evidence | inputs/jira/tickets.csv:15-42 |
+| "Customers want faster sync" | Evidence | inputs/voc/interview-1.md:89 |
+| "Sync time can be <5 seconds" | Assumption | Needs tech spike validation |
+
+**Why this matters:** PM decisions must be evidence-based. Invented data creates false confidence in bad bets.
+
+---
+
+## Daily Workflow (10-30 Minutes)
+
+### Morning Routine
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md
+/ktlo              # Triage overnight support tickets (~10 min)
+/voc               # Synthesize recent feedback (~10 min)
+/exec-update       # Generate stakeholder update (~10 min)
 ```
 
-**Detailed docs:** [docs/README.opencode.md](docs/README.opencode.md)
+**Output:** 3 files in ~30 minutes:
+- `outputs/ktlo/` - Prioritized backlog with themes
+- `outputs/insights/` - Customer pain points and patterns
+- `outputs/exec_updates/` - 1-page summary for stakeholders
 
-## The Basic Workflow
+**Why daily?**
+- Keeps you connected to customer reality
+- Prevents backlog overwhelm
+- Gives stakeholders visibility
 
-1. **brainstorming** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
+### Weekly Planning
 
-2. **using-git-worktrees** - Activates after design approval. Creates isolated workspace on new branch, runs project setup, verifies clean test baseline.
-
-3. **writing-plans** - Activates with approved design. Breaks work into bite-sized tasks (2-5 minutes each). Every task has exact file paths, complete code, verification steps.
-
-4. **subagent-driven-development** or **executing-plans** - Activates with plan. Dispatches fresh subagent per task with two-stage review (spec compliance, then code quality), or executes in batches with human checkpoints.
-
-5. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
-
-6. **requesting-code-review** - Activates between tasks. Reviews against plan, reports issues by severity. Critical issues block progress.
-
-7. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, presents options (merge/PR/keep/discard), cleans up worktree.
-
-**The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
-
-## What's Inside
-
-### Skills Library
-
-**Testing**
-- **test-driven-development** - RED-GREEN-REFACTOR cycle (includes testing anti-patterns reference)
-
-**Debugging**
-- **systematic-debugging** - 4-phase root cause process (includes root-cause-tracing, defense-in-depth, condition-based-waiting techniques)
-- **verification-before-completion** - Ensure it's actually fixed
-
-**Collaboration** 
-- **brainstorming** - Socratic design refinement
-- **writing-plans** - Detailed implementation plans
-- **executing-plans** - Batch execution with checkpoints
-- **dispatching-parallel-agents** - Concurrent subagent workflows
-- **requesting-code-review** - Pre-review checklist
-- **receiving-code-review** - Responding to feedback
-- **using-git-worktrees** - Parallel development branches
-- **finishing-a-development-branch** - Merge/PR decision workflow
-- **subagent-driven-development** - Fast iteration with two-stage review (spec compliance, then code quality)
-
-**Meta**
-- **writing-skills** - Create new skills following best practices (includes testing methodology)
-- **using-superpowers** - Introduction to the skills system
-
-## Philosophy
-
-- **Test-Driven Development** - Write tests first, always
-- **Systematic over ad-hoc** - Process over guessing
-- **Complexity reduction** - Simplicity as primary goal
-- **Evidence over claims** - Verify before declaring success
-
-Read more: [Superpowers for Claude Code](https://blog.fsck.com/2025/10/09/superpowers/)
-
-## Contributing
-
-Skills live directly in this repository. To contribute:
-
-1. Fork the repository
-2. Create a branch for your skill
-3. Follow the `writing-skills` skill for creating and testing new skills
-4. Submit a PR
-
-See `skills/writing-skills/SKILL.md` for the complete guide.
-
-## Updating
-
-Skills update automatically when you update the plugin:
-
-```bash
-/plugin update superpowers
+```
+/charters          # Generate/refine quarterly charters (~20 min)
 ```
 
-## License
+**Uses:**
+- Latest VOC synthesis
+- Latest KTLO triage
+- Truth base (if exists)
 
-MIT License - see LICENSE file for details
+**Output:** `outputs/roadmap/Q1-2026-charters.md`
+- 3-5 strategic bets for the quarter
+- Success metrics (baseline + target)
+- Risks with mitigation
+- Dependencies
+
+**Why weekly?** Priorities shift. Weekly charter review keeps you aligned with reality, not outdated plans.
+
+---
+
+## Common Tasks
+
+### Daily/Weekly Commands
+
+| Task | Command | Time | Output |
+|------|---------|------|--------|
+| Triage support backlog | `/ktlo` | 10 min | outputs/ktlo/ |
+| Synthesize customer feedback | `/voc` | 10 min | outputs/insights/ |
+| Generate exec update | `/exec-update` | 10 min | outputs/exec_updates/ |
+| Plan the quarter | `/charters` | 20 min | outputs/roadmap/ |
+
+### Senior PM Commands
+
+| Task | Command | Time | Output |
+|------|---------|------|--------|
+| Map stakeholders | `/stakeholders` | 30 min | outputs/stakeholders/ |
+| Create GTM launch plan | `/gtm` | 60 min | outputs/gtm/ |
+| Write product strategy | `/strategy` | 90 min | outputs/strategy/ |
+| Post-launch retrospective | `/review` | 45 min | outputs/reviews/ |
+
+### As-Needed Skills
+
+| Task | Invoke | Output |
+|------|--------|--------|
+| Build product understanding | "Run building-truth-base" | outputs/truth_base/ |
+| Find KB gaps | "Run analyzing-kb-gaps" | outputs/insights/ |
+| Write a PRD | "Run writing-prds-from-charters for [charter]" | outputs/delivery/ |
+| Prioritize work | "Run prioritizing-work" | outputs/roadmap/ |
+
+**See:** [skills/README.md](skills/README.md) for full skill catalog
+
+---
+
+## Troubleshooting
+
+### "My output is marked as stale"
+
+**What this means:** Source files changed after output was generated.
+
+**How to fix:**
+```
+/voc               # Refresh VOC synthesis
+/ktlo              # Refresh KTLO triage
+/charters          # Refresh quarterly charters
+```
+
+**See:** [alerts/README.md](alerts/README.md) for staleness details
+
+### "I see drift warnings"
+
+**What this means:** Downstream output is newer than upstream sources (manual edit or out-of-sync).
+
+**Options:**
+1. **Reconcile:** Keep downstream changes, update upstream to match
+2. **Refresh:** Regenerate downstream from current upstream
+
+**See:** [outputs/README.md](outputs/README.md#drift-detection)
+
+### "Command not found"
+
+**Problem:** Typed `/my-command` but nothing happened.
+
+**Solution:**
+1. Check available commands: `ls commands/`
+2. Use direct invocation: "Run skill-name"
+3. Verify skill exists: `ls skills/`
+
+### "No input files found"
+
+**Problem:** Ran skill but no source files exist.
+
+**Solution:**
+1. Check expected directory (e.g., `inputs/voc/` for VOC)
+2. Export data from source systems (Jira, survey tool)
+3. Verify file format (.md, .csv, .pdf, .txt)
+
+### "Output doesn't match my needs"
+
+**Problem:** Generated output isn't quite right.
+
+**Solution:**
+1. Skills are customizable - edit `skills/[skill-name]/SKILL.md`
+2. Modify output format, add/remove sections
+3. Re-run skill with customizations
+
+**See:** [skills/README.md](skills/README.md#customization)
+
+### More Help
+
+- **Detailed troubleshooting:** See `docs/TROUBLESHOOTING.md` (after Phase 4)
+- **Workflow guides:** See `docs/workflows/` (after Phase 5)
+- **Full implementation guide:** [IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md)
+
+---
+
+## Learning System
+
+### How PM OS Gets Smarter
+
+After you generate 5+ outputs for a skill, the learning system can analyze patterns:
+
+**What it does:**
+1. Reads all versions in `history/[skill-name]/`
+2. Identifies success patterns (what gets approved)
+3. Identifies failure patterns (what causes revisions)
+4. Quantifies confidence: Strong (≥80%), Medium (50-80%), Weak (<50%)
+5. Writes learned rules to `.claude/rules/learned/` (auto-loaded)
+
+**Example learned pattern:**
+
+```markdown
+## Success Pattern: Charter Brevity
+**Observation:** Charters with ≤3 strategic bets get approved faster
+**Evidence:** 10/12 successful charters (83%)
+**Recommendation:** Default to 3 bets max per quarter
+```
+
+**When learning runs:**
+- Automatically every 7 days (via session hook)
+- Or manually: "Analyze patterns from [skill-name] history"
+
+**See:** [history/README.md](history/README.md#learning-system-integration) for details
+
+---
+
+## Next Steps
+
+### After Your First Week
+
+1. **Review your outputs** - Check `outputs/` directories
+2. **Compare versions** - See how thinking evolved in `history/`
+3. **Refine your workflow** - Customize skills to fit your domain
+4. **Add domain vocabulary** - Update `.claude/rules/domain/vocabulary.md`
+
+### After Your First Month
+
+1. **Generate quarterly charters** - Plan Q1/Q2/etc with `/charters`
+2. **Write PRDs** - Turn charters into specs
+3. **Run learning analysis** - Extract patterns from history
+4. **Try senior PM commands** - `/stakeholders`, `/gtm`, `/strategy`
+
+### After Your First Quarter
+
+1. **Post-launch review** - Run `/review` for completed launches
+2. **Quarterly retrospective** - Review all Q1 outputs
+3. **Refine PM OS** - Update skills based on learnings
+4. **Share with team** - Commit customizations to shared repo
+
+---
+
+## Key Features
+
+### 1. Command-Based Workflow
+
+Short commands invoke PM workflows - no plugin dependency:
+
+```
+/ktlo → skills/triaging-ktlo/SKILL.md
+/voc → skills/synthesizing-voc/SKILL.md
+```
+
+**See:** [commands/README.md](commands/README.md)
+
+### 2. Automatic Learning
+
+Mines `history/` for patterns, writes to `.claude/rules/learned/` (auto-loaded):
+
+- Analyzes success/failure patterns
+- Quantifies confidence levels
+- Updates personal preferences in `CLAUDE.local.md`
+- System gets smarter over time
+
+**See:** [history/README.md](history/README.md#learning-system-integration)
+
+### 3. Modular Rules Architecture
+
+Rules in `.claude/rules/` auto-discover:
+- **pm-core/**: Evidence rules, metadata, decision algorithm
+- **domain/**: Vocabulary (Business Network, Catalogs, CPG)
+- **system/**: Staleness protocol, output destinations
+- **pm-workflows/**: Charter and PRD rules (path-specific)
+- **learned/**: Auto-generated patterns
+
+**See:** [.claude/README.md](.claude/README.md)
+
+### 4. Senior PM Coverage
+
+Beyond IC-level (VOC, KTLO, charters, PRDs) to Senior PM:
+- Stakeholder mapping (`/stakeholders`)
+- GTM/launch planning (`/gtm`)
+- Multi-year product strategy (`/strategy`)
+- Post-launch retrospectives (`/review`)
+
+**See:** [skills/README.md](skills/README.md#senior-pm-skills)
+
+---
+
+## Documentation
+
+- **Quick start:** This README
+- **Full implementation guide:** [IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md)
+- **Modular rules verification:** [.claude/MODULAR_RULES_VERIFICATION.md](.claude/MODULAR_RULES_VERIFICATION.md)
+- **Folder-specific guides:**
+  - [inputs/README.md](inputs/README.md) - Adding source data
+  - [outputs/README.md](outputs/README.md) - Understanding results
+  - [history/README.md](history/README.md) - Versioning and learning
+  - [skills/README.md](skills/README.md) - PM workflow library
+  - [commands/README.md](commands/README.md) - Command shortcuts
+  - [.claude/README.md](.claude/README.md) - Configuration deep-dive
+  - [alerts/README.md](alerts/README.md) - Staleness tracking
+
+---
 
 ## Support
 
-- **Issues**: https://github.com/obra/superpowers/issues
-- **Marketplace**: https://github.com/obra/superpowers-marketplace
+- **Issues:** Report at https://github.com/anthropics/claude-code/issues
+- **Questions:** Check folder READMEs for specific topics
+- **Customization:** Edit skills and rules to fit your workflow
+
+---
+
+**Ready to start?** Drop files into `inputs/` and run `/ktlo` or `/voc` to begin!
+# pmos
