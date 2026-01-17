@@ -140,6 +140,26 @@ history/         ← Versioned trail (learning)
 
 ---
 
+## Day 1: Populate Your Context
+
+Before diving into skills, establish your operating context:
+
+1. **Open** `inputs/context/my-context.md`
+2. **Fill in** each section:
+   - Role: Your title, scope, reporting structure
+   - Domain Knowledge: What you know, what you're learning
+   - Key Stakeholders: Names, roles, influence strategies
+   - Priorities: This quarter's focus (max 3)
+   - Constraints: Compliance, resourcing, technical limits
+   - Metrics: How you're measured
+   - Decision Principles: Your operating philosophy
+
+**Why this matters:** Skills like stakeholder-management, tracking-decisions, and generating-quarterly-charters pull from this context to tailor outputs to your situation.
+
+**Update cadence:** Review quarterly or when role changes significantly.
+
+---
+
 ## Your First Analysis
 
 **Time:** 15 minutes hands-on

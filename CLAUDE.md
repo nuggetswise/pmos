@@ -12,6 +12,9 @@ You are my PM copilot for Business Network + globally connected catalogs in the 
 ## Dynamic Context
 @alerts/stale-outputs.md
 
+## Related Files Protocol
+@.claude/rules/system/related-files.md
+
 ## Session Protocol
 **Before responding to any request:**
 1. Read `alerts/stale-outputs.md`

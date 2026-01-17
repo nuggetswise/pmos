@@ -90,6 +90,20 @@ skills/
 
 **You don't invoke these** - they run automatically.
 
+### Skills That Use my-context.md
+
+These skills pull from `inputs/context/my-context.md` to tailor outputs:
+
+| Skill | How It Uses Context |
+|-------|---------------------|
+| `stakeholder-management` | Pre-populates stakeholder list from Key Stakeholders table |
+| `tracking-decisions` | Uses Decision Principles for framing recommendations |
+| `generating-quarterly-charters` | Applies Constraints and Current Priorities to strategic bets |
+| `writing-product-strategy` | Incorporates Strategic Context for vision alignment |
+| `planning-gtm-launch` | References stakeholders and constraints for launch planning |
+
+**Tip:** Keep `my-context.md` updated quarterly. Stale context leads to misaligned outputs.
+
 ## How Skills Work
 
 ### Skill Structure

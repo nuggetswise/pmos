@@ -23,6 +23,12 @@ PMs make dozens of prioritization calls. Without tracking outcomes, you can't le
 
 Create file: `outputs/decisions/YYYY-MM-DD-[short-title].md`
 
+**Template:** Copy from `outputs/decisions/TEMPLATE.md` which includes:
+- Decision statement and tradeoffs
+- Reversibility assessment (one-way vs two-way door)
+- Communication plan
+- Learning capture sections for outcome review
+
 ### 2. Fill Decision Template
 
 ```markdown

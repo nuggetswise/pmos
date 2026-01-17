@@ -95,9 +95,24 @@ downstream:
 - [file paths]
 
 ## Claims Ledger
-| Claim | Type | Source |
-|-------|------|--------|
-| ... | Evidence/Assumption/Open Question | ... |
+
+| Claim | Status | Confidence | Source | Last Verified |
+|-------|--------|------------|--------|---------------|
+| ... | fact/assumption/hypothesis | high/med/low | [source:line] | YYYY-MM-DD |
+
+### Status Definitions
+| Status | Meaning | Action Required |
+|--------|---------|-----------------|
+| **fact** | Verified from authoritative source | None - treat as ground truth |
+| **assumption** | Inferred, reasonable but unverified | Validate within 30 days |
+| **hypothesis** | Speculative, needs testing | Must test before building on it |
+
+### Confidence Criteria
+| Level | Criteria |
+|-------|----------|
+| **high** | Multiple sources agree, recently verified, authoritative |
+| **med** | Single source, somewhat dated, reasonable inference |
+| **low** | Weak source, speculation, conflicting signals |
 ```
 
 **Step 5: Copy to History**
@@ -138,8 +153,8 @@ Update `alerts/stale-outputs.md` with the new output and its sources.
 
 ## Evidence Tracking
 
-| Claim | Type | Source |
-|-------|------|--------|
-| [Product does X] | Evidence | [inputs/roadmap_deck/strategy.pdf] |
-| [Users are Y segment] | Assumption | [inferred from KB articles] |
-| [Integration with Z exists] | Open Question | [not stated in sources] |
+| Claim | Status | Confidence | Source | Last Verified |
+|-------|--------|------------|--------|---------------|
+| [Product does X] | fact | high | inputs/roadmap_deck/strategy.pdf:12 | YYYY-MM-DD |
+| [Users are Y segment] | assumption | med | inferred from KB articles | YYYY-MM-DD |
+| [Integration with Z exists] | hypothesis | low | not stated in sources | - |

@@ -25,6 +25,18 @@ PM OS is a **file-based workflow system** that:
 
 ## Quick Start (5 Minutes)
 
+### Step 0: Set Up Your Context (5 min)
+
+Before running any skills, populate your context file:
+
+1. Open `inputs/context/my-context.md`
+2. Fill in your role, stakeholders, priorities, constraints
+3. This becomes the foundation for all PM outputs
+
+Your context informs stakeholder maps, decision logs, and strategic framing.
+
+**See:** [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md#day-1-populate-your-context) for detailed guidance.
+
 ### 1. Drop Files into `inputs/`
 
 ```bash
@@ -88,6 +100,8 @@ history/         ← Versioned trail (enables learning)
 - [commands/README.md](commands/README.md) - Command shortcuts
 - [.claude/README.md](.claude/README.md) - Configuration and rules
 - [alerts/README.md](alerts/README.md) - Staleness tracking
+
+**Output styles:** Customize Claude's communication via `.claude/output-styles/` (optional)
 
 ### Step 2: Export Your First Inputs
 

@@ -21,7 +21,8 @@ outputs/
 ├── stakeholders/     # Stakeholder maps
 ├── reviews/          # Post-launch retrospectives
 ├── decisions/        # Decision tracking logs
-└── learning/         # Learning analysis reports
+├── learning/         # Learning analysis reports
+└── open-questions.md # Centralized unknowns tracker (cross-skill aggregation)
 ```
 
 ## Output Types
@@ -56,6 +57,15 @@ outputs/
 | `gtm/` | planning-gtm-launch | Charter or spec | Launch plan (market, positioning, enablement) |
 | `strategy/` | writing-product-strategy | Context | 3-5 year vision, pillars, roadmap |
 | `reviews/` | reviewing-launch-outcomes | Launch data | Post-launch retrospective, lessons learned |
+
+### Cross-Cutting Outputs
+
+| Directory/File | Skill | Input Source | Purpose |
+|----------------|-------|--------------|---------|
+| `decisions/` | tracking-decisions | User input + context | Decision logs with learning capture |
+| `open-questions.md` | Cross-skill aggregation | All outputs with Open Questions | Centralized unknowns tracker |
+
+**Note:** `open-questions.md` is automatically updated when skills generate outputs with Open Question claims. It aggregates unknowns across all PM work for visibility and follow-up.
 
 ## Understanding Output Files
 

@@ -10,6 +10,7 @@ The `inputs/` directory is where you drop source files for PM analysis. This is 
 
 ```
 inputs/
+├── context/          # YOUR context - role, constraints, stakeholders (user-maintained)
 ├── voc/              # Voice of Customer - feedback, interviews, surveys
 ├── jira/             # Support tickets and bug reports
 ├── roadmap_deck/     # Strategy presentations, product plans
@@ -17,12 +18,22 @@ inputs/
 └── knowledge_base/   # KB articles, support documentation
 ```
 
+## User vs System Boundary
+
+| Directory | Maintained By | Purpose |
+|-----------|---------------|---------|
+| `context/` | **You** | Your role, constraints, stakeholders, decision principles |
+| `voc/`, `jira/`, etc. | **You** (from external sources) | Product/customer data for analysis |
+
+**Key principle:** `context/` is about YOU. Other directories are about the PRODUCT and CUSTOMERS.
+
 ## Usage
 
 ### When to Add Files
 
 | Directory | What to Add | When |
 |-----------|-------------|------|
+| `context/` | Your role, stakeholders, constraints, decision principles | At setup, update quarterly |
 | `voc/` | Customer feedback, interview transcripts, survey results | After customer calls, surveys, user research |
 | `jira/` | Exported tickets (CSV format preferred) | Weekly or when triaging backlog |
 | `roadmap_deck/` | Strategy slides, roadmap presentations, planning docs | When onboarding or strategy updates |

@@ -117,6 +117,24 @@ downstream:
 |-------------|----------|----------------|--------------|-------------|-------|
 | [Name] | [Key concerns] | [Info/decision/support] | YYYY-MM-DD or "Not yet" | [Specific next step] | [PM/other] |
 
+## Relationship Management
+
+| Stakeholder | Cadence | Channel | Relationship | Last Contact | Next Action |
+|-------------|---------|---------|--------------|--------------|-------------|
+| [Name] | Weekly/Biweekly/Monthly | 1:1/Slack/Staff meeting | Good/Neutral/Strained | YYYY-MM-DD | [Action] |
+
+## Blockers Analysis
+
+| Stakeholder | What They're Blocking | Root Cause | Unblock Strategy | Owner | Target Date |
+|-------------|----------------------|------------|------------------|-------|-------------|
+| [Name] | [Issue] | [Why] | [Action] | [PM] | [Date] |
+
+## How to Win Each Stakeholder
+
+| Stakeholder | Their Win Condition | What They Fear | Winning Message | Proof They Need |
+|-------------|--------------------|--------------------|-----------------|-----------------|
+| [Name] | [What success looks like to them] | [Their worry] | [Key message] | [Evidence that moves them] |
+
 ## Communication Plan
 
 | Stakeholder | Cadence | Format | Key Messages | Next Touchpoint |

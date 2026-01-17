@@ -17,6 +17,12 @@ This file tracks output dependencies and staleness. Claude checks this at sessio
 ## Dependency Graph
 
 ```
+TIER 0 (User Context - Informs All Outputs)
+─────────────────────────────────────────────────────────────
+inputs/context/*          ──▶  outputs/stakeholders/*.md
+                          ──▶  outputs/decisions/*.md
+                          ──▶  (influences all PM outputs)
+
 TIER 1 (Direct from inputs)
 ─────────────────────────────────────────────────────────────
 inputs/voc/*              ──▶  outputs/insights/voc-synthesis-*.md
@@ -35,6 +41,10 @@ outputs/ktlo/*            ──▶  outputs/roadmap/Qx-*-charters.md
 TIER 3 (Depends on Tier 2 outputs)
 ─────────────────────────────────────────────────────────────
 outputs/roadmap/*         ──▶  outputs/delivery/prds/*.md
+
+CROSS-CUTTING (Aggregated from multiple sources)
+─────────────────────────────────────────────────────────────
+outputs/open-questions.md ◀──  (all outputs with Open Questions)
 ```
 
 ---

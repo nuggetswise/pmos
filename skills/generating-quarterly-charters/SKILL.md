@@ -164,10 +164,18 @@ downstream:
 |---------|-------------|----------|
 | [Segment] | [Description] | [Reason] |
 
-### Success Metrics
-| Metric | Current | Target | How Measured |
-|--------|---------|--------|--------------|
-| [KPI] | [X or Unknown] | [Y] | [Method] |
+### Success Criteria
+
+| Criterion | Baseline | Target | Measurement Source | Owner |
+|-----------|----------|--------|-------------------|-------|
+| [User outcome] | [Current] | [Goal] | [Dashboard/Survey/etc] | [Name/TBD] |
+| [Business outcome] | [Current] | [Goal] | [Data source] | [Name/TBD] |
+| [Technical outcome] | [Current] | [Goal] | [System metrics] | [Name/TBD] |
+
+**Verification Plan:**
+- [ ] Baseline measured before work starts (Date: ___)
+- [ ] Mid-point check scheduled (Date: ___)
+- [ ] Final measurement planned (Date: ___)
 
 ### Scope
 **In scope:**
