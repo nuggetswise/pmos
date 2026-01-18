@@ -44,16 +44,17 @@ inputs/
 
 **Recommended formats:**
 - **Text/Markdown**: `.md`, `.txt` - Easiest to process
+- **Word**: `.docx` - OK for source docs; no need to pre-convert
 - **CSV**: `.csv` - Great for structured data (Jira exports, survey results)
 - **PDF**: `.pdf` - For presentations and documents (note: will be converted)
-- **Avoid**: Binary formats, locked documents, large media files
+- **Avoid**: Locked documents, unsupported binary formats, large media files
 
 ### File Naming Best Practices
 
 Use descriptive, dated filenames:
 
 **Good examples:**
-- `inputs/voc/customer-interview-acme-corp-2026-01-15.md`
+- `inputs/voc/customer-interview-acme-corp-2026-01-15.docx`
 - `inputs/jira/support-tickets-2026-01.csv`
 - `inputs/roadmap_deck/Q1-2026-product-strategy.pdf`
 
@@ -71,9 +72,9 @@ You just finished customer interviews. Here's how to add them:
 1. **Export transcripts** from your interview tool (Gong, Zoom, etc.)
 2. **Save to inputs/voc/** with descriptive names:
    ```
-   inputs/voc/interview-buyer-retailer-a-2026-01-15.md
-   inputs/voc/interview-supplier-brand-x-2026-01-16.md
-   inputs/voc/interview-ops-manager-2026-01-17.md
+   inputs/voc/interview-buyer-retailer-a-2026-01-15.docx
+   inputs/voc/interview-supplier-brand-x-2026-01-16.docx
+   inputs/voc/interview-ops-manager-2026-01-17.docx
    ```
 3. **Run synthesis:** `/voc` or "Run synthesizing-voc"
 4. **Review output:** `outputs/insights/voc-synthesis-2026-01-17.md`
@@ -128,7 +129,7 @@ Minimum required columns:
 **Solution:**
 1. Check the expected input directory (e.g., `inputs/voc/` for VOC synthesis)
 2. Verify files are in the correct subdirectory
-3. Ensure files have readable format (.md, .csv, .pdf, .txt)
+3. Ensure files have readable format (.md, .txt, .docx, .csv, .pdf)
 
 ### Issue: "CSV parsing failed"
 

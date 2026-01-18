@@ -355,6 +355,20 @@ downstream: []
 - [ ] Metadata header complete
 - [ ] Copied to history, tracker updated
 
+## Goal-Backward Verification
+
+**Before marking complete, run goal-backward check** (see `.claude/rules/pm-core/goal-backward-verification.md`):
+
+**Goal:** Engineering can build the right thing without coming back with questions.
+
+**Observable truths (must all pass):**
+- [ ] Engineer can start work without asking "what do you mean by X?"
+- [ ] Edge cases cover realistic failure scenarios
+- [ ] Success metrics have measurement plan (not just targets)
+- [ ] Rollout plan has exit criteria, not just entry
+
+**On failure:** Do not mark complete. Note which checks failed in Open Questions section.
+
 ## Evidence Tracking
 
 | Claim | Type | Source |

@@ -34,6 +34,34 @@ Options:
 2. Refresh: Regenerate PRD from charter
 ```
 
+## What Gets Tracked in stale-outputs.md
+
+**Track ONLY regeneratable outputs** - artifacts that are meant to be refreshed when sources change.
+
+### ✅ Track These:
+- **Tier 1:** VOC synthesis, KTLO triage, truth base, KB gaps (from inputs/)
+- **Tier 2:** Quarterly charters (from Tier 1 outputs)
+- **Tier 3:** PRDs (from Tier 2 outputs)
+- **Cross-cutting:** Open questions aggregator (if implemented)
+
+**Key test:** "If the source file changes, should this output regenerate?"
+
+### ❌ Don't Track These:
+- **Decision documents** - Point-in-time decisions, not regeneratable
+- **One-time analyses** - Reviews, comparisons, investigations
+- **Stakeholder maps** - Updated manually based on context changes
+- **GTM plans** - Launch-specific, not input-dependent
+- **Strategy docs** - Long-lived, manually updated
+- **Post-launch reviews** - Historical records
+
+**Key test:** "Is this a snapshot/decision/manual artifact rather than a generated insight?"
+
+### Why This Matters
+
+The staleness system tracks **data flows** (inputs → insights → plans → specs), not **all PM artifacts**.
+
+Decision docs and one-time analyses don't fit the dependency graph - they're outputs of PM judgment, not skill regeneration.
+
 ## Frozen Outputs
 
 Some outputs may be intentionally frozen (not updated despite stale sources):

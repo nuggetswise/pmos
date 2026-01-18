@@ -261,6 +261,20 @@ downstream:
 - [ ] Metadata header complete
 - [ ] Copied to history, tracker updated
 
+## Goal-Backward Verification
+
+**Before marking complete, run goal-backward check** (see `.claude/rules/pm-core/goal-backward-verification.md`):
+
+**Goal:** Stakeholders can explain the quarter's bets and why they matter.
+
+**Observable truths (must all pass):**
+- [ ] Stakeholder can explain the quarter's bets in 2 minutes
+- [ ] Each bet has clear "we'll know it worked if..." statement
+- [ ] Risks section would survive "what could kill this?" challenge
+- [ ] Dependencies name actual teams (not all "TBD")
+
+**On failure:** Do not mark complete. Note which checks failed in Open Questions section.
+
 ## Evidence Tracking
 
 | Claim | Type | Source |

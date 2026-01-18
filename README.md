@@ -17,7 +17,7 @@ PM OS is a **file-based workflow system** that:
 - Learns from history (extracts success/failure patterns over time)
 - Provides senior PM coverage (stakeholder mapping, GTM, strategy, reviews)
 
-**Why file-based?** No database, no server, no API - just markdown files, skills, and Claude Code. Works offline, version controlled, shareable.
+**Why file-based?** No database, no server, no API - just files, skills, and Claude Code. Works offline, version controlled, shareable.
 
 **Core principle:** Evidence before claims, always. Every output cites sources, tags assumptions, and includes a claims ledger.
 
@@ -44,7 +44,7 @@ Your context informs stakeholder maps, decision logs, and strategic framing.
 inputs/jira/support-tickets-2026-01.csv
 
 # Add customer feedback
-inputs/voc/interview-customer-a-2026-01-15.md
+inputs/voc/interview-customer-a-2026-01-15.docx
 inputs/voc/survey-results-2026-01.csv
 
 # Add strategy docs (if available)
@@ -141,7 +141,7 @@ history/         ← Versioned trail (enables learning)
 ```
 
 **What happens:**
-1. Reads `inputs/voc/*.md` and `*.csv`
+1. Reads `inputs/voc/*` (md, txt, docx, pdf, csv)
 2. Extracts verbatim quotes
 3. Groups into themes (pain points, requests, praise)
 4. Quantifies patterns ("3/7 customers mentioned X")

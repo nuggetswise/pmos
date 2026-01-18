@@ -55,7 +55,7 @@ outputs/open-questions.md ◀──  (all outputs with Open Questions)
 
 | Output | Generated | Sources | Status |
 |--------|-----------|---------|--------|
-| *(none yet)* | - | - | - |
+| *(none yet - decision documents are not tracked per staleness-protocol.md)* | - | - | - |
 
 ---
 

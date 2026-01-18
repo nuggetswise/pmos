@@ -151,6 +151,20 @@ Update `alerts/stale-outputs.md` with the new output and its sources.
 - [ ] Output copied to history folder
 - [ ] Staleness tracker updated
 
+## Goal-Backward Verification
+
+**Before marking complete, run goal-backward check** (see `.claude/rules/pm-core/goal-backward-verification.md`):
+
+**Goal:** New team member can understand product in 15 minutes.
+
+**Observable truths (must all pass):**
+- [ ] Someone unfamiliar can explain the product's value prop
+- [ ] Open questions identify actual unknowns (not just padding)
+- [ ] Terminology matches what the team actually uses
+- [ ] Core workflows are actionable (trigger → steps → outcome)
+
+**On failure:** Do not mark complete. Note which checks failed in Open Questions section.
+
 ## Evidence Tracking
 
 | Claim | Status | Confidence | Source | Last Verified |

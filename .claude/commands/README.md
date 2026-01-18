@@ -10,6 +10,7 @@ The `commands/` directory contains **quick shortcuts to PM skills** - simple com
 
 ```
 commands/
+├── status.md         # /status → Show PM OS status (active work, hot outputs, stale items)
 ├── ktlo.md           # /ktlo → triaging-ktlo skill
 ├── voc.md            # /voc → synthesizing-voc skill
 ├── charters.md       # /charters → generating-quarterly-charters skill
@@ -24,6 +25,12 @@ commands/
 ```
 
 ## Available Commands
+
+### System Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/status` | Show PM OS status - active work, hot outputs, stale items, blockers |
 
 ### Daily Commands
 
