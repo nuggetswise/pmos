@@ -1,145 +1,61 @@
 #!/usr/bin/env bash
 # SessionStart hook for PM OS
-# Implements "Context First, Every Request" - loads 5 dimensions at startup
-# Computes status DYNAMICALLY from source files (no static nexa-status.md)
+# Reads only nexa/state.json for runtime state and greeting content.
 
 set -euo pipefail
 
 # Determine plugin root directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+STATE_PATH="${PLUGIN_ROOT}/nexa/state.json"
 
-# ============================================================================
-# DYNAMIC STATUS COMPUTATION (from source files, not static status file)
-# ============================================================================
+# Defaults (used if state.json missing or partial)
+phase="OBSERVE"
+next_action="Run pm-os scan to ingest new sources"
+last_id="none"
+last_result="n/a"
+last_finished="n/a"
+ingest_count="0"
+error_count="0"
+recent_ingest=""
 
-# Extract active work from projects.md
-active_work=""
-if [ -f "${PLUGIN_ROOT}/inputs/context/projects.md" ]; then
-    # Get table rows under "## Active Initiatives"
-    active_work=$(sed -n '/## Active Initiatives/,/^## /p' "${PLUGIN_ROOT}/inputs/context/projects.md" 2>/dev/null | \
-        grep -E "^\|.*\|$" | \
-        grep -v "^| Initiative" | \
-        grep -v "^|---" | \
-        head -5 || echo "")
-fi
-if [ -z "$active_work" ]; then
-    active_work="  *(no active initiatives)*"
-fi
+if [ -f "${STATE_PATH}" ]; then
+    IFS=$'\0' read -r phase next_action last_id last_result last_finished ingest_count error_count recent_ingest < <(
+        python - "${STATE_PATH}" <<'PY'
+import json
+import sys
 
-# Extract blockers from challenges.md
-blockers=""
-if [ -f "${PLUGIN_ROOT}/inputs/context/challenges.md" ]; then
-    blockers=$(sed -n '/## Active Blockers/,/^## /p' "${PLUGIN_ROOT}/inputs/context/challenges.md" 2>/dev/null | \
-        grep -E "^\|.*\|$" | \
-        grep -v "^| Blocker" | \
-        grep -v "^|---" | \
-        head -3 || echo "")
-fi
-if [ -z "$blockers" ]; then
-    blockers="  *(no blockers)*"
-fi
+state = json.load(open(sys.argv[1]))
+phase = state.get("phase") or "OBSERVE"
+next_action = state.get("next_action") or "Run pm-os scan to ingest new sources"
+last = state.get("last_job") or {}
+last_id = last.get("id") or "none"
+last_result = last.get("result") or "n/a"
+last_finished = last.get("finished_at") or "n/a"
+ingest_index = state.get("ingest_index") or []
+ingest_count = str(len(ingest_index))
+error_count = str(len(state.get("errors") or []))
+recent_ingest = ""
+if ingest_index:
+    recent_ingest = ingest_index[-1].get("source_path") or ""
 
-# Extract algorithm phase from session-state.md
-algorithm_phase="OBSERVE"
-recommended_next="building-truth-base"
-if [ -f "${PLUGIN_ROOT}/outputs/session-state.md" ]; then
-    phase_line=$(grep "Current Phase" "${PLUGIN_ROOT}/outputs/session-state.md" 2>/dev/null || echo "")
-    if [ -n "$phase_line" ]; then
-        algorithm_phase=$(echo "$phase_line" | cut -d'|' -f3 | tr -d ' ' || echo "OBSERVE")
-    fi
-    rec_line=$(grep "Recommended Next" "${PLUGIN_ROOT}/outputs/session-state.md" 2>/dev/null || echo "")
-    if [ -n "$rec_line" ]; then
-        recommended_next=$(echo "$rec_line" | cut -d'|' -f3 | xargs || echo "building-truth-base")
-    fi
-fi
-
-# Extract stale outputs from alerts/stale-outputs.md
-stale_outputs=""
-if [ -f "${PLUGIN_ROOT}/alerts/stale-outputs.md" ]; then
-    stale_outputs=$(sed -n '/## Stale Outputs/,/^## /p' "${PLUGIN_ROOT}/alerts/stale-outputs.md" 2>/dev/null | \
-        grep -E "^\|.*\|$" | \
-        grep -v "^| Output" | \
-        grep -v "^|---" | \
-        grep -v "none yet" | \
-        head -3 || echo "")
-fi
-if [ -z "$stale_outputs" ]; then
-    stale_outputs="  *(none)*"
+print("\0".join([
+    phase,
+    next_action,
+    last_id,
+    last_result,
+    last_finished,
+    ingest_count,
+    error_count,
+    recent_ingest,
+]))
+PY
+    )
 fi
 
-# Get recent decisions
-recent_decisions=""
-decision_files=$(ls -t "${PLUGIN_ROOT}/outputs/decisions/"*.md 2>/dev/null | grep -v "TEMPLATE" | head -3 || echo "")
-if [ -n "$decision_files" ]; then
-    for file in $decision_files; do
-        filename=$(basename "$file" .md)
-        recent_decisions="${recent_decisions}  • ${filename}\n"
-    done
-else
-    recent_decisions="  *(no decisions recorded)*"
+if [ -z "${recent_ingest}" ]; then
+    recent_ingest="*(none)*"
 fi
-
-# Compute next actions based on current phase
-next_actions=""
-case "$algorithm_phase" in
-    "OBSERVE")
-        next_actions="1. Run building-truth-base to establish product understanding
-2. Continue customer discovery (synthesizing-voc)
-3. Review KTLO queue (triaging-ktlo)"
-        ;;
-    "THINK")
-        next_actions="1. Complete analysis (analyzing-kb-gaps, competitive-analysis)
-2. Review insights before planning
-3. Prepare for charter generation"
-        ;;
-    "PLAN")
-        next_actions="1. Complete quarterly charters (generating-quarterly-charters)
-2. Prioritize work across charters
-3. Prepare for PRD writing"
-        ;;
-    "BUILD")
-        next_actions="1. Write PRDs for charter bets (writing-prds-from-charters)
-2. Verify completeness (verification-before-completion)
-3. Prepare for engineering handoff"
-        ;;
-    *)
-        next_actions="1. Run building-truth-base to start OBSERVE phase
-2. Check inputs/context for configuration
-3. Review CLAUDE.md for setup guidance"
-        ;;
-esac
-
-# ============================================================================
-# CONTEXT LOADING: 5 Dimensions (per Kai's "Context First" model)
-# ============================================================================
-
-# Read COMPASS: Mission, Goals, Beliefs
-compass_content=$(cat "${PLUGIN_ROOT}/inputs/context/compass.md" 2>/dev/null || echo "# COMPASS not configured")
-
-# Read PROJECTS: Current Work
-projects_content=$(cat "${PLUGIN_ROOT}/inputs/context/projects.md" 2>/dev/null || echo "# PROJECTS not configured")
-
-# Read CHALLENGES: Obstacles
-challenges_content=$(cat "${PLUGIN_ROOT}/inputs/context/challenges.md" 2>/dev/null || echo "# CHALLENGES not configured")
-
-# Read PREFERENCES: Your Style
-preferences_content=$(cat "${PLUGIN_ROOT}/inputs/context/preferences.md" 2>/dev/null || echo "# PREFERENCES not configured")
-
-# Read HISTORY: Past Decisions (from outputs/decisions/)
-history_files=$(ls -t "${PLUGIN_ROOT}/outputs/decisions/"*.md 2>/dev/null | grep -v "TEMPLATE" | head -5 || echo "")
-history_summary=""
-if [ -n "$history_files" ]; then
-    for file in $history_files; do
-        filename=$(basename "$file")
-        history_summary="${history_summary}- ${filename}\n"
-    done
-else
-    history_summary="*(no decisions recorded yet)*"
-fi
-
-# Read using-pm-os content
-using_pm_os_content=$(cat "${PLUGIN_ROOT}/skills/using-pm-os/SKILL.md" 2>&1 || echo "Error reading using-pm-os skill")
 
 # ============================================================================
 # JSON ESCAPE FUNCTION
@@ -164,33 +80,22 @@ escape_for_json() {
 }
 
 # ============================================================================
-# BUILD CONTEXT INJECTION (greeting FIRST, then context)
+# BUILD CONTEXT INJECTION (greeting FIRST, then protocol)
 # ============================================================================
 
-# Pre-computed greeting with dynamic values - THIS GOES FIRST
 greeting_block="<session-greeting>
-You are Nexa, operating PM OS. At session start, greet the user with loaded context summary.
+You are Nexa, operating PM OS. At session start, greet the user with the runtime state from nexa/state.json.
 
 **YOUR CONTEXT IS LOADED - Use it to inform EVERY response:**
 
-## COMPASS (Mission, Goals, Beliefs)
-${compass_content}
-
-## PROJECTS (Current Work)
-${projects_content}
-
-## CHALLENGES (Obstacles)
-${challenges_content}
-
-## PREFERENCES (Your Style)
-${preferences_content}
-
-## HISTORY (Recent Decisions)
-${history_summary}
-
-## Algorithm Phase
-Current: ${algorithm_phase}
-Recommended Next: ${recommended_next}
+## Runtime State
+Phase: ${phase}
+Next Action: ${next_action}
+Last Job: ${last_id} (${last_result})
+Last Finished: ${last_finished}
+Ingested Sources: ${ingest_count}
+Errors: ${error_count}
+Recent Source: ${recent_ingest}
 
 ---
 
@@ -199,35 +104,27 @@ Recommended Next: ${recommended_next}
 \`\`\`
 👋 Nexa here - PM OS ready.
 
-📚 Loaded: 5 context dimensions
+🔄 Phase: ${phase}
+👉 Next: ${next_action}
 
-🔄 Algorithm Phase: ${algorithm_phase}
-   Recommended: ${recommended_next}
+🧾 Last Job: ${last_id} (${last_result})
+🕒 Finished: ${last_finished}
 
-🔥 Active Work:
-${active_work}
-
-⚠️ Needs Attention:
-   Blockers: ${blockers}
-   Stale: ${stale_outputs}
-
-📋 Next Actions:
-${next_actions}
+📥 Ingested Sources: ${ingest_count}
+⚠️ Errors: ${error_count}
+📄 Latest Source: ${recent_ingest}
 
 Ready for your request.
 \`\`\`
 
 **ABSOLUTE REQUIREMENT:** You MUST output this greeting BEFORE doing anything else. Even if the user's first message is an action request, you output the greeting FIRST, then address their request. No exceptions. This is not optional.
-
-**CRITICAL:** Your goals drive every response. Check COMPASS before answering.
 </session-greeting>"
 
-# Staleness check reminder
-staleness_reminder="<session-protocol>
+state_reminder="<session-protocol>
 BEFORE responding to user requests, you MUST:
-1. Read alerts/stale-outputs.md
-2. If any outputs are stale, report: 'These outputs may be stale: [list]. Say refresh <skill> to update.'
-3. If any downstream output is newer than its sources, flag drift and ask to reconcile
+1. Read nexa/state.json
+2. If current_job is running, report status and ask whether to wait or proceed
+3. If last job failed, call out the error and suggest pm-os scan
 4. Then proceed with the user's request
 </session-protocol>"
 
@@ -240,7 +137,7 @@ BEFORE running any skill, check prerequisites per .claude/rules/pm-core/algorith
 - BUILD skills HARD REQUIRE a charter (PLAN output)
 - LEARN skills require completed work
 
-Current phase: ${algorithm_phase}
+Current phase: ${phase}
 If user requests a skill outside current phase, check prerequisites and warn/block accordingly.
 </algorithm-enforcement>"
 
@@ -248,16 +145,15 @@ If user requests a skill outside current phase, check prerequisites and warn/blo
 # OUTPUT JSON
 # ============================================================================
 
-using_pm_os_escaped=$(escape_for_json "$using_pm_os_content")
 greeting_escaped=$(escape_for_json "$greeting_block")
-staleness_escaped=$(escape_for_json "$staleness_reminder")
+state_escaped=$(escape_for_json "$state_reminder")
 algorithm_escaped=$(escape_for_json "$algorithm_reminder")
 
 cat <<EOF
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "<EXTREMELY_IMPORTANT>\nYou have PM OS.\n\n${greeting_escaped}\n\n${staleness_escaped}\n\n${algorithm_escaped}\n\n**Below is the full content of your 'using-pm-os' skill - your introduction to PM OS workflows:**\n\n${using_pm_os_escaped}\n</EXTREMELY_IMPORTANT>"
+    "additionalContext": "<EXTREMELY_IMPORTANT>\nYou have PM OS.\n\n${greeting_escaped}\n\n${state_escaped}\n\n${algorithm_escaped}\n</EXTREMELY_IMPORTANT>"
   }
 }
 EOF

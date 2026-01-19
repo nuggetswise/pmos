@@ -295,7 +295,7 @@ If a charter doesn't advance a pillar → question whether it belongs on roadmap
 **Step 9: Copy to History & Update Tracker**
 
 - Copy to `history/writing-product-strategy/product-strategy-YYYY-MM-DD.md`
-- Update `alerts/stale-outputs.md`
+- Update `nexa/state.json` and append to `outputs/audit/auto-run-log.md`
 
 ## Quick Reference
 

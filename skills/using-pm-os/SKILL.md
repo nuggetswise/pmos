@@ -13,9 +13,9 @@ description: Session guardrails for PM OS - dynamic execution with dependency aw
 ## Dependency Hygiene
 
 Before generating any downstream output (charters or PRDs):
-1. Read `alerts/stale-outputs.md`
-2. If any outputs are stale, report them and ask whether to refresh
-3. If a downstream output is newer than its sources, flag potential drift and ask to reconcile
+1. Run `pm-os status` or read `nexa/state.json`
+2. If sources changed since the last scan, recommend `pm-os scan` before regenerating
+3. If an output is older than its sources, flag drift and ask whether to refresh upstream outputs first
 
 ## Evidence Discipline
 

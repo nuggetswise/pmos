@@ -21,9 +21,9 @@ paths:
 ## Quality Gates
 - Review with stakeholder-map before finalizing
 - Run verification-before-completion skill
-- Update alerts/stale-outputs.md with dependencies
+- Update `nexa/state.json` + audit log with dependencies
 
 ## Downstream Impact
 When charters change:
 - PRDs depending on this charter become stale
-- Check alerts/stale-outputs.md for affected outputs
+- Check `pm-os status` / `nexa/state.json` for affected outputs

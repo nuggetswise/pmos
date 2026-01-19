@@ -1,0 +1,48 @@
+# PM OS Source Registry
+# Copy to sources.local.yaml and customize for your environment
+# sources.local.yaml is gitignored
+
+version: 1
+
+# How often to scan for changes (seconds)
+scan_interval_sec: 300
+
+# Wait for file to be stable before processing (prevents auto-save conflicts)
+stability_window_sec: 240
+
+sources:
+  # Downloads folder - common place for exports
+  - path: "${HOME}/Downloads"
+    include:
+      - "jira*.csv"
+      - "*.pdf"
+      - "*.docx"
+      - "*.pptx"
+    mode: "non_recursive"
+    description: "Jira exports, customer docs"
+
+  # Google Drive / OneDrive PM folder
+  - path: "${HOME}/Drive/PM"
+    include:
+      - "**/*.docx"
+      - "**/*.pptx"
+      - "**/*.pdf"
+      - "**/*.csv"
+    mode: "recursive"
+    description: "PM documents from cloud sync"
+
+  # Internal inputs (always scanned)
+  - path: "inputs/"
+    include:
+      - "**/*"
+    exclude:
+      - "context/**"
+    mode: "recursive"
+    description: "PM OS input files (context/ excluded - auto-loaded by Claude)"
+
+# Example: Slack exports
+#  - path: "${HOME}/Downloads/slack-exports"
+#    include:
+#      - "**/*.json"
+#    mode: "recursive"
+#    description: "Slack channel exports"

@@ -538,12 +538,12 @@ code .claude/rules/domain/vocabulary.md
 # Add new terms or clarify existing ones
 ```
 
-**5. Update alerts/stale-outputs.md:**
+**5. Update AG3 state (no manual stale tracker):**
 ```bash
-# Record that skill files were updated
-code alerts/stale-outputs.md
+# Confirm next action reflects the change
+pm-os status
 
-# Note which skills changed and why
+# If you updated skills/templates manually, note it in your commit message
 ```
 
 **Track decisions:**
@@ -573,7 +573,7 @@ This creates feedback loop: Decision (launch plan) → Outcome (review) → Less
 - Templates with new sections or checklists
 - Quality gates with new checkpoints
 - Vocabulary with new terms
-- `alerts/stale-outputs.md` with tracking info
+- `nexa/state.json` reflects next actions and recent activity
 
 **You now have:**
 - Clear understanding of what worked/didn't work

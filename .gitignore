@@ -1,0 +1,22 @@
+# Daemon-managed outputs (auto-generated)
+outputs/ingest/
+outputs/audit/
+outputs/deltas/
+
+# Daemon state
+nexa/state.json
+
+# Local configuration
+nexa/sources.local.yaml
+CLAUDE.local.md
+
+# Directory placeholders
+**/.gitkeep
+
+# Node modules (if using pm-os CLI locally)
+node_modules/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db

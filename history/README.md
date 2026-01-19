@@ -28,7 +28,7 @@ history/
 ├── writing-product-strategy/         # Strategy documents
 ├── reviewing-launch-outcomes/        # Post-launch reviews
 ├── tracking-decisions/               # Decision logs
-├── learning-from-history/            # Learning analysis reports
+├── learning-from-history/            # Optional learning analysis reports
 └── generating-exec-update/           # Exec updates
 ```
 
@@ -36,15 +36,15 @@ history/
 
 ## How History Works
 
-### Automatic Versioning
+### History Mirroring
 
 Every time a skill runs:
 
 1. **Generate output**: Skills write to `outputs/[type]/latest-file.md`
-2. **Copy to history**: Same file copied to `history/[skill]/latest-file-YYYY-MM-DD.md`
-3. **Update tracker**: `alerts/stale-outputs.md` updated with new version
+2. **Mirror to history**: Run `pm-os mirror` to copy to `history/[skill]/latest-file-YYYY-MM-DD.md`
+3. **Update state/audit**: `nexa/state.json` and `outputs/audit/auto-run-log.md` updated with new version
 
-**You never manually manage history** - it happens automatically.
+**You never manually manage history files** - `pm-os mirror` handles it.
 
 ### Example: Charter Evolution
 
@@ -126,11 +126,11 @@ The learning system analyzes history to extract patterns:
 
 **Automatic:** Weekly via `hooks/weekly-learning.sh`
 - Checks every 7 days
-- Suggests learning when history has ≥5 files for a skill
+- Runs `pm-os learn --auto` when history has ≥5 files for a skill
 
-**Manual:** You can trigger anytime
+**Manual (execution path):** You can trigger anytime
 ```
-"Analyze patterns from generating-quarterly-charters history"
+pm-os learn generating-quarterly-charters
 ```
 
 ### What Learning Produces
@@ -217,7 +217,7 @@ find history/ -name "*2026-01-*.md" -o -name "*2026-02-*.md" -o -name "*2026-03-
 
 After 5+ outputs for a skill:
 ```
-"Analyze patterns from generating-quarterly-charters history"
+pm-os learn generating-quarterly-charters
 ```
 
 Learning system will:

@@ -494,7 +494,7 @@ code outputs/gtm/gtm-real-time-sync-2026-01-16.md
 
 # Make changes, save
 
-# Update alerts/stale-outputs.md to reflect manual edit
+# No manual stale tracker in AG3; rely on `pm-os status` and re-run the skill if needed
 ```
 
 **Why this step matters:** First draft GTM plans always have gaps. Stakeholder feedback surfaces what you missed.
@@ -512,7 +512,8 @@ code outputs/gtm/gtm-real-time-sync-2026-01-16.md
 - `history/planning-gtm-launch/gtm-[initiative]-YYYY-MM-DD.md`
 
 **Updated:**
-- `alerts/stale-outputs.md` - Tracks GTM plan sources and dependencies
+- `nexa/state.json` - Next action reflects what to refresh or run next
+- `outputs/audit/auto-run-log.md` - Records daemon actions (if any)
 
 **You now have:**
 - Clear positioning and value proposition

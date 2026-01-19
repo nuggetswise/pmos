@@ -25,7 +25,7 @@ skills/
 ├── writing-product-strategy/         # Senior PM: 3-5 year strategy
 ├── reviewing-launch-outcomes/        # Senior PM: Post-launch retrospectives
 ├── tracking-decisions/               # As-needed: Decision logging
-├── learning-from-history/            # Automatic: Pattern extraction
+├── learning-from-history/            # Optional: Pattern extraction
 └── using-pm-os/                      # System: Session guardrails
 ```
 
@@ -85,10 +85,10 @@ skills/
 
 | Skill | When It Runs | Purpose |
 |-------|--------------|---------|
-| learning-from-history | Weekly via hook | Extract success/failure patterns |
+| learning-from-history | Weekly auto + on-demand (`pm-os learn`) | Extract success/failure patterns |
 | using-pm-os | Every session start | Session guardrails, staleness check |
 
-**You don't invoke these** - they run automatically.
+**Note:** Weekly hook runs `pm-os learn --auto`; use `pm-os learn <skill>` anytime.
 
 ### Skills That Use my-context.md
 
@@ -475,7 +475,7 @@ Look for these retail themes:
      │
      ├────► Copy to history/
      │
-     └────► Update alerts/stale-outputs.md
+     └────► Update nexa/state.json + outputs/audit/auto-run-log.md
 ```
 
 **See also:**

@@ -318,7 +318,7 @@ downstream: []
 **Step 8: Copy to History & Update Tracker**
 
 - Copy to `history/writing-prds-from-charters/[name]-prd-YYYY-MM-DD.md`
-- Update `alerts/stale-outputs.md`
+- Update `nexa/state.json` and append to `outputs/audit/auto-run-log.md`
 
 ## Quick Reference
 

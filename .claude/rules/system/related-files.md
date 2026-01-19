@@ -13,7 +13,7 @@ When modifying certain files, check and update related files to maintain coheren
 | `.claude/output-styles/*.md` | Ensure aligned with `evidence-rules.md` and `output-metadata.md` |
 | `skills/*/SKILL.md` (any skill) | Update `skills/README.md` if skill purpose changed |
 | `README.md` | Check `docs/GETTING_STARTED.md` for consistency |
-| `alerts/stale-outputs.md` (dependency graph) | Update `.claude/rules/system/output-destinations.md` |
+| `nexa/state.json` (state + staleness) | Update `.claude/rules/system/output-destinations.md` |
 | `outputs/decisions/TEMPLATE.md` | Update `skills/tracking-decisions/SKILL.md` |
 
 ## Enforcement Protocol
@@ -50,7 +50,7 @@ ALL outputs/*/*.md files (if regenerated)
 
 - **Outputs in history/**: These are snapshots, don't modify
 - **User-maintained files**: `inputs/context/`, `inputs/voc/`, etc. - only user modifies
-- **Frozen outputs**: Marked as frozen in `alerts/stale-outputs.md`
+- **Frozen outputs**: If tracked, note in `nexa/state.json` or audit log
 
 ## Adding New Relationships
 

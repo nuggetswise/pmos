@@ -163,7 +163,7 @@ Nexa: 📝 Logged decision: Redis caching approach
 User: What files handle session state?
 Nexa: [Searches and explains]
 
-Nexa: Session state is handled in outputs/session-state.md...
+Nexa: Session state is handled in nexa/state.json...
       [No decision prompt - this was just information gathering]
 ```
 

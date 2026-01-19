@@ -102,7 +102,6 @@ pm_os_superpowers/
 ├── skills/          # PM workflow library (17 skills)
 ├── commands/        # Quick shortcuts (11 commands)
 ├── .claude/         # Configuration and rules
-├── alerts/          # Staleness tracking
 ├── hooks/           # Session automation
 └── README.md        # Quick start guide
 ```
@@ -131,7 +130,6 @@ history/         ← Versioned trail (learning)
 | `skills/` | PM workflows | ✓ (optional) | |
 | `commands/` | Quick shortcuts | ✓ (optional) | |
 | `.claude/` | Config & rules | ✓ (advanced) | ✓ (learned) |
-| `alerts/` | Staleness tracking | | ✓ |
 
 **Deep dives available:**
 - [inputs/README.md](/Users/singhm/pm_os_superpowers/inputs/README.md) - How to add source data
@@ -397,11 +395,11 @@ Day 3 (later):
 - Status: ✓ Current again
 ```
 
-**How PM OS detects staleness:**
+**How PM OS detects staleness (AG3):**
 
-1. **Session start:** Hook reads `alerts/stale-outputs.md`
+1. **Session start:** Hook reads `nexa/state.json`
 2. **Compare timestamps:** Output generation time vs source modification time
-3. **Report:** "These outputs may be stale: [list]"
+3. **Report:** "These outputs may be stale: [list]" (via status brief)
 4. **User decides:** Refresh now or proceed with caution
 
 **Visual representation:**
@@ -564,7 +562,7 @@ Evidence discipline prevents:
 
 **Automatic checks:**
 
-Every session start, PM OS checks `alerts/stale-outputs.md` and reports:
+Every session start, PM OS checks `nexa/state.json` and reports:
 
 ```
 ✓ No stale outputs detected. All current.
@@ -600,10 +598,10 @@ Say "refresh voc" to update, or proceed with caution.
 **Manual staleness check:**
 
 ```
-"What outputs are stale?"
+pm-os status
 ```
 
-Claude Code reads `alerts/stale-outputs.md` and reports all stale outputs with reasons.
+The 5-line brief shows next actions and stale outputs (when applicable).
 
 ### Common Daily Scenarios
 
@@ -701,8 +699,8 @@ Claude Code reads `alerts/stale-outputs.md` and reports all stale outputs with r
    - Output: `outputs/delivery/prd-feature-name.md`
 
 3. **Run learning analysis**
-   - After 5+ KTLO triages: "Analyze patterns from triaging-ktlo history"
-   - After 5+ VOC syntheses: "Analyze patterns from synthesizing-voc history"
+   - After 5+ KTLO triages: `pm-os learn triaging-ktlo`
+   - After 5+ VOC syntheses: `pm-os learn synthesizing-voc`
    - System extracts success/failure patterns
    - Patterns written to `.claude/rules/learned/` (auto-loaded)
 
@@ -820,7 +818,7 @@ See: [.claude/README.md](/Users/singhm/pm_os_superpowers/.claude/README.md)
 
 **When to ignore:** Minor changes (typo fixes) that don't affect analysis.
 
-See: [alerts/README.md](/Users/singhm/pm_os_superpowers/alerts/README.md)
+See: `outputs/audit/auto-run-log.md` for scan history
 
 ### "I see drift warnings"
 
@@ -1033,7 +1031,6 @@ downstream:
   - [skills/README.md](/Users/singhm/pm_os_superpowers/skills/README.md) - PM workflow library
   - [commands/README.md](/Users/singhm/pm_os_superpowers/commands/README.md) - Command shortcuts
   - [.claude/README.md](/Users/singhm/pm_os_superpowers/.claude/README.md) - Configuration deep-dive
-  - [alerts/README.md](/Users/singhm/pm_os_superpowers/alerts/README.md) - Staleness tracking
 
 ### Support
 

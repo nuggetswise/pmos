@@ -121,7 +121,7 @@ Copy output to `history/building-truth-base/truth-base-YYYY-MM-DD.md`
 
 **Step 6: Update Staleness Tracker**
 
-Update `alerts/stale-outputs.md` with the new output and its sources.
+Update `nexa/state.json` and append to `outputs/audit/auto-run-log.md` with the new output and its sources.
 
 ## Quick Reference
 

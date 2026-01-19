@@ -72,19 +72,11 @@ learning-from-history:
   IF MISSING: "Not enough history to extract patterns. Keep using PM OS and try again later."
 ```
 
-## Phase Tracking in Session State
+## Phase Tracking in State
 
-Update `outputs/session-state.md` to include algorithm phase:
-
-```yaml
-## Algorithm Phase
-| Field | Value |
-|-------|-------|
-| Current Phase | OBSERVE / THINK / PLAN / BUILD / VERIFY / LEARN |
-| Phase Entry | YYYY-MM-DD HH:MM |
-| Completed Phases | [list of phases completed this cycle] |
-| Recommended Next | [skill name] |
-```
+Update `nexa/state.json` to reflect algorithm phase:
+- `phase`: OBSERVE / THINK / PLAN / BUILD / VERIFY / LEARN
+- `next_action`: recommended next skill or remediation
 
 ## Enforcement Behavior
 

@@ -2,6 +2,9 @@
 
 This directory contains modular rules that govern how Claude operates as your PM copilot. Rules are auto-discovered and loaded at session start.
 
+> **AG3 Note:** Staleness and session state now live in `nexa/state.json`. Any
+> references to `alerts/stale-outputs.md` or `outputs/session-state.md` are legacy.
+
 ## Table of Contents
 
 - [Directory Structure](#directory-structure)
@@ -48,6 +51,7 @@ This directory contains modular rules that govern how Claude operates as your PM
 - **evidence-rules.md** - Evidence tagging, Claims Ledger, source attribution
 - **output-metadata.md** - YAML frontmatter standards, temperature classification, review cadence
 - **decision-algorithm.md** - The OBSERVE → THINK → PLAN → BUILD → EXECUTE → VERIFY → LEARN loop
+- **pm-collaborative-style.md** - MANDATORY collaborative PM interaction style (explains why, teaches patterns, connects to history)
 
 **Why these matter:** Violating evidence discipline creates false confidence in bad bets. These rules ensure every output is traceable, verifiable, and properly tracked.
 
@@ -144,7 +148,7 @@ This limits the rule's scope to specific output types.
 
 Before responding to any request, Claude:
 
-1. Reads `alerts/stale-outputs.md`
+1. Reads `nexa/state.json`
 2. Reports any stale outputs
 3. Checks for drift (downstream newer than sources)
 4. Then proceeds with your request
@@ -242,7 +246,7 @@ Add a new rule when you find yourself:
 - Output style: crisp, decision-first, always include risks and next actions
 - Copy to history directory with date suffix
 
-**After Generation:** Update `alerts/stale-outputs.md` and copy to history.
+**After Generation:** Update `nexa/state.json` + audit log and copy to history.
 
 ---
 
@@ -253,6 +257,24 @@ Add a new rule when you find yourself:
 **The Loop:** OBSERVE → THINK → PLAN → BUILD → EXECUTE → VERIFY → LEARN
 
 **Key Principle:** Verifiability is everything. Evidence before claims, always.
+
+---
+
+### pm-core/pm-collaborative-style.md
+
+**Purpose:** MANDATORY collaborative PM interaction style for all PM OS workflows.
+
+**Key Requirements:**
+- Explain the "why" before acting on any PM task
+- Provide insights during analysis (share emerging patterns)
+- Suggest evidence-based next steps after completion
+- Maintain strict evidence discipline (never invent, always cite)
+- Teach PM patterns and connect work to history
+- Connect work across tiers (inputs → strategy → delivery)
+
+**Output Style:** Decision-first, crisp, enterprise-grade, risk-inclusive, action-oriented
+
+**Why this matters:** Makes you a better PM by teaching patterns, not just executing tasks.
 
 ---
 
@@ -325,7 +347,7 @@ Add a new rule when you find yourself:
 
 **Purpose:** Defines session start behavior for checking stale outputs.
 
-**Session Start Protocol:** Always check `alerts/stale-outputs.md` before responding to any request
+**Session Start Protocol:** Always check `nexa/state.json` before responding to any request
 
 **Staleness Check Format:** Report stale outputs with source change reason
 

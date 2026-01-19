@@ -360,7 +360,7 @@ code outputs/roadmap/Q1-2026-charters.md
 
 # Make changes, save
 
-# Update alerts/stale-outputs.md to reflect manual edit
+# No manual stale tracker in AG3; rely on `pm-os status` and re-run `/charters` if needed
 ```
 
 **Pro tip:** If making small changes (typos, metric tweaks), edit the file directly. If making big changes (reprioritization, new bets), re-run `/charters`.
@@ -378,7 +378,8 @@ code outputs/roadmap/Q1-2026-charters.md
 - `history/generating-quarterly-charters/Q1-YYYY-charters-YYYY-MM-DD.md`
 
 **Updated:**
-- `alerts/stale-outputs.md` - Tracks charter sources and dependencies
+- `nexa/state.json` - Next action reflects what to refresh or run next
+- `outputs/audit/auto-run-log.md` - Records daemon actions (if any)
 
 **You now have:**
 - 3-5 strategic bets for the quarter

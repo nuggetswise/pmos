@@ -107,7 +107,7 @@ Which direction should I take?
 
 All deviations must be logged in two places:
 
-1. **Session state** (`outputs/session-state.md`) - Decisions section
+1. **State** (`nexa/state.json`) - note in `next_action` or job error context
 2. **Output Claims Ledger** - As Assumption with deviation note
 
 **Claims Ledger format:**
@@ -115,11 +115,11 @@ All deviations must be logged in two places:
 |-------|------|--------|
 | [Claim affected by deviation] | Assumption | Deviation Rule [1-4]: [brief explanation] |
 
-## Integration with Session State
+## Integration with State
 
 When a deviation occurs:
-1. Log in session state decisions section immediately
-2. If Rule 4 (STOP), also log as blocker
+1. Log in `nexa/state.json` (next action + any blockers)
+2. If Rule 4 (STOP), set next action to remediation
 3. Continue logging ensures resume can see what happened
 
 ## Decision Tree

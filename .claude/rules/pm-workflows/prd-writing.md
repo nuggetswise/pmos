@@ -7,7 +7,7 @@ paths:
 # PRD Writing Rules
 
 ## Before Writing
-- Verify charter is up-to-date (check alerts/stale-outputs.md)
+- Verify charter is up-to-date (check `pm-os status` / `nexa/state.json`)
 - Confirm charter is approved
 - Read stakeholder-map if exists
 
@@ -33,4 +33,4 @@ paths:
 ## Quality Gates
 - Run verification-before-completion skill
 - Ensure all SHALL requirements are testable
-- Update alerts/stale-outputs.md
+- Update `nexa/state.json` + audit log

@@ -22,26 +22,37 @@ The greeting ensures:
 **At the start of EVERY new session (not mid-conversation):**
 
 1. **OUTPUT THE GREETING FIRST** - No exceptions
-2. Compute status dynamically from source files (no static status file)
-3. Show algorithm phase and recommended next skill
-4. Report active work, blockers, stale outputs
+2. Read state from `nexa/state.json` (single source of truth)
+3. Read context from `inputs/context/` files for active work and blockers
+4. Show 5-line daemon brief + expanded context
 5. Then address the user's request
 
 **"Context First, Every Request"** - Your context loads once at session start and informs everything.
 
-## Status Sources (Dynamic Computation)
+## Status Sources (AG3 Architecture)
 
-The greeting computes status from these files:
+The greeting reads from these sources:
 
 | Source | Data Extracted |
 |--------|----------------|
+| `nexa/state.json` | Daemon status, phase, current job, next action |
 | `inputs/context/projects.md` | Active Initiatives table |
 | `inputs/context/challenges.md` | Active Blockers table |
-| `outputs/session-state.md` | Algorithm Phase (Current, Recommended) |
-| `alerts/stale-outputs.md` | Stale Outputs section |
-| `outputs/decisions/*.md` | Recent decisions list |
+| `inputs/context/compass.md` | Mission, goals |
+| `inputs/context/preferences.md` | User preferences |
 
-Status is computed fresh each session - no stale data.
+**Single source of truth:** `nexa/state.json` replaces multiple markdown status files.
+
+## Automation Status
+
+The learning loop is fully automated:
+
+| Component | Status | How It Works |
+|-----------|--------|--------------|
+| Auto-mirror | ✅ Active | Nexa runs `pm-os mirror --quiet` after every skill output |
+| Auto-learn | ✅ Active | Weekly hook runs `pm-os learn --auto` on 7-day cadence |
+
+**No manual `pm-os mirror` required** - Nexa handles mirroring automatically after generating outputs.
 
 ## Greeting Format
 
@@ -50,17 +61,17 @@ Status is computed fresh each session - no stale data.
 
 📚 Loaded: 5 context dimensions
 
-🔄 Algorithm Phase: [Current] → Recommended: [next skill]
+🤖 Daemon: [status from state.json]
+🔄 Mode: [phase from state.json]
+📥 Current: [current_job or "idle"]
+📝 Latest: [brief.latest_delta or "none"]
+➡️  Next: [next_action from state.json]
 
 🔥 Active Work:
 [table rows from projects.md]
 
 ⚠️ Needs Attention:
    Blockers: [from challenges.md]
-   Stale: [from stale-outputs.md, or "none"]
-
-📋 Next Actions:
-[computed based on algorithm phase]
 
 Ready for your request.
 ```
@@ -91,7 +102,11 @@ A new session is detected when:
 
 📚 Loaded: 5 context dimensions
 
-🔄 Algorithm Phase: OBSERVE → Recommended: building-truth-base
+🤖 Daemon: stopped
+🔄 Mode: OBSERVE
+📥 Current: idle
+📝 Latest: none
+➡️  Next: Run 'pm-os scan' to scan for new documents
 
 🔥 Active Work:
 | Customer Discovery Program | In Progress | Complete 5 interviews (2026-01-31) |
@@ -99,43 +114,37 @@ A new session is detected when:
 
 ⚠️ Needs Attention:
    Blockers: No customer interview pipeline, Metrics baseline undefined
-   Stale: (none)
-
-📋 Next Actions:
-1. Run building-truth-base to establish product understanding
-2. Continue customer discovery (synthesizing-voc)
-3. Review KTLO queue (triaging-ktlo)
 
 Ready for your request.
 ```
 
-### With Blockers
+### With Active Job
 
 ```
 👋 Nexa here - PM OS ready.
 
 📚 Loaded: 5 context dimensions
 
-🔄 Algorithm Phase: PLAN → Recommended: generating-quarterly-charters
+🤖 Daemon: running (hb: 2m ago)
+🔄 Mode: OBSERVE
+📥 Current: ingest (running)
+📝 Latest: Processed 3 customer feedback docs
+➡️  Next: Run synthesizing-voc to analyze feedback
 
 🔥 Active Work:
-| Q1 Charter Definition | In Progress | 3 bets defined (2026-02-14) |
+| Customer Discovery Program | In Progress | Complete 5 interviews (2026-01-31) |
 
 ⚠️ Needs Attention:
-   Blockers: Missing truth base - need to run building-truth-base first
-   Stale: voc-synthesis-2026-01.md (source changed)
+   Blockers: (none)
 
-📋 Next Actions:
-1. Complete quarterly charters (generating-quarterly-charters)
-2. Prioritize work across charters
-3. Prepare for PRD writing
-
-Ready to resolve blocker or start new task?
+Ready for your request.
 ```
 
 ## Fallback: /status Command
 
-If greeting doesn't appear, users can run `/status` to get the same information. The `/status` command computes status dynamically using the same logic.
+If greeting doesn't appear, users can run `/status` to get the same information. The `/status` command reads from `nexa/state.json`.
+
+Alternatively, run `pm-os status` in terminal for the 5-line brief.
 
 ## When NOT to Greet
 

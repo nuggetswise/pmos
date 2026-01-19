@@ -120,6 +120,18 @@ Minimum required columns:
 
 **Important:** Input files are never modified by PM OS. They're read-only.
 
+## How Files Are Processed (AG3)
+
+The PM OS daemon (`pm-os` CLI) can also scan and extract documents:
+
+1. Configure sources in `nexa/sources.local.yaml`
+2. Drop files in appropriate subdirectory (voc/, jira/, etc.)
+3. Run `pm-os scan` or enable `pm-os watch` for auto-processing
+4. Extracted text goes to `outputs/ingest/`
+5. Files are routed based on `nexa/input-rules.yaml`
+
+**Note:** `inputs/context/` is excluded from scanning - it's your personal context, not document input. Context files are read directly by Nexa, not processed through the daemon.
+
 ## Common Issues
 
 ### Issue: "No input files found"

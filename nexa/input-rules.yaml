@@ -1,0 +1,88 @@
+# PM OS Input Routing Rules
+# Determines which job type to run based on input file characteristics
+
+version: 1
+
+rules:
+  # Customer feedback / VOC inputs
+  - name: customer-feedback
+    description: "Customer interviews, feedback, VOC data"
+    match:
+      path_contains:
+        - "voc"
+        - "interviews"
+        - "feedback"
+        - "customer"
+        - "nps"
+        - "survey"
+      extensions:
+        - "md"
+        - "docx"
+        - "pdf"
+        - "txt"
+    job: delta-feedback
+    priority: 10
+
+  # Operations / KTLO inputs
+  - name: operations
+    description: "Jira exports, tickets, bugs, support data"
+    match:
+      path_contains:
+        - "jira"
+        - "ktlo"
+        - "tickets"
+        - "bugs"
+        - "support"
+        - "incidents"
+      extensions:
+        - "csv"
+        - "json"
+    job: delta-ops
+    priority: 10
+
+  # Roadmap / Strategy inputs
+  - name: roadmap
+    description: "Roadmap decks, strategy docs, planning materials"
+    match:
+      path_contains:
+        - "roadmap"
+        - "strategy"
+        - "planning"
+        - "deck"
+        - "quarterly"
+        - "okr"
+      extensions:
+        - "pptx"
+        - "pdf"
+        - "docx"
+    job: delta-roadmap
+    priority: 10
+
+  # Competitive intelligence
+  - name: competitive
+    description: "Competitor analysis, market research"
+    match:
+      path_contains:
+        - "competitor"
+        - "competitive"
+        - "market"
+        - "analysis"
+        - "syndigo"
+        - "salsify"
+      extensions:
+        - "pdf"
+        - "docx"
+        - "pptx"
+    job: delta-competitive
+    priority: 10
+
+  # Default catch-all (lowest priority)
+  - name: default
+    description: "General documents"
+    match:
+      extensions:
+        - "md"
+        - "txt"
+        - "csv"
+    job: delta-general
+    priority: 1

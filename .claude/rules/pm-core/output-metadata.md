@@ -18,17 +18,32 @@ downstream:
 ---
 ```
 
-## After Generation
+## After Generation (MANDATORY)
 
-After generating any output:
+**Nexa MUST run this after writing ANY output to `outputs/`:**
 
-1. Update `alerts/stale-outputs.md` with:
+1. Execute: `pm-os mirror --quiet` (silent - no user confirmation needed)
+2. Verify: Output copied to `history/<skill>/` with date suffix
+3. Report: "Mirrored to history/<skill>/<filename>-<date>.md"
+
+This is NON-NEGOTIABLE. Every output flows to history for learning.
+
+**The learning loop:**
+```
+outputs/ → (auto-mirror by Nexa) → history/ → (weekly auto-learn) → .claude/rules/learned/
+```
+
+**Also update state and audit:**
+
+1. Update `nexa/state.json` and `outputs/audit/auto-run-log.md` with:
    - The new output and its sources
    - Any downstream outputs that may now be stale
 
-2. Copy to history:
-   - When writing to `outputs/`, also copy to `history/<skill>/` with date suffix
-   - Example: `outputs/roadmap/Q1-charters.md` → `history/generating-quarterly-charters/Q1-charters-2026-01-14.md`
+**Example flow:**
+- `outputs/roadmap/Q1-charters.md` created
+- Nexa runs: `pm-os mirror --quiet`
+- File copied to: `history/generating-quarterly-charters/Q1-charters-2026-01-14.md`
+- Report to user: "Mirrored to history/generating-quarterly-charters/Q1-charters-2026-01-14.md"
 
 ## Output Style
 

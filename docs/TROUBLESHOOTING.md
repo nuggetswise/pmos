@@ -2,6 +2,9 @@
 
 This guide helps you resolve common issues with PM OS. Find your problem, follow the solution.
 
+> **AG3 Note:** Runtime state lives in `nexa/state.json`. Use `pm-os status`
+> for a quick snapshot and `outputs/audit/auto-run-log.md` for scan history.
+
 ---
 
 ## Quick Diagnosis
@@ -26,8 +29,8 @@ Issue with...
 ### My Output is Marked as Stale
 
 **Symptoms:**
-- Session starts with warning: "These outputs may be stale: [list]"
-- Alert shows "⚠️ STALE" next to output in `alerts/stale-outputs.md`
+- You know a source file changed after an output was generated
+- `pm-os scan` ingests new sources since the last output
 - Claude warns output may have outdated information
 
 **Cause:**
@@ -40,8 +43,7 @@ Source files were modified **after** the output was generated. For example:
 
 1. **Check which sources changed:**
    ```bash
-   # Read the alerts file
-   cat alerts/stale-outputs.md
+   pm-os status
 
    # Or check source modification times
    ls -lt inputs/voc/
@@ -56,7 +58,7 @@ Source files were modified **after** the output was generated. For example:
    ```
 
 3. **Verify refresh worked:**
-   - Check `alerts/stale-outputs.md` - status should change to "✓ Current"
+   - Confirm a new output timestamp and entry in `outputs/audit/auto-run-log.md`
    - New output should include data from changed source files
 
 4. **Check for cascading staleness:**
@@ -77,7 +79,7 @@ Source files were modified **after** the output was generated. For example:
 - You're mid-task and will refresh later
 
 **Related:**
-- [alerts/README.md](../alerts/README.md) - How staleness tracking works
+- [outputs/audit/auto-run-log.md](../outputs/audit/auto-run-log.md) - How staleness tracking works
 - [outputs/README.md](../outputs/README.md) - Understanding output dependencies
 
 ---
@@ -109,7 +111,7 @@ Result: Charter (Jan 18) older than VOC (Jan 20) → Drift detected
 1. **Understand what changed:**
    ```bash
    # Review the drift warning details
-   cat alerts/stale-outputs.md
+   pm-os status
 
    # Compare versions if available
    diff history/synthesizing-voc/voc-synthesis-2026-01-15.md \
@@ -140,11 +142,11 @@ Result: Charter (Jan 18) older than VOC (Jan 20) → Drift detected
 
    # For reconcile approach:
    # Manually edit upstream to match downstream
-   # Then update alerts/stale-outputs.md to mark resolved
+   # Then update nexa/state.json to mark resolved
    ```
 
 4. **Verify resolution:**
-   - Check `alerts/stale-outputs.md` - drift warning should clear
+   - Check `nexa/state.json` - drift warning should clear
    - Verify timestamps: downstream should be older or equal to upstream
    - Test that outputs reflect intended state
 
@@ -161,7 +163,7 @@ Result: Charter (Jan 18) older than VOC (Jan 20) → Drift detected
 - Documented divergence from upstream
 
 **Related:**
-- [alerts/README.md](../alerts/README.md) - Drift detection details
+- [outputs/audit/auto-run-log.md](../outputs/audit/auto-run-log.md) - Drift detection details
 - [outputs/README.md](../outputs/README.md) - Dependency flow
 
 ---
@@ -207,7 +209,7 @@ File sync tools (Dropbox, Google Drive, OneDrive) are "touching" files - updatin
 
    # Wait a few minutes
    # Check if it's still marked current
-   cat alerts/stale-outputs.md
+   pm-os status
    ```
 
 **Prevention:**
@@ -216,7 +218,7 @@ File sync tools (Dropbox, Google Drive, OneDrive) are "touching" files - updatin
 - Configure sync to ignore modification time updates
 
 **Related:**
-- [alerts/README.md](../alerts/README.md) - Staleness detection logic
+- [outputs/audit/auto-run-log.md](../outputs/audit/auto-run-log.md) - Staleness detection logic
 
 ---
 
@@ -229,7 +231,7 @@ File sync tools (Dropbox, Google Drive, OneDrive) are "touching" files - updatin
 
 **Cause:**
 1. **Output metadata incomplete:** Output doesn't track the source file
-2. **Alerts file not updated:** Skill didn't update `alerts/stale-outputs.md`
+2. **Alerts file not updated:** Skill didn't update `nexa/state.json`
 3. **New file not in tracked sources:** Added file outside expected input pattern
 
 **Solution:**
@@ -261,8 +263,8 @@ File sync tools (Dropbox, Google Drive, OneDrive) are "touching" files - updatin
    # Check output metadata again
    head -20 outputs/insights/voc-synthesis.md
 
-   # Check alerts file
-   cat alerts/stale-outputs.md
+   # Check runtime status
+   pm-os status
    ```
 
 4. **If still not detected:**
@@ -275,11 +277,11 @@ File sync tools (Dropbox, Google Drive, OneDrive) are "touching" files - updatin
 - Place input files in standard locations
 - Follow naming conventions (e.g., `inputs/voc/*.md`)
 - Regenerate outputs after adding input files
-- Check alerts file after regenerating
+- Check runtime status after regenerating
 
 **Related:**
 - [outputs/README.md](../outputs/README.md) - Output metadata standards
-- [alerts/README.md](../alerts/README.md) - How staleness detection works
+- [outputs/audit/auto-run-log.md](../outputs/audit/auto-run-log.md) - How staleness detection works
 
 ---
 
@@ -324,7 +326,7 @@ Parallel changes in both upstream and downstream without coordination.
    ```
 
    **Strategy B: Keep both, reconcile later**
-   - Add note to `alerts/stale-outputs.md` explaining drift
+   - Add note to `nexa/state.json` explaining drift
    - Mark as "frozen" (intentionally not syncing)
    - Schedule review meeting to reconcile
 
@@ -341,8 +343,8 @@ Parallel changes in both upstream and downstream without coordination.
    echo "Rationale: [why]" >> outputs/decisions/drift-resolutions.md
    ```
 
-5. **Update alerts:**
-   - Mark drift as resolved in `alerts/stale-outputs.md`
+5. **Update runtime state:**
+   - Add a note to `outputs/audit/auto-run-log.md`
    - Document which version is canonical
 
 **Prevention:**
@@ -352,7 +354,7 @@ Parallel changes in both upstream and downstream without coordination.
 - Document decisions for future reference
 
 **Related:**
-- [alerts/README.md](../alerts/README.md) - Drift detection
+- [outputs/audit/auto-run-log.md](../outputs/audit/auto-run-log.md) - Drift detection
 - [outputs/decisions/](../outputs/decisions/) - Decision log
 
 ---
@@ -548,10 +550,9 @@ Command file references wrong skill in its content.
    rm temp.md
    ```
 
-4. **Update alerts file:**
+4. **Update runtime log:**
    ```bash
-   # Add output to tracking
-   # Edit alerts/stale-outputs.md
+   # Add a note to outputs/audit/auto-run-log.md
    ```
 
 **Prevention:**
@@ -659,12 +660,9 @@ PM OS versions outputs with date suffixes. Multiple versions can exist.
    # Top file = latest
    ```
 
-2. **Check alerts file:**
+2. **Check runtime status:**
    ```bash
-   # Shows currently tracked outputs
-   cat alerts/stale-outputs.md
-
-   # Look in "Currently Tracked Outputs" table
+   pm-os status
    ```
 
 3. **Check output directory README:**
@@ -680,11 +678,11 @@ PM OS versions outputs with date suffixes. Multiple versions can exist.
 **Prevention:**
 - Use `outputs/` for current version only
 - Historical versions in `history/` directory
-- Check alerts file for canonical current outputs
+- Use output timestamps for canonical current outputs
 
 **Related:**
 - [outputs/README.md](../outputs/README.md) - File naming conventions
-- [alerts/README.md](../alerts/README.md) - Tracking current outputs
+- [outputs/audit/auto-run-log.md](../outputs/audit/auto-run-log.md) - Tracking current outputs
 
 ---
 
@@ -714,7 +712,7 @@ PM OS versions outputs with date suffixes. Multiple versions can exist.
 2. **Check dependency chain:**
    ```bash
    # Is this a Tier 2/3 output?
-   cat alerts/stale-outputs.md
+   pm-os status
 
    # Example: Charters depend on VOC
    # If VOC is stale, charters will be stale too
@@ -746,10 +744,10 @@ PM OS versions outputs with date suffixes. Multiple versions can exist.
 **Prevention:**
 - Pause sync tools during PM OS work
 - Refresh in dependency order
-- Check alerts file before important work
+- Check runtime status before important work
 
 **Related:**
-- [alerts/README.md](../alerts/README.md) - Dependency tiers
+- [outputs/audit/auto-run-log.md](../outputs/audit/auto-run-log.md) - Dependency tiers
 
 ---
 
@@ -891,15 +889,12 @@ PM OS versions outputs with date suffixes. Multiple versions can exist.
 2. **Check learning tracker:**
    ```bash
    # Look for tracking file
-   cat .learning-tracker
-
-   # Or check history/learning-from-history/
-   ls history/learning-from-history/
+   cat .claude/learning-last-run
    ```
 
 3. **Force learning manually:**
    ```
-   "Analyze patterns from generating-quarterly-charters history"
+   pm-os learn generating-quarterly-charters
    ```
 
 4. **Check hook configuration:**
@@ -913,8 +908,8 @@ PM OS versions outputs with date suffixes. Multiple versions can exist.
 5. **Verify output location:**
    ```bash
    # Check for learning outputs
-   ls outputs/learning/
    ls .claude/rules/learned/
+   ls CLAUDE.local.md
    ```
 
 **Prevention:**
@@ -945,9 +940,9 @@ PM OS versions outputs with date suffixes. Multiple versions can exist.
 
 1. **Check learning output:**
    ```bash
-   # Look for learning analysis report
-   ls outputs/learning/
-   cat outputs/learning/patterns-*.md
+   # Look for learned rules
+   ls .claude/rules/learned/
+   cat .claude/rules/learned/*.md
    ```
 
 2. **Review analysis:**
@@ -961,15 +956,14 @@ PM OS versions outputs with date suffixes. Multiple versions can exist.
    # Continue using skill, building history
    ```
 
-4. **Run learning with `--force` flag:**
+4. **Run learning again after more history:**
    ```
-   "Analyze patterns from generating-quarterly-charters history with force flag"
+   pm-os learn generating-quarterly-charters
    ```
 
 5. **Check for patterns in analysis output:**
    ```bash
-   # Even if no rules file, analysis may contain insights
-   grep -i "pattern" outputs/learning/patterns-*.md
+   grep -i "pattern" .claude/rules/learned/*.md
    ```
 
 **Prevention:**
@@ -1017,10 +1011,10 @@ Missing or incomplete metadata in output files.
      - outputs/ktlo/ktlo-triage.md (modified: 2026-01-15)
    ```
 
-2. **Check alerts file:**
+2. **Check runtime status:**
    ```bash
    # Shows dependency relationships
-   cat alerts/stale-outputs.md
+   pm-os status
 
    # Look in "Dependency Graph" section
    ```
@@ -1042,7 +1036,7 @@ Missing or incomplete metadata in output files.
 **Prevention:**
 - Always use skills to generate outputs (includes metadata)
 - Maintain metadata when editing
-- Check dependency graph in alerts file
+- Check dependency graph in output metadata
 
 **Dependency Tiers:**
 ```
@@ -1052,7 +1046,7 @@ TIER 3: Tier 2 outputs → outputs/delivery/
 ```
 
 **Related:**
-- [alerts/README.md](../alerts/README.md) - Dependency tracking
+- [outputs/audit/auto-run-log.md](../outputs/audit/auto-run-log.md) - Dependency tracking
 - [outputs/README.md](../outputs/README.md) - Metadata standards
 
 ---
@@ -1320,7 +1314,7 @@ Start here
 
 ```bash
 # Check staleness
-cat alerts/stale-outputs.md
+pm-os status
 
 # List available commands
 ls commands/
@@ -1346,7 +1340,7 @@ grep -A5 "sources:" outputs/roadmap/Q1-charters.md
 ## See Also
 
 - [Main README](../README.md) - Getting started with PM OS
-- [alerts/README.md](../alerts/README.md) - Staleness and drift details
+- [outputs/audit/auto-run-log.md](../outputs/audit/auto-run-log.md) - Staleness and drift details
 - [outputs/README.md](../outputs/README.md) - Output structure and metadata
 - [history/README.md](../history/README.md) - Learning system and versioning
 - [commands/README.md](../commands/README.md) - Command reference

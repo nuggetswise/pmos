@@ -37,11 +37,6 @@ count_history_files() {
     find "${PLUGIN_ROOT}/history" -type f -name "*.md" 2>/dev/null | wc -l | tr -d ' '
 }
 
-# Update last run timestamp
-update_learning_tracker() {
-    date +%s > "${LEARNING_TRACKER}"
-}
-
 # Main logic
 main() {
     local history_count=$(count_history_files)
@@ -53,35 +48,21 @@ main() {
     fi
 
     if should_run_learning; then
-        # Suggest learning to the user via additional context
-        local learning_prompt="<learning-suggestion>
-It's been more than ${LEARNING_INTERVAL_DAYS} days since the last learning analysis.
-You have ${history_count} files in history/ directories that can be analyzed for patterns.
+        local cli_cmd=()
 
-Consider running learning analysis on a specific skill:
-- \"Analyze patterns from generating-quarterly-charters history\"
-- \"Learn from synthesizing-voc history\"
-- \"Extract patterns from triaging-ktlo history\"
+        if command -v pm-os >/dev/null 2>&1; then
+            cli_cmd=(pm-os learn --auto)
+        elif [[ -f "${PLUGIN_ROOT}/nexa/dist/index.js" ]]; then
+            cli_cmd=(node "${PLUGIN_ROOT}/nexa/dist/index.js" learn --auto)
+        else
+            exit 0
+        fi
 
-This will write learned patterns to .claude/rules/learned/ (auto-loaded) and update CLAUDE.local.md with personal preferences.
-</learning-suggestion>"
-
-        # Output as hook context
-        cat <<EOF
-{
-  "hookSpecificOutput": {
-    "hookEventName": "SessionStart",
-    "additionalContext": "${learning_prompt}"
-  }
-}
-EOF
-
-        # Update tracker (mark as suggested)
-        update_learning_tracker
+        "${cli_cmd[@]}" >/dev/null 2>&1 || true
     fi
 }
 
-# Allow manual invocation to force learning suggestion
+# Allow manual invocation to force learning run
 if [[ "${1:-}" == "--force" ]]; then
     rm -f "${LEARNING_TRACKER}"
 fi

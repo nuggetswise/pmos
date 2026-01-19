@@ -89,8 +89,7 @@ history/
 
 ### Alerts
 ```
-alerts/
-└── stale-outputs.md   # Tracks which outputs need refresh
+└── nexa/state.json   # Tracks which outputs need refresh
 ```
 
 ---
@@ -100,7 +99,7 @@ alerts/
 Every skill run:
 1. Writes current output to `outputs/`
 2. Copies dated version to `history/<skill>/`
-3. Updates `alerts/stale-outputs.md`
+3. Updates `nexa/state.json`
 
 **To check past work:**
 - "What did I run last week?" → Claude reads history folders
@@ -126,7 +125,7 @@ downstream:
 **How it works:**
 1. When a source file is newer than an output, the output is "stale"
 2. When a downstream output is newer than its sources, flag "drift" for review
-3. Claude checks `alerts/stale-outputs.md` at session start
+3. Claude checks `nexa/state.json` at session start
 4. Claude reports: "These outputs may be stale: [list]"
 5. Say "refresh <skill>" to regenerate
 
@@ -281,8 +280,7 @@ pm_os_superpowers/
 ├── hooks/                               # Session hooks
 │   ├── session-start.sh                 # Staleness check
 │   └── weekly-learning.sh               # Learning trigger
-├── alerts/
-│   └── stale-outputs.md                 # Dependency tracker
+│   └── nexa/state.json                 # Dependency tracker
 ├── inputs/                              # Your source files
 ├── outputs/                             # Current outputs
 └── history/                             # Versioned output trail

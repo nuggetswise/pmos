@@ -2,7 +2,7 @@
 
 **A file-based PM operating system for Business Network + Catalogs (Retail/CPG)**
 
-PM OS helps you build evidence-based PM practice with daily workflows, senior PM skills, and automatic learning. Turn raw inputs (Jira tickets, customer feedback) into actionable insights, strategic charters, and executable PRDs - all with built-in staleness tracking and continuous improvement.
+PM OS helps you build evidence-based PM practice with daily workflows, senior PM skills, and automatic learning. Turn raw inputs (Jira tickets, customer feedback) into actionable insights, strategic charters, and executable PRDs - with scan-based freshness checks and continuous improvement.
 
 **Full documentation:** See [IMPLEMENTATION_COMPLETE.md](IMPLEMENTATION_COMPLETE.md) for complete implementation guide.
 
@@ -23,17 +23,30 @@ PM OS is a **file-based workflow system** that:
 
 ---
 
-## Quick Start (5 Minutes)
+## Quick Start (AG3)
+
+1. **Set up sources:** `cp nexa/sources.example.yaml nexa/sources.local.yaml`
+2. **Scan documents:** `pm-os scan`
+3. **Check status:** `pm-os status`
+4. **Run skills:** `/voc`, `/ktlo`, `/charters`
+5. **Outputs auto-mirror to history, learning runs weekly**
+
+**No manual mirroring required** - the learning loop is fully automated.
+
+---
+
+## Detailed Quick Start (5 Minutes)
 
 ### Step 0: Set Up Your Context (5 min)
 
-Before running any skills, populate your context file:
+Before running any skills, populate your context files:
 
-1. Open `inputs/context/my-context.md`
-2. Fill in your role, stakeholders, priorities, constraints
-3. This becomes the foundation for all PM outputs
+1. Open `inputs/context/compass.md` - your mission, goals, beliefs
+2. Open `inputs/context/projects.md` - your current work
+3. Open `inputs/context/challenges.md` - your blockers
+4. Open `inputs/context/preferences.md` - your working style
 
-Your context informs stakeholder maps, decision logs, and strategic framing.
+Your context informs all PM outputs and is auto-loaded every session.
 
 **See:** [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md#day-1-populate-your-context) for detailed guidance.
 
@@ -51,7 +64,17 @@ inputs/voc/survey-results-2026-01.csv
 inputs/roadmap_deck/Q1-2026-strategy.pdf
 ```
 
-### 2. Run Your First Command
+### 2. Scan and Check Status (CLI)
+
+Use the CLI to ingest new or changed sources and confirm state:
+
+```bash
+pm-os scan          # Ingest new/changed docs and update state
+pm-os status        # 5-line snapshot (phase, last job, next action)
+pm-os search "kafka"  # Search filenames and full text
+```
+
+### 3. Run Your First Skill
 
 ```
 /ktlo              # Triage KTLO backlog (10 min)
@@ -59,14 +82,14 @@ inputs/roadmap_deck/Q1-2026-strategy.pdf
 /exec-update       # Generate 1-page update (10 min)
 ```
 
-### 3. Review Outputs
+### 4. Review Outputs
 
 Check `outputs/` directories:
 - `outputs/ktlo/ktlo-triage-2026-01-15.md` - Prioritized backlog
 - `outputs/insights/voc-synthesis-2026-01-15.md` - Customer themes
 - `outputs/exec_updates/exec-update-2026-01-15.md` - Stakeholder summary
 
-**That's it!** You just ran your first PM OS workflow.
+**That's it!** You just ran your first PM OS workflow. Outputs are automatically mirrored to history for learning.
 
 ---
 
@@ -99,9 +122,8 @@ history/         ← Versioned trail (enables learning)
 - [skills/README.md](skills/README.md) - PM workflow library
 - [commands/README.md](commands/README.md) - Command shortcuts
 - [.claude/README.md](.claude/README.md) - Configuration and rules
-- [alerts/README.md](alerts/README.md) - Staleness tracking
 
-**Output styles:** Customize Claude's communication via `.claude/output-styles/` (optional)
+**Output styles:** Customize Claude's communication via `.claude/output-styles/`
 
 ### Step 2: Export Your First Inputs
 
@@ -178,15 +200,15 @@ ls history/synthesizing-voc/
 
 Patterns are written to `.claude/rules/learned/` and auto-load in future sessions.
 
-### Step 5: Understand Staleness
+### Step 5: Understand Freshness
 
-PM OS tracks dependencies automatically. When source files change, outputs become "stale":
+PM OS tracks changes via `pm-os scan` and output metadata. When source files change after an output was generated, treat that output as stale:
 
 **Example:**
 ```
 Day 1: Generate VOC synthesis (uses interview-1.md, interview-2.md)
 Day 3: Add interview-3.md
-Day 4: Session starts → "VOC synthesis is stale (source changed)"
+Day 4: Run `pm-os scan` → new source ingested
 ```
 
 **What to do:**
@@ -194,7 +216,7 @@ Day 4: Session starts → "VOC synthesis is stale (source changed)"
 /voc               # Refresh synthesis to include interview-3
 ```
 
-Staleness ensures you never make decisions on outdated data.
+Use `outputs/audit/auto-run-log.md` and output timestamps to verify freshness before making decisions.
 
 ---
 
@@ -210,7 +232,6 @@ Staleness ensures you never make decisions on outdated data.
 | `skills/` | PM workflow library (17 skills) | [skills/README.md](skills/README.md) |
 | `commands/` | Quick shortcuts (11 commands) | [commands/README.md](commands/README.md) |
 | `.claude/` | Configuration & rules | [.claude/README.md](.claude/README.md) |
-| `alerts/` | Staleness tracking | [alerts/README.md](alerts/README.md) |
 
 ### Dependency Flow (3 Tiers)
 
@@ -344,7 +365,7 @@ Every output follows these rules:
 /charters          # Refresh quarterly charters
 ```
 
-**See:** [alerts/README.md](alerts/README.md) for staleness details
+**See:** `outputs/audit/auto-run-log.md` for scan history
 
 ### "I see drift warnings"
 
@@ -416,8 +437,8 @@ After you generate 5+ outputs for a skill, the learning system can analyze patte
 ```
 
 **When learning runs:**
-- Automatically every 7 days (via session hook)
-- Or manually: "Analyze patterns from [skill-name] history"
+- Automatically every 7 days (via session hook: `pm-os learn --auto`)
+- Or manually: `pm-os learn <skill-name>`
 
 **See:** [history/README.md](history/README.md#learning-system-integration) for details
 
@@ -507,7 +528,6 @@ Beyond IC-level (VOC, KTLO, charters, PRDs) to Senior PM:
   - [skills/README.md](skills/README.md) - PM workflow library
   - [commands/README.md](commands/README.md) - Command shortcuts
   - [.claude/README.md](.claude/README.md) - Configuration deep-dive
-  - [alerts/README.md](alerts/README.md) - Staleness tracking
 
 ---
 

@@ -341,7 +341,7 @@ code outputs/strategy/product-strategy-2026.md
 
 # Make changes, save
 
-# Update alerts/stale-outputs.md to reflect manual edit
+# No manual stale tracker in AG3; rely on `pm-os status` and re-run the skill if needed
 ```
 
 **Pro tip:** If making small changes (typos, metric tweaks), edit directly. If making big changes (new pillars, different horizon), re-run the skill.
@@ -406,7 +406,8 @@ Feedback by [date]?
 - `history/writing-product-strategy/product-strategy-YYYY-MM-DD.md`
 
 **Updated:**
-- `alerts/stale-outputs.md` - Tracks strategy sources and dependencies
+- `nexa/state.json` - Next action reflects what to refresh or run next
+- `outputs/audit/auto-run-log.md` - Records daemon actions (if any)
 
 **You now have:**
 - Clear 3-5 year vision

@@ -13,9 +13,15 @@ This skill closes the "Learn" loop : Observe → Think → Plan → Build → Ex
 
 ## When to Use
 
-- **Automatic:** Triggered weekly by session hook
-- **Manual:** When you want to analyze a specific skill's history
+- **Automatic:** Weekly hook runs `pm-os learn --auto`
+- **Manual:** `pm-os learn <skill-name>` to analyze a specific skill
 - **After major milestone:** Post-launch, post-quarter, post-strategy cycle
+
+## Current Implementation
+
+- `pm-os learn <skill-name>` writes learned rules to `.claude/rules/learned/`
+- Appends preferences to `CLAUDE.local.md`
+- Optional deep-dive reports are manual (not produced by the CLI)
 
 ## Core Pattern
 
@@ -185,9 +191,9 @@ Append or update `CLAUDE.local.md`:
 - User's success metrics: [Metrics user tracks]
 ```
 
-**Step 7: Generate Analysis Report**
+**Step 7: Optional Analysis Report (Manual)**
 
-Write detailed analysis to `outputs/learning/learning-summary-[skill-name]-YYYY-MM-DD.md`:
+If you want a long-form report, write it to `outputs/learning/learning-summary-[skill-name]-YYYY-MM-DD.md`:
 
 ```markdown
 ---
@@ -265,9 +271,9 @@ sample_size: [N]
 4. **Update skill:** Implement recommended changes to skill file
 ```
 
-**Step 8: Copy to History**
+**Step 8: Optional History Copy**
 
-- Copy analysis to `history/learning-from-history/learning-[skill-name]-YYYY-MM-DD.md`
+- If you created a manual report, copy it to `history/learning-from-history/learning-[skill-name]-YYYY-MM-DD.md`
 
 ## Quick Reference
 
