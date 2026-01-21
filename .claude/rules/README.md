@@ -61,6 +61,8 @@ This directory contains modular rules that govern how Claude operates as your PM
 
 - **charter-creation.md** - Quarterly charter requirements, evidence gates, downstream impact
 - **prd-writing.md** - PRD sections, requirements format, quality gates, format options
+- **interview-protocol.md** - Role-specific interview question templates and protocols for discovery
+- **signal-classification.md** - EXPLICIT/INFERRED/IMPLICIT signal classification framework
 
 **Why these matter:** Standardizes high-stakes deliverables to ensure consistency and completeness.
 
@@ -87,7 +89,7 @@ This directory contains modular rules that govern how Claude operates as your PM
 **Auto-generated patterns** from past work. This directory is empty initially and grows as you use PM OS.
 
 **How it works:**
-- Skills like `learning-from-history` extract patterns from your outputs
+- The `learn --patterns` skill extracts patterns from your outputs
 - New vocabulary, decision patterns, and personal preferences are stored here
 - Rules in `learned/` take precedence over base rules (your recent learnings override defaults)
 
@@ -222,31 +224,57 @@ Add a new rule when you find yourself:
 
 ## Rule Reference
 
-### pm-core/evidence-rules.md
+### domain/mode-crisis.md
 
-**Purpose:** Ensures every claim in PM outputs is properly tagged and sourced.
+**Purpose:** Tone and structure rules for high-stakes, time-sensitive communications.
 
 **Key Requirements:**
-- Every output must include a "Sources Used" section
-- Every major claim tagged as: Evidence / Assumption / Open Question
-- Claims Ledger table required at end of all outputs
-- Never invent metrics, customers, roadmap facts, or quotes
+- Lead with impact, not cause
+- Own the issue directly, without hedging language
+- Provide timelines you can commit to
+- Structure updates with Status, Impact, Next Steps
 
-**Validation Checklist:** 9-point checklist before marking any output complete.
+**Why it matters:** In a crisis, clear and accountable communication is essential for maintaining stakeholder trust.
 
 ---
 
-### pm-core/output-metadata.md
+### domain/mode-vision.md
 
-**Purpose:** Standardizes metadata for dependency tracking and staleness detection.
+**Purpose:** Tone and structure rules for inspiring, forward-looking communications.
 
 **Key Requirements:**
-- YAML frontmatter with: generated, skill, sources, downstream
-- Temperature classification: hot (weekly review), warm (monthly), cold (archive)
-- Output style: crisp, decision-first, always include risks and next actions
-- Copy to history directory with date suffix
+- Paint the destination, not just the path
+- Connect the vision to a larger purpose (customer, company, team)
+- Acknowledge the difficulty of the journey to build credibility
+- Make the vision tangible with concrete examples
 
-**After Generation:** Update `nexa/state.json` + audit log and copy to history.
+**Why it matters:** A compelling vision rallies teams and aligns stakeholders around a future state.
+
+---
+
+### domain/vocabulary.md
+
+**Purpose:** Domain vocabulary for Business Network + Catalogs (Retail/Brands/CPG).
+
+**Sections:**
+- Core terms (Business Network, Catalog, SKU, Item, etc.)
+- Systems (PIM, MDM)
+- PM acronyms (KTLO, VOC, GTM, PRD, TAM/SAM/SOM, ICP)
+
+**Expanding:** Add new terms as you encounter them; `learn --patterns` skill will extract terms from outputs.
+
+---
+
+### pm-core/algorithm-enforcement.md
+
+**Purpose:** Enforces the OBSERVE → THINK → PLAN → BUILD loop by checking for required inputs before running skills.
+
+**Key Requirements:**
+- Hard block skills that have firm prerequisites (e.g., cannot run `writing-prds-from-charters` without a charter).
+- Soft block skills with recommendations (e.g., suggest running `synthesizing-voc` before `brainstorming`).
+- Tracks and displays current phase in the algorithm loop.
+
+**Why it matters:** Prevents "out of order" execution, ensuring that every planning and build action is based on prior observation and thinking.
 
 ---
 
@@ -260,21 +288,99 @@ Add a new rule when you find yourself:
 
 ---
 
+### pm-core/decision-detection.md
+
+**Purpose:** Automatically detects decision moments during PM work to prompt logging.
+
+**Key Requirements:**
+- Uses heuristics to classify decisions as High, Medium, or Low confidence.
+- Auto-logs high-confidence decisions (e.g., completing a charter).
+- Asks the user to confirm medium-confidence decisions (e.g., choosing one option over another).
+- Avoids prompt fatigue by batching and respecting user preferences.
+
+**Why it matters:** Ensures important decisions are captured for future learning without creating excessive administrative burden.
+
+---
+
+### pm-core/deviation-rules.md
+
+**Purpose:** Provides predictable guidance when unexpected situations arise during skill execution.
+
+**Key Rules:**
+- **Rule 1 (Missing Source):** Pause and ask the user how to proceed.
+- **Rule 2 (Conflicting Data):** Flag the conflict, use the most recent source, and proceed.
+- **Rule 3 (Scope Creep):** Document as "Out of Scope" and continue with the original plan.
+- **Rule 4 (Invalid Assumption):** STOP immediately and checkpoint with the user.
+
+**Why it matters:** Prevents the AI from failing or producing incorrect output when faced with imperfect inputs or changing conditions.
+
+---
+
+### pm-core/evidence-rules.md
+
+**Purpose:** Ensures every claim in PM outputs is properly tagged and sourced.
+
+**Key Requirements:**
+- Every output must include a "Sources Used" section.
+- Every major claim tagged as: `Evidence`, `Assumption`, or `Open Question`.
+- A "Claims Ledger" table is required at the end of all outputs.
+- Never invent metrics, customers, roadmap facts, or quotes.
+
+**Validation Checklist:** 9-point checklist before marking any output complete.
+
+---
+
+### pm-core/goal-backward-verification.md
+
+**Purpose:** Prevents "completed but wrong" outputs by checking if the final document achieves its strategic purpose.
+
+**Key Requirements:**
+- State the output's true goal (e.g., "Engineering can build without questions").
+- Derive 3-5 observable truths that should result from a successful output.
+- Validate key links (e.g., every problem statement links to evidence).
+
+**Why it matters:** It shifts the definition of "done" from "all sections are filled" to "this document accomplishes its goal."
+
+---
+
+### pm-core/output-metadata.md
+
+**Purpose:** Standardizes metadata for dependency tracking and staleness detection.
+
+**Key Requirements:**
+- YAML frontmatter with: `generated`, `skill`, `sources`, `downstream`.
+- Temperature classification: `hot`, `warm`, `cold`.
+- **Mandatory:** Run `pm-os mirror --quiet` after generating any output to copy it to `history/`.
+
+**Why it matters:** This metadata is the foundation of the system's memory, enabling automated staleness detection and learning from historical work.
+
+---
+
 ### pm-core/pm-collaborative-style.md
 
 **Purpose:** MANDATORY collaborative PM interaction style for all PM OS workflows.
 
 **Key Requirements:**
-- Explain the "why" before acting on any PM task
-- Provide insights during analysis (share emerging patterns)
-- Suggest evidence-based next steps after completion
-- Maintain strict evidence discipline (never invent, always cite)
-- Teach PM patterns and connect work to history
-- Connect work across tiers (inputs → strategy → delivery)
+- Explain the "why" before acting on any PM task.
+- Provide insights and emerging patterns during analysis.
+- Suggest evidence-based next steps after completion.
+- Maintain strict evidence discipline, citing sources for all claims.
+- Teach PM patterns and connect work to historical context.
 
-**Output Style:** Decision-first, crisp, enterprise-grade, risk-inclusive, action-oriented
+**Why this matters:** Transforms the AI from a simple task-executor into a collaborative partner that helps the user become a better PM.
 
-**Why this matters:** Makes you a better PM by teaching patterns, not just executing tasks.
+---
+
+### pm-workflows/bridge-and-pivot.md
+
+**Purpose:** Provides patterns for handling off-topic questions and unexpected challenges gracefully.
+
+**Framework (ABC):**
+- **A**cknowledge the question.
+- **B**ridge to your key message.
+- **C**ommunicate your point concisely.
+
+**Why it matters:** Helps maintain control of a conversation and stay on message, even when caught off-guard.
 
 ---
 
@@ -282,13 +388,38 @@ Add a new rule when you find yourself:
 
 **Purpose:** Rules for quarterly charter creation.
 
-**Required Sections:** Strategic bets, success metrics, risks, dependencies
+**Required Sections:** Strategic bets, success metrics, risks, dependencies.
 
-**Evidence Requirements:** All bets must link to VOC or KTLO evidence, claims ledger required
+**Evidence Requirements:** All bets must link to VOC or KTLO evidence; a claims ledger is required.
 
-**Quality Gates:** Review with stakeholder-map, run verification-before-completion
+**Quality Gates:** Review with stakeholder-map; run verification-before-completion.
 
-**Downstream Impact:** When charters change, PRDs become stale
+---
+
+### pm-workflows/narrative-structure.md
+
+**Purpose:** Transforms messy PM context into a compelling narrative for stakeholder communication.
+
+**Framework:**
+- **Context:** The setup.
+- **Conflict:** The tension or problem.
+- **Resolution:** The path forward.
+
+**Why it matters:** A good story is more persuasive than a list of facts. This structure helps build buy-in for strategic initiatives.
+
+---
+
+### pm-workflows/objection-handling.md
+
+**Purpose:** Patterns for handling pushback and challenges from stakeholders.
+
+**Framework (LAAR):**
+- **L**isten completely.
+- **A**cknowledge their concern.
+- **A**sk clarifying questions to find the underlying need.
+- **R**espond to the need, not just the surface objection.
+
+**Why it matters:** Turns adversarial objections into collaborative problem-solving.
 
 ---
 
@@ -296,38 +427,11 @@ Add a new rule when you find yourself:
 
 **Purpose:** Rules for writing Product Requirements Documents.
 
-**Required Sections:** Problem statement, success metrics, requirements (SHALL/SHOULD/MAY), edge cases, dependencies, acceptance criteria
+**Required Sections:** Problem statement, success metrics, requirements (SHALL/SHOULD/MAY), edge cases, dependencies, acceptance criteria.
 
-**Evidence Requirements:** Link back to charter, all requirements trace to charter bets or VOC, no scope creep
+**Evidence Requirements:** Link back to charter; all requirements must trace to charter bets or VOC; no scope creep.
 
-**Format Options:** `--format full` (complete), `--format exec` (1-page), `--format eng` (requirements only)
-
-**Quality Gates:** Run verification-before-completion, ensure all SHALL requirements are testable
-
----
-
-### domain/vocabulary.md
-
-**Purpose:** Domain vocabulary for Business Network + Catalogs (Retail/Brands/CPG).
-
-**Sections:**
-- Core terms (Business Network, Catalog, SKU, Item, etc.)
-- Systems (PIM, MDM)
-- PM acronyms (KTLO, VOC, GTM, PRD, TAM/SAM/SOM, ICP)
-
-**Expanding:** Add new terms as you encounter them; `learning-from-history` skill will extract terms from outputs.
-
----
-
-### system/related-files.md
-
-**Purpose:** Ensures related files stay in sync when one is modified.
-
-**File Relationship Map:** Table mapping files to their dependents
-
-**Enforcement Protocol:** Before completing any file modification, check table, read related files, fix inconsistencies
-
-**Cascade Rules:** Some changes cascade through multiple levels (e.g., context → stakeholders → charters)
+**Format Options:** `--format full` (complete), `--format exec` (1-page), `--format eng` (requirements only).
 
 ---
 
@@ -335,11 +439,41 @@ Add a new rule when you find yourself:
 
 **Purpose:** Tracks where different PM outputs are stored and their history directories.
 
-**Output Type Mapping:** Table mapping output types to locations and history directories
+**Key Feature:** A mapping table that links output types (e.g., "Quarterly charters") to their location (`outputs/roadmap/`) and history folder (`history/generating-quarterly-charters/`).
 
-**History Rule:** When writing to `outputs/`, copy to `history/<skill>/` with date suffix
+**Why it matters:** Provides a single source of truth for file organization, enabling programmatic access and reliable mirroring.
 
-**Dependency Graph:** Visualizes how inputs flow to outputs (Tier 0 → Tier 1 → Tier 2 → Tier 3)
+---
+
+### system/related-files.md
+
+**Purpose:** Ensures related files stay in sync when one is modified.
+
+**Key Feature:** A relationship map that tells the AI to check `file B` when `file A` is changed.
+
+**Why it matters:** Prevents inconsistencies and maintains the integrity of the knowledge base as it evolves.
+
+---
+
+### system/session-greeting.md
+
+**Purpose:** Defines the mandatory greeting format the AI must use at the start of every new session.
+
+**Key Requirements:**
+- The greeting MUST be the first output in a session.
+- It must report status based on `nexa/state.json`, including the daemon status, current algorithm phase, active work, and any blockers.
+
+**Why it matters:** Ensures the user has immediate context on the system's state before starting work.
+
+---
+
+### system/session-state-protocol.md
+
+**Purpose:** Defines that session state is tracked in `nexa/state.json`.
+
+**Key Fields:** `phase`, `current_job`, `next_action`, `last_job`, `errors`.
+
+**Why it matters:** Centralizes state management into a single, machine-readable file, replacing previous manual markdown tracking.
 
 ---
 
@@ -347,13 +481,10 @@ Add a new rule when you find yourself:
 
 **Purpose:** Defines session start behavior for checking stale outputs.
 
-**Session Start Protocol:** Always check `nexa/state.json` before responding to any request
+**Key Requirement:** Staleness is inferred by comparing an output's `generated` timestamp with the `modified` timestamps of its sources, as listed in its metadata.
 
-**Staleness Check Format:** Report stale outputs with source change reason
+**Why it matters:** This automates staleness detection, removing the need for manual tracking files.
 
-**Drift Detection:** Report when downstream output is newer than sources
-
-**Frozen Outputs:** Some outputs may be intentionally frozen (not updated despite stale sources)
 
 ---
 

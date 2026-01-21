@@ -36,5 +36,5 @@ Domain terms for Business Network + Catalogs in Retail/Brands/CPG.
 
 Add new terms as you encounter them:
 1. Add to this file when learning new domain terms
-2. `learning-from-history` skill will extract terms from outputs
+2. `learn --patterns` skill will extract terms from outputs
 3. Terms in `.claude/rules/learned/` take precedence (more recent learnings)

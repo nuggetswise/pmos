@@ -14,7 +14,7 @@ When modifying certain files, check and update related files to maintain coheren
 | `skills/*/SKILL.md` (any skill) | Update `skills/README.md` if skill purpose changed |
 | `README.md` | Check `docs/GETTING_STARTED.md` for consistency |
 | `nexa/state.json` (state + staleness) | Update `.claude/rules/system/output-destinations.md` |
-| `outputs/decisions/TEMPLATE.md` | Update `skills/tracking-decisions/SKILL.md` |
+| `outputs/decisions/TEMPLATE.md` | Update `skills/learn/SKILL.md` (--decision mode) |
 
 ## Enforcement Protocol
 

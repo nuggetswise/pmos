@@ -14,6 +14,8 @@ The `history/` directory contains **versioned copies of all outputs** - a comple
 
 ```
 history/
+├── sessions/                         # Session summaries (auto-capture)
+├── learnings/                        # Extracted patterns by date (auto-capture)
 ├── building-truth-base/              # Product understanding snapshots
 ├── synthesizing-voc/                 # VOC synthesis versions
 ├── triaging-ktlo/                    # KTLO triage reports
@@ -33,6 +35,17 @@ history/
 ```
 
 **Pattern:** History directory names mirror skill names.
+
+### Auto-Capture Directories (NEW)
+
+Two directories support the auto-capture learning system:
+
+| Directory | Purpose | Updated By |
+|-----------|---------|------------|
+| `sessions/` | Session summaries | Auto-capture at session end |
+| `learnings/` | Extracted insights per skill run | Auto-capture after skill completion |
+
+See `.claude/rules/system/auto-capture.md` for the protocol.
 
 ## How History Works
 

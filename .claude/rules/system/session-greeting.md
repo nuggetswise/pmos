@@ -43,6 +43,40 @@ The greeting reads from these sources:
 
 **Single source of truth:** `nexa/state.json` replaces multiple markdown status files.
 
+## Output Quality Trend Calculation
+
+The greeting includes a quality trend line based on recent output ratings captured in `.beads/insights.jsonl`.
+
+**How to calculate:**
+
+1. Read `.beads/insights.jsonl` and filter for `type: "output-rating"`
+2. Take the most recent 10 ratings (or fewer if less than 10 exist)
+3. Calculate average rating: `sum(ratings) / count(ratings)`
+4. Determine trend by comparing recent 5 vs previous 5:
+   - If recent avg > previous avg by ≥0.3 → "↑ (trending up)"
+   - If recent avg < previous avg by ≥0.3 → "↓ (trending down)"
+   - Otherwise → "→ (stable)"
+5. Count total ratings to show sample size
+
+**Example calculations:**
+
+| Scenario | Recent 5 | Previous 5 | Average | Trend | Display |
+|----------|----------|------------|---------|-------|---------|
+| Improving | [5,5,4,5,4] = 4.6 | [3,4,3,4,3] = 3.4 | 4.0 | ↑ | `4.0/5 ↑ (10 ratings)` |
+| Declining | [2,3,2,3,2] = 2.4 | [4,5,4,4,5] = 4.4 | 3.4 | ↓ | `3.4/5 ↓ (10 ratings)` |
+| Stable | [4,4,4,4,4] = 4.0 | [4,4,4,4,4] = 4.0 | 4.0 | → | `4.0/5 → (10 ratings)` |
+| New user | [5,4] = 4.5 | (none) | 4.5 | - | `4.5/5 (2 ratings)` |
+| No ratings | (none) | (none) | - | - | `No ratings yet` |
+
+**Display format:**
+- With ratings: `📈 Output Quality: 4.2/5 ↑ (8 ratings)`
+- No ratings: `📈 Output Quality: No ratings yet`
+
+**When to skip:**
+- If `.beads/insights.jsonl` doesn't exist → display "No ratings yet"
+- If file exists but no output-rating beads → display "No ratings yet"
+- If error reading file → display "Quality trend unavailable"
+
 ## Automation Status
 
 The learning loop is fully automated:
@@ -60,6 +94,8 @@ The learning loop is fully automated:
 👋 Nexa here - PM OS ready.
 
 📚 Loaded: 5 context dimensions
+
+📈 Output Quality: [avg]/5 [trend] ([N] ratings)
 
 🤖 Daemon: [status from state.json]
 🔄 Mode: [phase from state.json]
@@ -89,7 +125,7 @@ A new session is detected when:
 | Phase | Recommended Actions |
 |-------|---------------------|
 | OBSERVE | building-truth-base, synthesizing-voc, triaging-ktlo |
-| THINK | analyzing-kb-gaps, competitive-analysis |
+| THINK | analyze --kb, competitive-analysis |
 | PLAN | generating-quarterly-charters, prioritizing-work |
 | BUILD | writing-prds-from-charters, verification-before-completion |
 
@@ -101,6 +137,8 @@ A new session is detected when:
 👋 Nexa here - PM OS ready.
 
 📚 Loaded: 5 context dimensions
+
+📈 Output Quality: 4.2/5 ↑ (8 ratings)
 
 🤖 Daemon: stopped
 🔄 Mode: OBSERVE
@@ -124,6 +162,8 @@ Ready for your request.
 👋 Nexa here - PM OS ready.
 
 📚 Loaded: 5 context dimensions
+
+📈 Output Quality: 4.5/5 → (5 ratings)
 
 🤖 Daemon: running (hb: 2m ago)
 🔄 Mode: OBSERVE

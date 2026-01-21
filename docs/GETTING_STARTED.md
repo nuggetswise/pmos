@@ -99,7 +99,7 @@ pm_os_superpowers/
 ├── inputs/          # Drop source files here
 ├── outputs/         # Generated insights and plans
 ├── history/         # Versioned output trail
-├── skills/          # PM workflow library (17 skills)
+├── skills/          # PM workflow library (15 skills)
 ├── commands/        # Quick shortcuts (11 commands)
 ├── .claude/         # Configuration and rules
 ├── hooks/           # Session automation
@@ -152,7 +152,7 @@ Before diving into skills, establish your operating context:
    - Metrics: How you're measured
    - Decision Principles: Your operating philosophy
 
-**Why this matters:** Skills like stakeholder-management, tracking-decisions, and generating-quarterly-charters pull from this context to tailor outputs to your situation.
+**Why this matters:** Skills like stakeholder-management, learn --decision, and generating-quarterly-charters pull from this context to tailor outputs to your situation.
 
 **Update cadence:** Review quarterly or when role changes significantly.
 
@@ -1009,12 +1009,12 @@ downstream:
 | Invoke | Purpose | Output |
 |--------|---------|--------|
 | "Run building-truth-base" | Build product understanding | outputs/truth_base/ |
-| "Run analyzing-kb-gaps" | Find KB gaps | outputs/insights/ |
+| "Run analyze --kb" | Find KB gaps | outputs/insights/ |
 | "Run writing-prds-from-charters for [charter]" | Write PRD | outputs/delivery/ |
 | "Run prioritizing-work" | Prioritize work | outputs/roadmap/ |
 | "Run competitive-analysis" | Analyze competitors | outputs/insights/ |
-| "Run analyzing-data" | Data deep-dive | outputs/insights/ |
-| "Run tracking-decisions" | Log major decisions | outputs/decisions/ |
+| "Run analyze --data" | Data deep-dive | outputs/insights/ |
+| "Run learn --decision" | Log major decisions | outputs/decisions/ |
 
 ---
 
@@ -1040,6 +1040,52 @@ downstream:
 
 ---
 
+## AG3: The 2nd Brain Evolution
+
+PM OS is evolving from AG2 (agent-on-demand) to AG3 (persistent 2nd brain). This section previews upcoming capabilities.
+
+### What's Changing
+
+| Aspect | AG2 (Current) | AG3 (Coming) |
+|--------|---------------|--------------|
+| **Context loading** | Full file re-read | Atomic beads (60-80% token reduction) |
+| **Staleness** | File-level (noisy) | Bead-level (precise) |
+| **Ingestion** | Manual file drop | MCP real-time + manual |
+| **Dependencies** | Claims Ledger (text) | Dependency graph (queryable) |
+
+### New Capabilities
+
+#### Communication Engine
+
+Executive presence for high-stakes situations:
+
+```
+/exec-update --mode crisis     # Incident updates
+/charters --mode vision        # Strategy presentations
+/reframe "Timeline too aggressive"  # Handle objections
+/pivot "What about mobile?"    # Handle curveballs
+```
+
+#### Bead-Based Memory (Future)
+
+Instead of re-reading entire interviews:
+```
+# Current (expensive)
+/voc → reads 10 interview files → 50K tokens
+
+# AG3 (efficient)
+/voc → reads relevant beads → 8K tokens
+```
+
+### Getting Ready for AG3
+
+1. **Keep using PM OS normally** - AG2 continues working
+2. **Build history** - More history = better learning patterns
+3. **Watch for announcements** - AG3 phases roll out incrementally
+4. **Read the architecture** - `docs/AG3-architecture.md`
+
+---
+
 ## Summary
 
 **You've learned:**
@@ -1050,6 +1096,7 @@ downstream:
 4. ✓ How dependencies work (3-tier cascade, staleness tracking)
 5. ✓ Daily workflow (KTLO, VOC, exec updates in 30 min)
 6. ✓ Next steps (weekly planning, quarterly retrospectives, learning system)
+7. ✓ AG3 roadmap (Communication Engine, beads, MCP integration)
 
 **Ready to start?**
 

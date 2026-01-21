@@ -30,7 +30,7 @@ The `.claude/` directory contains **Claude Code configuration and rules** - the 
 │   └── learned/                    # Auto-generated patterns
 │       └── (empty until learning runs)
 ├── agents/                         # Agent definitions (optional)
-├── output-styles/                  # Custom output styles (optional)
+├── output-styles/                  # Custom output styles
 ├── settings.json                   # Rules configuration
 ├── settings.local.json             # Local overrides (not in git)
 └── MODULAR_RULES_VERIFICATION.md  # Rules documentation
@@ -136,7 +136,7 @@ The `learned/` directory is special - it's **written by the learning system**, n
 ```markdown
 ---
 generated: 2026-01-20 14:30
-skill: learning-from-history
+skill: learn --patterns
 analyzed_skill: generating-quarterly-charters
 sample_size: 12
 ---

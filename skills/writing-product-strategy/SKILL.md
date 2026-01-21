@@ -96,7 +96,18 @@ Show how strategy connects to execution:
 - **Charters → PRDs:** How PRDs deliver capabilities
 - **Metrics:** Strategy KPIs → Charter metrics → PRD acceptance criteria
 
-**Step 8: Generate Output**
+**Step 8: Strategic Reasoning (Meta-Prompt)**
+
+Before generating the main strategy document, create a "Strategic Reasoning" section following `.claude/rules/pm-core/meta-prompt-reasoning.md`:
+
+- **Problem & Goals:** Restate what success looks like for this strategy
+- **Context & Constraints:** List available evidence and gaps
+- **Options Evaluated:** What strategic directions were considered? (at least 3)
+- **Selection Rationale:** Why these pillars beat alternatives
+
+This transparency helps stakeholders verify assumptions and challenge logic before committing to a multi-year direction.
+
+**Step 9: Generate Output**
 
 Write to `outputs/strategy/product-strategy-YYYY.md`:
 
@@ -114,6 +125,44 @@ downstream:
 ---
 
 # Product Strategy: [Product Area] ([Start Year]-[End Year])
+
+## Strategic Reasoning
+
+### Problem & Goals
+**Problem:** [One-sentence restatement of strategic challenge]
+**Success Criteria:** [What makes this strategy high-quality]
+
+### Context & Constraints
+**Available Evidence:**
+- [Source 1 with key findings]
+- [Source 2 with key findings]
+
+**Constraints:**
+- [Resource/market/technical limitations]
+
+**Gaps:**
+- [What we don't know that matters]
+
+### Strategic Options Evaluated
+
+| Option | Strengths | Weaknesses | Evidence Score |
+|--------|-----------|------------|----------------|
+| [Direction A] | [Pros] | [Cons] | High/Medium/Low |
+| [Direction B] | [Pros] | [Cons] | High/Medium/Low |
+| [Direction C] | [Pros] | [Cons] | High/Medium/Low |
+
+### Selection Rationale
+**Chosen:** [Strategic pillars selected]
+
+**Why chosen beats alternatives:**
+1. [Reason 1 with evidence]
+2. [Reason 2 with evidence]
+3. [Reason 3 with evidence]
+
+**What would change this strategy:**
+- [Market/competitive condition that would shift direction]
+
+---
 
 ## Vision Statement
 
@@ -292,10 +341,58 @@ If a charter doesn't advance a pillar → question whether it belongs on roadmap
 | [Market size $A] | Evidence/Unknown | [Source or "Need research"] |
 ```
 
-**Step 9: Copy to History & Update Tracker**
+**Step 10: Copy to History & Update Tracker**
 
-- Copy to `history/writing-product-strategy/product-strategy-YYYY-MM-DD.md`
+- Run `pm-os mirror --quiet` to copy to `history/writing-product-strategy/product-strategy-YYYY-MM-DD.md`
 - Update `nexa/state.json` and append to `outputs/audit/auto-run-log.md`
+
+**Step 11: Post-Skill Reflection (MANDATORY)**
+
+Follow protocol in `.claude/rules/pm-core/post-skill-reflection.md`:
+
+1. **Extract key learnings** (3-5 insights):
+   - What strategic options were evaluated vs selected?
+   - How did meta-prompt reasoning help clarify choices?
+   - What evidence gaps existed?
+   - What pillars emerged as most defensible?
+   - Connections to past strategies or charters?
+
+2. **Create learning entry:**
+   - Write to `history/learnings/YYYY-MM-DD-writing-product-strategy.md`
+   - Use template from post-skill-reflection rule
+
+3. **Create insight beads:**
+   - For each significant, reusable insight
+   - Append to `.beads/insights.jsonl`
+   - Types: insight (strategic learning), pattern (recurring), question (validation needed)
+
+4. **Request output rating:**
+   ```
+   Rate this strategy doc (1-5, or 'skip'):
+   1 - Needs major revision
+   2 - Below expectations
+   3 - Meets expectations
+   4 - Exceeds expectations
+   5 - Outstanding, exactly what I needed
+   ```
+   - If rated: Create output-rating bead
+   - Capture any qualitative feedback
+
+5. **Detect decisions:**
+   - Strategy creation = high confidence decision
+   - Auto-log: "Chose strategic pillars: [list] based on [evidence]"
+   - Write to `outputs/decisions/YYYY-MM-DD-product-strategy-[horizon].md`
+
+6. **Report completion:**
+   ```
+   ✅ Product strategy complete → outputs/strategy/product-strategy-YYYY.md
+      Mirrored to history/writing-product-strategy/product-strategy-YYYY-MM-DD.md
+
+   📝 Captured learnings: [N] insights, [N] beads → history/learnings/YYYY-MM-DD-writing-product-strategy.md
+   📋 Logged decision: [Horizon] product strategy → outputs/decisions/
+
+   Rate this strategy doc (1-5, or 'skip'): [prompt for rating]
+   ```
 
 ## Quick Reference
 

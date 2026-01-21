@@ -66,7 +66,18 @@ For each competitor, collect:
      Simple       Complex
 ```
 
-**Step 5: Generate Output**
+**Step 5: Strategic Reasoning (Meta-Prompt)**
+
+Before generating the main analysis, create a "Strategic Reasoning" section following `.claude/rules/pm-core/meta-prompt-reasoning.md`:
+
+- **Problem & Goals:** What strategic question is this analysis answering? (e.g., "Should we position as enterprise vs SMB?")
+- **Context & Constraints:** What evidence was available? What couldn't be verified?
+- **Options Evaluated:** What positioning strategies or competitive responses were considered?
+- **Selection Rationale:** If making positioning recommendations, why this approach beats alternatives
+
+This is especially important when competitive analysis leads to positioning decisions.
+
+**Step 6: Generate Output**
 
 Write to `outputs/insights/competitive-analysis-YYYY-MM-DD.md`:
 
@@ -81,6 +92,39 @@ downstream:
 ---
 
 # Competitive Analysis: [Market/Category]
+
+## Strategic Reasoning
+
+### Problem & Goals
+**Problem:** [What strategic question does this analysis answer?]
+**Success Criteria:** [What makes this analysis useful for decisions?]
+
+### Context & Constraints
+**Available Evidence:**
+- [What sources were accessible]
+- [What was verifiable vs uncertain]
+
+**Constraints:**
+- [Limitations: only public info, couldn't verify X]
+
+### Positioning Options Evaluated (if applicable)
+
+| Option | Strengths | Weaknesses | Evidence |
+|--------|-----------|------------|----------|
+| [Strategy A] | [Pros] | [Cons] | [Competitive gaps found] |
+| [Strategy B] | [Pros] | [Cons] | [Competitive threats] |
+
+### Selection Rationale (if making recommendations)
+**Recommended:** [Positioning/strategy recommendation if applicable]
+
+**Why this beats alternatives:**
+- [Reason 1 with competitive evidence]
+- [Reason 2 with competitive evidence]
+
+**What would change this:**
+- [Market/competitive condition that would shift positioning]
+
+---
 
 ## Executive Summary
 [2-3 sentences on competitive landscape]
@@ -130,10 +174,57 @@ downstream:
 | [Targets enterprise] | Evidence/Inference | [About page or inference] |
 ```
 
-**Step 6: Copy to History & Update Tracker**
+**Step 7: Copy to History & Update Tracker**
 
-- Copy to `history/competitive-analysis/competitive-analysis-YYYY-MM-DD.md`
+- Run `pm-os mirror --quiet` to copy to `history/competitive-analysis/competitive-analysis-YYYY-MM-DD.md`
 - Update `nexa/state.json` and append to `outputs/audit/auto-run-log.md`
+
+**Step 8: Post-Skill Reflection (MANDATORY)**
+
+Follow protocol in `.claude/rules/pm-core/post-skill-reflection.md`:
+
+1. **Extract key learnings** (3-5 insights):
+   - What competitive gaps were most surprising?
+   - What positioning options were evaluated?
+   - What evidence was hardest to verify?
+   - How did meta-prompt reasoning clarify positioning choices?
+   - Connections to past competitive analyses?
+
+2. **Create learning entry:**
+   - Write to `history/learnings/YYYY-MM-DD-competitive-analysis.md`
+   - Use template from post-skill-reflection rule
+
+3. **Create insight beads:**
+   - For each significant, reusable insight
+   - Append to `.beads/insights.jsonl`
+   - Types: insight (competitive learning), pattern (market trends), question (needs validation)
+
+4. **Request output rating:**
+   ```
+   Rate this competitive analysis (1-5, or 'skip'):
+   1 - Needs major revision
+   2 - Below expectations
+   3 - Meets expectations
+   4 - Exceeds expectations
+   5 - Outstanding, exactly what I needed
+   ```
+   - If rated: Create output-rating bead
+   - Capture any qualitative feedback
+
+5. **Detect decisions:**
+   - If positioning recommendations made = medium confidence decision
+   - Ask: "This analysis includes positioning recommendations. Log as decision? [Yes/No]"
+   - If yes: Write to `outputs/decisions/YYYY-MM-DD-competitive-positioning.md`
+
+6. **Report completion:**
+   ```
+   ✅ Competitive analysis complete → outputs/insights/competitive-analysis-YYYY-MM-DD.md
+      Mirrored to history/competitive-analysis/competitive-analysis-YYYY-MM-DD.md
+
+   📝 Captured learnings: [N] insights, [N] beads → history/learnings/YYYY-MM-DD-competitive-analysis.md
+
+   Rate this competitive analysis (1-5, or 'skip'): [prompt for rating]
+   ```
 
 ## Quick Reference
 

@@ -62,7 +62,7 @@ last_updated: 2026-01-17
 ## Algorithm Phase: OBSERVE
 
 Current work is focused on OBSERVE phase:
-- ✅ PM OS setup (using-pm-os)
+- ✅ PM OS setup (session-guardrails)
 - 🔄 Customer discovery (synthesizing-voc)
 - 🔴 Competitive analysis (competitive-analysis)
 - 🔴 Truth base (building-truth-base)

@@ -118,7 +118,18 @@ For each charter:
 | Risks | What could go wrong | Mitigations |
 | Why Now | Why this quarter | Business/strategic reason |
 
-**Step 5: Generate Output**
+**Step 5: Strategic Reasoning (Meta-Prompt)**
+
+Before generating the main charter document, create a "Strategic Reasoning" section following `.claude/rules/pm-core/meta-prompt-reasoning.md`:
+
+- **Problem & Goals:** What makes a high-quality charter? (Stakeholders can explain bets, engineering can scope work)
+- **Context & Constraints:** Available evidence (VOC, KTLO, truth base) and resource constraints
+- **Options Evaluated:** What charter candidates were considered? (aim for 5-7 initial, narrow to 3-5)
+- **Selection Rationale:** Why these 3-5 bets beat alternatives (show evidence scoring)
+
+This helps stakeholders understand why certain initiatives made the cut and others didn't.
+
+**Step 6: Generate Output**
 
 Write to `outputs/roadmap/Qx-YYYY-charters.md`:
 
@@ -135,6 +146,50 @@ downstream:
 ---
 
 # Q[X] [YYYY] Charters
+
+## Strategic Reasoning
+
+### Problem & Goals
+**Problem:** Choose [N] strategic bets from [M] possible initiatives for Q[X], maximizing value with constrained resources.
+**Success Criteria:** [What makes these charters high-quality]
+
+### Context & Constraints
+**Available Evidence:**
+- VOC: [Key findings from synthesis]
+- KTLO: [Key patterns from triage]
+- Truth base: [Relevant context]
+
+**Constraints:**
+- [Resource/capacity limitations]
+- [Timeline constraints]
+
+**Gaps:**
+- [What we don't know that matters]
+
+### Charter Candidates Evaluated
+
+| Candidate | VOC Signal | KTLO Signal | Evidence Score | Decision |
+|-----------|------------|-------------|----------------|----------|
+| [Initiative A] | [High/Med/Low] | [High/Med/Low] | High/Med/Low | ✅ Charter 1 |
+| [Initiative B] | [High/Med/Low] | [High/Med/Low] | High/Med/Low | ✅ Charter 2 |
+| [Initiative C] | [High/Med/Low] | [High/Med/Low] | High/Med/Low | ✅ Charter 3 |
+| [Initiative D] | [High/Med/Low] | [High/Med/Low] | High/Med/Low | ❌ Deferred |
+| [Initiative E] | [High/Med/Low] | [High/Med/Low] | High/Med/Low | ❌ Rejected |
+
+### Selection Rationale
+**Chosen:** [List selected charters]
+
+**Why chosen beat alternatives:**
+1. [Reason 1 with evidence]
+2. [Reason 2 with evidence]
+3. [Reason 3 with evidence]
+
+**Deferred to next quarter:** [List with brief reason]
+
+**What would change these priorities:**
+- [Condition that would shift charter priorities]
+
+---
 
 ## Executive Summary
 [3-5 sentences: What are we betting on this quarter? Why?]
@@ -226,8 +281,56 @@ downstream:
 
 **Step 6: Copy to History & Update Tracker**
 
-- Copy to `history/generating-quarterly-charters/Qx-YYYY-charters-YYYY-MM-DD.md`
+- Run `pm-os mirror --quiet` to copy to `history/generating-quarterly-charters/Qx-YYYY-charters-YYYY-MM-DD.md`
 - Update `nexa/state.json` and append to `outputs/audit/auto-run-log.md`
+
+**Step 7: Post-Skill Reflection (MANDATORY)**
+
+Follow protocol in `.claude/rules/pm-core/post-skill-reflection.md`:
+
+1. **Extract key learnings** (3-5 insights):
+   - What charter candidates were evaluated vs selected?
+   - What patterns emerged in evidence strength (VOC+KTLO)?
+   - What made scope/non-scope clear vs ambiguous?
+   - How did risk identification go?
+   - Connections to past charters?
+
+2. **Create learning entry:**
+   - Write to `history/learnings/YYYY-MM-DD-generating-quarterly-charters.md`
+   - Use template from post-skill-reflection rule
+
+3. **Create insight beads:**
+   - For each significant, reusable insight
+   - Append to `.beads/insights.jsonl`
+   - Types: insight (new learning), pattern (recurring theme), question (raised)
+
+4. **Request output rating:**
+   ```
+   Rate this charter (1-5, or 'skip'):
+   1 - Needs major revision
+   2 - Below expectations
+   3 - Meets expectations
+   4 - Exceeds expectations
+   5 - Outstanding, exactly what I needed
+   ```
+   - If rated: Create output-rating bead
+   - Capture any qualitative feedback
+
+5. **Detect decisions:**
+   - Charter creation = high confidence decision
+   - Auto-log: "Prioritized [N] bets: [list] over [alternatives]"
+   - Write to `outputs/decisions/YYYY-MM-DD-qN-charter-prioritization.md`
+
+6. **Report completion:**
+   ```
+   ✅ Quarterly charters complete → outputs/roadmap/Qx-YYYY-charters.md
+      Mirrored to history/generating-quarterly-charters/Qx-YYYY-charters-YYYY-MM-DD.md
+
+   📝 Captured learnings: [N] insights, [N] beads → history/learnings/YYYY-MM-DD-generating-quarterly-charters.md
+   📋 Logged decision: Q[N] charter prioritization → outputs/decisions/
+
+   Rate this charter (1-5, or 'skip'): [prompt for rating]
+   ```
 
 ## Quick Reference
 

@@ -14,7 +14,7 @@ Compute and display PM OS status dynamically from source files.
 
 2. Compute next actions based on current algorithm phase:
    - OBSERVE: building-truth-base, synthesizing-voc, triaging-ktlo
-   - THINK: analyzing-kb-gaps, competitive-analysis
+   - THINK: analyze --kb, competitive-analysis
    - PLAN: generating-quarterly-charters
    - BUILD: writing-prds-from-charters
 

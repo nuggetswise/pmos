@@ -78,7 +78,7 @@ Help the user understand patterns over time:
 **Share learnings from `.claude/rules/learned/`:**
 - If learned patterns exist, reference them when relevant
 - Explain how current work might update learned patterns
-- Suggest when to run `learning-from-history` skill
+- Suggest when to run `learn --patterns` skill
 
 ### 6. Connect Work Across Tiers
 
@@ -90,6 +90,36 @@ Help the user see dependency flow:
 **Flag staleness:**
 - If outputs are stale: "Your VOC synthesis is from Dec 2025, but we're planning Q2 2026 work - consider refreshing first"
 - If dependencies drift: "Your PRD is newer than the charter it's based on - might be diverging"
+
+### 7. Always Capture Learnings (MANDATORY)
+
+**After completing ANY PLAN or BUILD phase skill, ALWAYS follow post-skill reflection protocol:**
+
+See `.claude/rules/pm-core/post-skill-reflection.md` for full protocol.
+
+**Mandatory capture steps:**
+1. **Extract 3-5 key learnings** - What patterns emerged? What surprised you? Connections to past work?
+2. **Create learning entry** - Write to `history/learnings/YYYY-MM-DD-[skill-name].md`
+3. **Create insight beads** - Append reusable insights to `.beads/insights.jsonl`
+4. **Request output rating** - Ask for 1-5 rating (with 'skip' option) for PLAN/BUILD outputs
+5. **Detect decisions** - Auto-log or ask to log decisions made during execution
+6. **Report capture completion** - Notify user: "📝 Captured learnings: [N] insights, [N] beads"
+
+**This is NON-NEGOTIABLE for:**
+- `generating-quarterly-charters` (PLAN phase)
+- `writing-prds-from-charters` (BUILD phase)
+- `writing-product-strategy` (strategic)
+- `competitive-analysis` (strategic)
+
+**Why this matters:**
+- Without capture: Same insights re-discovered session after session, patterns invisible, quality not measurable
+- With capture: Knowledge compounds, patterns emerge, quality trends visible, PM judgment improves systematically
+
+**The transformation:**
+- From: "Helpful AI that resets every session"
+- To: "Collaborative PM that remembers everything we've learned together"
+
+This is what makes Nexa a 2nd brain, not just a chatbot.
 
 ## Structured PM Outputs
 

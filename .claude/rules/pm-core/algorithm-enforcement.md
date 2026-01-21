@@ -11,23 +11,50 @@ Enforces the OBSERVE → THINK → PLAN → BUILD → EXECUTE → VERIFY → LEA
 
 | Phase | Skills | Prerequisites | Outputs |
 |-------|--------|---------------|---------|
-| **OBSERVE** | building-truth-base, synthesizing-voc, triaging-ktlo | None (entry point) | truth-base.md, voc-synthesis.md, ktlo-triage.md |
-| **THINK** | analyzing-kb-gaps, brainstorming, competitive-analysis | At least 1 OBSERVE output | insights/*.md |
+| **OBSERVE** | discovery, building-truth-base, synthesizing-voc, triaging-ktlo | None (entry point) | doc-analysis.md, signals.md, truth-base.md, voc-synthesis.md, ktlo-triage.md |
+| **THINK** | analyze --kb, brainstorming, competitive-analysis | At least 1 OBSERVE output | insights/*.md |
 | **PLAN** | generating-quarterly-charters, prioritizing-work | Truth base OR VOC synthesis | charters.md, priorities.md |
 | **BUILD** | writing-prds-from-charters | Charter exists | prds/*.md |
 | **EXECUTE** | *(Engineering handoff - not PM OS controlled)* | PRD exists | - |
 | **VERIFY** | verification-before-completion | Output to verify | Verified output |
-| **LEARN** | tracking-decisions, learning-from-history | Completed work to learn from | decisions/*.md, learned/*.md |
+| **LEARN** | learn --decision, learn --launch, learn --patterns | Completed work to learn from | decisions/*.md, reviews/*.md, learned/*.md |
 
 ## Prerequisite Checks
 
 Before running any skill, check prerequisites:
 
+### OBSERVE Phase Skills
+```
+discovery:
+  REQUIRES: None (entry point for new PMs)
+  RECOMMEND: "Run before building-truth-base for better context"
+  MODES:
+    --analyze-docs: Reads outputs/ingest/ and inputs/
+    --prep [role]: Reads existing discovery outputs
+    --synthesize: Reads all discovery + VOC inputs
+
+building-truth-base:
+  REQUIRES: None (entry point)
+  RECOMMEND: "Consider running discovery first if you have inherited documents"
+
+synthesizing-voc:
+  REQUIRES: inputs/voc/*.md (interview notes, feedback)
+  IF MISSING: "Add VOC sources to inputs/voc/ or run /discover --prep first"
+
+triaging-ktlo:
+  REQUIRES: inputs/jira/*.csv or similar ticket export
+  IF MISSING: "Export Jira tickets to inputs/jira/"
+```
+
 ### THINK Phase Skills
 ```
-analyzing-kb-gaps:
+analyze --kb:
   REQUIRES: outputs/truth_base/truth-base.md OR outputs/insights/voc-synthesis-*.md
   IF MISSING: "Run building-truth-base or synthesizing-voc first (OBSERVE phase)"
+
+analyze --data:
+  REQUIRES: inputs/data/*.csv or *.xlsx files
+  IF MISSING: "Add data files to inputs/data/"
 
 brainstorming:
   REQUIRES: None (can brainstorm anytime, but better with context)
@@ -63,11 +90,15 @@ writing-prds-from-charters:
 
 ### LEARN Phase Skills
 ```
-tracking-decisions:
+learn --decision:
   REQUIRES: Decision to track (none - can run anytime)
   RECOMMEND: "Document decisions as they happen, not retroactively"
 
-learning-from-history:
+learn --launch:
+  REQUIRES: Completed launch to review (GTM plan or charter exists)
+  RECOMMEND: "Run 30/60/90 days after launch for meaningful retrospective"
+
+learn --patterns:
   REQUIRES: 5+ outputs in history/ for the skill being analyzed
   IF MISSING: "Not enough history to extract patterns. Keep using PM OS and try again later."
 ```
@@ -108,12 +139,13 @@ When user asks "What's next?" or runs `/status`:
 
 | Current Phase | Recommended Next | Why |
 |---------------|------------------|-----|
-| None | OBSERVE: building-truth-base | Start with product understanding |
-| OBSERVE done | THINK: analyzing-kb-gaps | Generate insights from observations |
+| None (new PM) | OBSERVE: discovery | Analyze inherited docs, prep interviews |
+| None (established) | OBSERVE: building-truth-base | Start with product understanding |
+| OBSERVE done | THINK: analyze --kb | Generate insights from observations |
 | THINK done | PLAN: generating-quarterly-charters | Define strategic bets |
 | PLAN done | BUILD: writing-prds-from-charters | Turn bets into specs |
 | BUILD done | VERIFY: verification-before-completion | Validate the PRD |
-| VERIFY done | LEARN: tracking-decisions | Document what you learned |
+| VERIFY done | LEARN: learn --decision | Document what you learned |
 | LEARN done | OBSERVE: (new cycle) | Start fresh with new data |
 
 ## Phase Transitions
@@ -159,7 +191,7 @@ In the Nexa greeting, show algorithm phase:
 ```
 👋 Nexa here - PM OS ready.
 
-📚 Loaded: 12 rules, 17 skills, 12 commands
+📚 Loaded: 12 rules, 15 skills
 
 🔄 Algorithm Phase: PLAN
    ✅ OBSERVE: truth base, VOC synthesis, KTLO triage

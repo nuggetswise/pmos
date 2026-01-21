@@ -39,307 +39,102 @@ Speed up by batching steps 1-2 (KTLO) or running less frequently.
 
 ## Step-by-Step Process
 
-### Step 1: Export Overnight Jira Tickets
+This updated process gathers all inputs first, runs a single scan to ingest them, and then uses skills to analyze the fresh data. This is more efficient and aligns with the PM OS architecture.
 
-**Action:** Export support tickets to PM OS inputs folder.
+### Step 1: Place Your Raw Data Files in `inputs/`
+
+**Action:** Gather your raw data from the last 24 hours and place it in the correct `inputs/` subdirectories. The `pm-os scan` tool will find and process them automatically.
+
+1.  **Export Jira Tickets:**
+    *   Go to Jira and export your support tickets (bugs, requests, escalations) from the last 24 hours as a CSV file.
+    *   Place the file in `inputs/jira/`. For example: `inputs/jira/tickets-2026-01-15.csv`.
+
+2.  **Save Customer Feedback:**
+    *   Collect any new customer feedback from emails, call transcripts, surveys, or Slack.
+    *   Save each source as a separate text or markdown file.
+    *   Place the files in `inputs/voc/`. For example: `inputs/voc/interview-acme-corp.md` or `inputs/voc/survey-notes.txt`.
+
+**Why this step matters:** This is the "Observe" phase. You are collecting the raw reality of your customers and your system from the past day. The system can't analyze what it can't see.
+
+**Time:** ~5-10 minutes (depending on export/gathering time)
+
+### Step 2: Scan Inputs to Update the System
+
+**Action:** Run the `pm-os scan` command to make the system aware of the new files you just added.
 
 ```bash
-# If using Jira CSV export (manual)
-# 1. Go to Jira → Filters → Your KTLO filter
-# 2. Export as CSV
-# 3. Save to: inputs/jira/tickets-YYYY-MM-DD.csv
-
-# Or use Jira CLI (if installed)
-jira export --filter="KTLO" --output=inputs/jira/tickets-$(date +%Y-%m-%d).csv
-```
-
-**Why this step matters:** You can't triage what you can't see. Export ensures you have fresh data to analyze.
-
-**What to export:**
-- Bugs filed in last 24 hours
-- Support requests
-- Tech debt tickets
-- Customer escalations
-
-**Pro tip:** Set up a saved Jira filter for "KTLO backlog" and export the same filter daily.
-
-### Step 2: Run /ktlo (Triage Support Backlog)
-
-**Action:** Triage the support backlog into prioritized buckets.
-
-```
-/ktlo
+pm-os scan
 ```
 
 **What happens:**
-- PM OS reads `inputs/jira/*.csv`
-- Groups tickets by theme (bugs, requests, tech debt)
-- Prioritizes into tiers:
-  - **P0: Now** (urgent, blocking customers)
-  - **P1: This quarter** (important, affects many)
-  - **P2: Backlog** (nice-to-have, defer)
-- Identifies top 3 patterns
-- Generates report in `outputs/ktlo/ktlo-triage-YYYY-MM-DD.md`
+- The `nexa` CLI finds all new or modified files in the `inputs/` directory.
+- It extracts their content and updates the central state in `nexa/state.json`.
+- Any outputs that depend on these sources are now marked as "stale."
 
-**Expected output:**
-```markdown
-# KTLO Triage - 2026-01-15
+**Why this step matters:** This is the critical ingestion step that makes your raw data available to all other skills. You must run `scan` after adding new files.
 
-## Summary
-- 47 tickets analyzed
-- 12 P0 (Now), 18 P1 (This quarter), 17 P2 (Backlog)
-- Top 3 themes: Catalog sync bugs (12), Missing attributes (8), Performance (6)
+**Time:** ~1 minute
 
-## P0: Now (12 tickets)
-[List of urgent tickets with context]
+### Step 3: Run Skills to Analyze Fresh Data
 
-## Top Patterns
-1. Catalog sync bugs (12 tickets)
-   - Impact: Blocking 3 major customers
-   - Root cause: Recent API change
-   - Action: Create spike ticket for eng
-```
+Now that the system has the latest data, you can run the analytical skills.
 
-**Time:** ~10 minutes (5 min export + 5 min triage)
+1.  **Triage Support Backlog:**
+    ```
+    /ktlo
+    ```
+    This skill reads the newly scanned Jira data, triages tickets, and creates a report in `outputs/ktlo/`.
 
-### Step 3: Review outputs/ktlo/ for Patterns
+2.  **Synthesize Customer Feedback:**
+    ```
+    /voc
+    ```
+    This skill reads the newly scanned VOC files, identifies themes and pain points, and creates a report in `outputs/insights/`.
 
-**Action:** Read the triage report and note key patterns.
+**Why this step matters:** These skills transform raw data into structured insights, forming the basis for your daily plan and stakeholder updates.
+
+**Time:** ~5-10 minutes
+
+### Step 4: Review Outputs for Key Patterns
+
+**Action:** Read the generated reports to understand the key takeaways from the day.
 
 ```bash
-# View latest triage
-cat outputs/ktlo/ktlo-triage-$(date +%Y-%m-%d).md
+# View latest triage report
+ls -lt outputs/ktlo/ | head -n 2
+
+# View latest VOC synthesis
+ls -lt outputs/insights/ | head -n 2
 ```
 
 **What to look for:**
-- Recurring themes (same issues appearing repeatedly)
-- New patterns (themes that weren't present before)
-- Customer impact (who's affected, how severe)
-- Actionable insights (what can you do today?)
+- **KTLO:** What are the most urgent (P0) issues? Are there new bug patterns?
+- **VOC:** What are the top customer pain points? Are there direct quotes you can use?
+- **Combined:** Do the KTLO themes and VOC themes reinforce each other? (e.g., customers are complaining about sync, and you see 12 sync-related bugs).
 
-**Questions to ask:**
-- Are the top 3 themes changing week-over-week?
-- Are P0 tickets clustered around one feature?
-- Is tech debt accumulating in one area?
-
-**Why this step matters:** Reading the report surfaces strategic signals. Multiple tickets about "slow catalog sync" might mean a charter-level investment is needed.
-
-**Time:** ~2 minutes
-
-### Step 4: Add Recent Customer Feedback → inputs/voc/
-
-**Action:** Capture customer feedback from emails, calls, Slack, surveys.
-
-**Create a new file per source:**
-```bash
-# After customer call
-touch inputs/voc/interview-acme-corp-2026-01-15.md
-
-# After reviewing survey responses
-touch inputs/voc/survey-q4-2025.md
-
-# After reviewing support emails
-touch inputs/voc/feedback-jan-2026.md
-```
-
-**Format for customer interviews:**
-```markdown
----
-date: 2026-01-15
-source: Customer call
-customer: Acme Corp
-role: VP Supply Chain
----
-
-# Interview Notes - Acme Corp
-
-## Key Quotes
-> "We spend 4 hours per week fixing catalog errors. It's killing our team."
-
-> "If you had real-time sync, we'd move our entire catalog to your platform."
-
-## Pain Points
-- Catalog sync is too slow (runs overnight only)
-- Attribute validation is weak (bad data gets through)
-- No bulk editing tools (tedious one-by-one edits)
-
-## Context
-- 50,000 SKUs in catalog
-- 200 suppliers
-- Uses competitor X for real-time sync (but wants to consolidate)
-```
-
-**Format for surveys/feedback:**
-```markdown
----
-date: 2026-01-15
-source: Survey responses
-sample_size: 47 customers
----
-
-# Q4 2025 Survey Results
-
-## Top Requests (by frequency)
-1. Bulk editing tools (23 mentions)
-2. Better search (19 mentions)
-3. Faster sync (15 mentions)
-
-## Verbatim Quotes
-> "Bulk editing would save us hours every week." (Customer 12)
-
-> "Search is too slow and often returns wrong results." (Customer 8)
-```
-
-**Why this step matters:** VOC synthesis only works if you feed it real customer feedback. This is your source of truth for what customers actually care about.
-
-**Time:** ~5 minutes (copy-paste from notes, emails, calls)
-
-### Step 5: Run /voc (Synthesize Themes)
-
-**Action:** Synthesize customer feedback into prioritized themes.
-
-```
-/voc
-```
-
-**What happens:**
-- PM OS reads `inputs/voc/*.md` (needs minimum 3 sources)
-- Extracts verbatim quotes
-- Groups into themes
-- Identifies pain points and unmet needs
-- Quantifies patterns (e.g., "3 of 7 customers mentioned X")
-- Generates report in `outputs/insights/voc-synthesis-YYYY-MM-DD.md`
-
-**Expected output:**
-```markdown
-# VOC Synthesis - 2026-01-15
-
-## Summary
-- 7 sources analyzed (5 interviews, 1 survey, 1 feedback doc)
-- 4 major themes identified
-- 12 verbatim quotes extracted
-
-## Theme 1: Catalog Sync Performance (5/7 sources)
-
-**Pain:** Catalog sync is too slow, runs overnight only
-
-**Quotes:**
-> "We spend 4 hours per week fixing catalog errors." (Acme Corp, Jan 15)
-
-> "If you had real-time sync, we'd move our entire catalog." (Acme Corp, Jan 15)
-
-> "Overnight sync means errors don't get caught until next day." (Survey respondent 23)
-
-**Impact:** High - blocking 3 major customers, 23 survey mentions
-
-**Opportunity:** Real-time sync feature (charter-level investment)
-
-## Theme 2: Bulk Editing Tools (4/7 sources)
-[...]
-```
+**Why this step matters:** This is where you connect the dots and form an opinion. The reports provide data; this step is where you find the story.
 
 **Time:** ~5 minutes
 
-### Step 6: Review outputs/insights/ for Pain Points
+### Step 5: Generate and Share an Executive Update
 
-**Action:** Read the VOC synthesis and identify top pain points.
-
-```bash
-# View latest synthesis
-cat outputs/insights/voc-synthesis-$(date +%Y-%m-%d).md
-```
-
-**What to look for:**
-- High-frequency themes (mentioned by many customers)
-- High-impact pain points (blocking business)
-- Unmet needs (things customers want but can't do today)
-- Quote clusters (multiple customers saying the same thing)
-
-**Questions to ask:**
-- Which pain point affects the most customers?
-- Which pain point has the highest business impact?
-- Which pain point can we solve this quarter?
-- Are there quick wins (small effort, high value)?
-
-**Why this step matters:** This is where you spot strategic opportunities. If 5/7 customers mention "real-time sync," that's a signal for a charter-level bet.
-
-**Time:** ~3 minutes
-
-### Step 7: Run /exec-update (Generate 1-Page Summary)
-
-**Action:** Generate a 1-page executive update summarizing key insights.
+**Action:** Use the generated insights to create a summary for your team and stakeholders.
 
 ```
 /exec-update
 ```
 
 **What happens:**
-- PM OS reads latest outputs from `outputs/ktlo/`, `outputs/insights/`, `outputs/roadmap/`
-- Synthesizes into 1-page summary
-- Includes:
-  - Key customer themes (from VOC)
-  - Top support patterns (from KTLO)
-  - Charter progress (if available)
-  - Next actions
-- Generates report in `outputs/exec_updates/exec-update-YYYY-MM-DD.md`
+- This skill reads the fresh `ktlo` and `voc` outputs you just created.
+- It synthesizes them into a single, scannable summary.
+- The report is saved to `outputs/exec_updates/`.
 
-**Expected output:**
-```markdown
-# Executive Update - 2026-01-15
+**Final action:** Copy the content of the executive update and share it in Slack, email, or your team's daily standup.
 
-## Key Insights
-1. **Catalog sync performance is top customer pain** (5/7 customers)
-   - Blocking 3 major accounts
-   - Survey: 15/47 respondents mentioned it
-   - Opportunity: Real-time sync feature
+**Why this step matters:** This closes the loop. You've observed reality, analyzed it, and now you are communicating the important signals to the rest of the organization to drive action.
 
-2. **Support backlog growing in one area** (12 sync bugs this week)
-   - Root cause: Recent API change
-   - Action: Eng spike to assess fix effort
+**Time:** ~5 minutes
 
-## Roadmap Progress
-- Q1 Charter 1: On track (85% complete)
-- Q1 Charter 2: At risk (needs eng resources)
-
-## Next Actions
-- [ ] Assess real-time sync feasibility (Eng spike)
-- [ ] Create charter for Q2 catalog performance bet
-- [ ] Fix API regression causing sync bugs (P0)
-```
-
-**Time:** ~3 minutes
-
-### Step 8: Share outputs/exec_updates/ with Stakeholders
-
-**Action:** Send the exec update to your team, manager, or stakeholders.
-
-**Delivery options:**
-
-**Email:**
-```bash
-# Copy content to email
-cat outputs/exec_updates/exec-update-$(date +%Y-%m-%d).md | pbcopy
-```
-
-**Slack:**
-```markdown
-Morning update: Key customer feedback + support patterns
-
-📊 Top customer pain: Catalog sync performance (5/7 customers)
-🐛 Support pattern: 12 sync bugs this week (API regression)
-🎯 Action: Eng spike to assess real-time sync feasibility
-
-Full report: [link to outputs/exec_updates/]
-```
-
-**Weekly meeting:**
-- Use exec update as your status report
-- Walk through key insights (2 min)
-- Highlight decisions needed (1 min)
-
-**Why this step matters:** Stakeholders can't act on insights they don't know about. Daily updates build trust and alignment.
-
-**Time:** ~2 minutes
 
 ## Expected Outputs After Completion
 

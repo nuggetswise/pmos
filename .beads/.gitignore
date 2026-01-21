@@ -1,0 +1,8 @@
+# Beads storage - personal to this PM instance
+# Do not version control these files
+insights.jsonl
+index.json
+
+# Allow the .gitignore and README to be tracked
+!.gitignore
+!README.md

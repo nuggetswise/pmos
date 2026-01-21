@@ -20,12 +20,12 @@ This PM OS follows an iterative refinement loop for all PM work.
 | Phase | PM OS Skills | What Happens |
 |-------|--------------|--------------|
 | **Observe** | building-truth-base, synthesizing-voc, triaging-ktlo | Gather context from inputs |
-| **Think** | analyzing-kb-gaps, brainstorming, competitive-analysis | Generate insights |
+| **Think** | analyze --kb, brainstorming, competitive-analysis | Generate insights |
 | **Plan** | generating-quarterly-charters, prioritizing-work | Sequence work |
 | **Build** | writing-prds-from-charters | Define execution |
 | **Execute** | *(Engineering handoff)* | Deliver the work |
 | **Verify** | verification-before-completion | Validate claims |
-| **Learn** | tracking-decisions, learning-from-history | Calibrate judgment |
+| **Learn** | learn --decision, learn --patterns | Calibrate judgment |
 
 ## Key Principle
 

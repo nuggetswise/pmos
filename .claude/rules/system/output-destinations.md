@@ -9,18 +9,20 @@ This file tracks where different PM outputs are stored and their history directo
 | **Ingested documents** | `outputs/ingest/` | *(managed by daemon)* |
 | **Delta summaries** | `outputs/deltas/` | *(managed by daemon)* |
 | **Audit log** | `outputs/audit/` | *(append-only)* |
+| Discovery outputs | `outputs/discovery/` | `history/discovery/` |
 | Truth base | `outputs/truth_base/` | `history/building-truth-base/` |
 | VOC synthesis | `outputs/insights/` | `history/synthesizing-voc/` |
-| KB gap analysis | `outputs/insights/` | `history/analyzing-kb-gaps/` |
+| KB gap analysis | `outputs/insights/` | `history/analyze/kb/` |
 | KTLO triage | `outputs/ktlo/` | `history/triaging-ktlo/` |
 | Quarterly charters | `outputs/roadmap/` | `history/generating-quarterly-charters/` |
 | PRDs | `outputs/delivery/` | `history/writing-prds-from-charters/` |
 | Stakeholder maps | `outputs/stakeholders/` | `history/stakeholder-management/` |
 | GTM docs | `outputs/gtm/` | `history/planning-gtm-launch/` |
 | Product strategy | `outputs/strategy/` | `history/writing-product-strategy/` |
-| Launch reviews | `outputs/reviews/` | `history/reviewing-launch-outcomes/` |
-| Decisions | `outputs/decisions/` | `history/tracking-decisions/` |
-| Learning analysis | `outputs/learning/` | `history/learning-from-history/` |
+| Launch reviews | `outputs/reviews/` | `history/learn/reviews/` |
+| Decisions | `outputs/decisions/` | `history/learn/decisions/` |
+| Learning analysis | `outputs/learning/` | `history/learn/patterns/` |
+| Data analysis | `outputs/insights/` | `history/analyze/data/` |
 | Exec updates | `outputs/exec_updates/` | - |
 
 ## AG3 Daemon Outputs
@@ -75,10 +77,17 @@ outputs/ingest/* (feedback)  ──▶  outputs/deltas/feedback-*.md
 outputs/ingest/* (ops)       ──▶  outputs/deltas/ops-*.md
 outputs/ingest/* (roadmap)   ──▶  outputs/deltas/roadmap-*.md
 
+TIER 1.5: Discovery (structured extraction from ingest)
+─────────────────────────────────────────────────────────────
+outputs/ingest/*             ──▶  outputs/discovery/doc-analysis-*.md
+outputs/discovery/*          ──▶  outputs/discovery/interview-guide-*.md
+inputs/voc/* + discovery/*   ──▶  outputs/discovery/signals-*.md
+
 TIER 2: LLM Skills (from deltas + context)
 ─────────────────────────────────────────────────────────────
 outputs/deltas/*             ──▶  outputs/insights/voc-synthesis-*.md
 outputs/deltas/*             ──▶  outputs/ktlo/ktlo-triage-*.md
+outputs/discovery/*          ──▶  outputs/truth_base/truth-base.md
 outputs/deltas/*             ──▶  outputs/truth_base/truth-base.md
 
 TIER 3: Planning Skills

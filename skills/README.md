@@ -6,27 +6,29 @@ The `skills/` directory contains **reusable PM workflows** - the core intelligen
 
 **Why this matters:** Skills encode PM best practices, ensuring consistent, evidence-based work. Think of them as your PM playbook - battle-tested workflows you can invoke anytime.
 
+## Skill Count: 15 Skills
+
+PM OS consolidates related workflows into unified skills with modes. This keeps the system learnable while preserving functionality.
+
 ## Directory Structure
 
 ```
 skills/
-├── triaging-ktlo/                    # Daily: KTLO backlog triage
-├── synthesizing-voc/                 # Daily: VOC theme extraction
-├── generating-exec-update/           # Daily: 1-page exec updates
+├── discovery/                        # Onboarding: Document analysis, interview prep
 ├── building-truth-base/              # Onboarding: Product understanding
-├── analyzing-kb-gaps/                # As-needed: KB pain point analysis
-├── generating-quarterly-charters/    # Weekly: Strategic bets
-├── writing-prds-from-charters/       # As-needed: PRD creation
-├── prioritizing-work/                # As-needed: Prioritization framework
+├── synthesizing-voc/                 # Daily: VOC theme extraction
+├── triaging-ktlo/                    # Daily: KTLO backlog triage
+├── generating-exec-update/           # Daily: 1-page exec updates
+├── brainstorming/                    # As-needed: Divergent thinking
 ├── competitive-analysis/             # As-needed: Competitive landscape
-├── analyzing-data/                   # As-needed: Data deep-dives
-├── planning-gtm-launch/              # Senior PM: GTM launch plans
+├── analyze/                          # As-needed: Data (--data) or KB gaps (--kb)
+├── generating-quarterly-charters/    # Weekly: Strategic bets
+├── prioritizing-work/                # As-needed: Prioritization framework
 ├── stakeholder-management/           # Senior PM: Stakeholder mapping
-├── writing-product-strategy/         # Senior PM: 3-5 year strategy
-├── reviewing-launch-outcomes/        # Senior PM: Post-launch retrospectives
-├── tracking-decisions/               # As-needed: Decision logging
-├── learning-from-history/            # Optional: Pattern extraction
-└── using-pm-os/                      # System: Session guardrails
+├── writing-prds-from-charters/       # As-needed: PRD creation
+├── planning-gtm-launch/              # Senior PM: GTM launch plans
+├── learn/                            # Learning: Decisions, launches, patterns
+└── writing-product-strategy/         # Senior PM: 3-5 year strategy
 ```
 
 **Each skill directory contains:**
@@ -36,73 +38,94 @@ skills/
 - Step-by-step core pattern
 - Output template with examples
 
+## Conversational Invocation (Preferred)
+
+PM OS should feel like talking to a 2nd brain, not running CLI commands. Express intent naturally:
+
+| Instead of... | Say... |
+|---------------|--------|
+| `/voc` | "What are customers saying?" |
+| `/discover --analyze-docs` | "Help me understand these docs" |
+| `/charters` | "What should we focus on this quarter?" |
+| `/learn --decision` | "Log this decision" |
+| `/analyze --data` | "Analyze this CSV for me" |
+| `/ktlo` | "What's on fire in support?" |
+
+Nexa routes to the right skill automatically based on your intent.
+
 ## Skill Categories
+
+### Onboarding Skills (New PM)
+
+| Skill | Command | Conversational | Time |
+|-------|---------|----------------|------|
+| discovery | `/discover` | "Help me understand these docs" | ~30-60 min |
+| building-truth-base | `/truth-base` | "What is this product?" | ~45 min |
+
+**Use these:** First week on a new product. Discovery -> Truth Base -> then daily skills.
 
 ### Daily Skills (10-30 min total)
 
-| Skill | Command | Purpose | Time |
-|-------|---------|---------|------|
-| triaging-ktlo | `/ktlo` | Prioritize support backlog | ~10 min |
-| synthesizing-voc | `/voc` | Extract customer themes | ~10 min |
-| generating-exec-update | `/exec-update` | Create 1-page stakeholder update | ~10 min |
+| Skill | Command | Conversational | Time |
+|-------|---------|----------------|------|
+| triaging-ktlo | `/ktlo` | "What's on fire in support?" | ~10 min |
+| synthesizing-voc | `/voc` | "What are customers saying?" | ~10 min |
+| generating-exec-update | `/exec-update` | "Generate an exec update" | ~10 min |
 
 **Use these:** Every day or weekly for staying on top of incoming data.
 
 ### Weekly Skills (15-30 min)
 
-| Skill | Command | Purpose | Time |
-|-------|---------|---------|------|
-| generating-quarterly-charters | `/charters` | Create strategic bets | ~20 min |
+| Skill | Command | Conversational | Time |
+|-------|---------|----------------|------|
+| generating-quarterly-charters | `/charters` | "What should we build this quarter?" | ~20 min |
 
 **Use this:** Weekly to plan quarterly roadmap, or when priorities shift.
 
 ### Senior PM Skills (30-90 min)
 
-| Skill | Command | Purpose | Time |
-|-------|---------|---------|------|
-| stakeholder-management | `/stakeholders` | Map power/interest grid | ~30 min |
-| planning-gtm-launch | `/gtm` | Create GTM launch plan | ~60 min |
-| writing-product-strategy | `/strategy` | Write 3-5 year strategy | ~90 min |
-| reviewing-launch-outcomes | `/review` | Post-launch retrospective | ~45 min |
+| Skill | Command | Conversational | Time |
+|-------|---------|----------------|------|
+| stakeholder-management | `/stakeholders` | "Map the stakeholders" | ~30 min |
+| planning-gtm-launch | `/gtm` | "Plan the GTM launch" | ~60 min |
+| writing-product-strategy | `/strategy` | "What's our 3-year strategy?" | ~90 min |
 
 **Use these:** For major initiatives, launches, or strategy planning.
 
 ### As-Needed Skills
 
-| Skill | How to Invoke | Purpose |
-|-------|---------------|---------|
-| building-truth-base | "Run building-truth-base" | Day-1 product understanding |
-| analyzing-kb-gaps | "Run analyzing-kb-gaps" | Find KB pain points |
-| writing-prds-from-charters | "Run writing-prds-from-charters for [charter]" | Turn charters into PRDs |
-| prioritizing-work | "Run prioritizing-work" | Sequence work by impact |
-| competitive-analysis | "Run competitive-analysis" | Analyze competitors |
-| analyzing-data | "Run analyzing-data" | Data deep-dive |
-| tracking-decisions | "Run tracking-decisions" | Log major decisions |
+| Skill | Command | Conversational |
+|-------|---------|----------------|
+| brainstorming | `/brainstorm` | "Help me brainstorm options" |
+| competitive-analysis | `/compete` | "Who are our competitors?" |
+| analyze | `/analyze` | "Analyze this data" or "What's missing from KB?" |
+| writing-prds-from-charters | `/prd` | "Write me a PRD for [charter]" |
+| prioritizing-work | `/prioritize` | "Prioritize this backlog" |
 
-**Use these:** When you need them for specific situations.
+### Learning Skills
 
-### Automatic Skills
+| Skill | Command | Conversational |
+|-------|---------|----------------|
+| learn | `/learn` | "Log this decision" / "How did the launch go?" / "What patterns have we learned?" |
 
-| Skill | When It Runs | Purpose |
-|-------|--------------|---------|
-| learning-from-history | Weekly auto + on-demand (`pm-os learn`) | Extract success/failure patterns |
-| using-pm-os | Every session start | Session guardrails, staleness check |
+**Modes:**
+- `--decision` - Log decision context and rationale
+- `--launch` - Post-launch retrospective (30/60/90 days)
+- `--patterns` - Extract patterns from history
 
-**Note:** Weekly hook runs `pm-os learn --auto`; use `pm-os learn <skill>` anytime.
+### Analysis Skills
 
-### Skills That Use my-context.md
+| Skill | Command | Conversational |
+|-------|---------|----------------|
+| analyze | `/analyze` | "Analyze this CSV" or "What gaps exist in KB?" |
 
-These skills pull from `inputs/context/my-context.md` to tailor outputs:
+**Modes:**
+- `--data` - Python-based data analysis (CSV, Excel)
+- `--kb` - Knowledge Base gap analysis
 
-| Skill | How It Uses Context |
-|-------|---------------------|
-| `stakeholder-management` | Pre-populates stakeholder list from Key Stakeholders table |
-| `tracking-decisions` | Uses Decision Principles for framing recommendations |
-| `generating-quarterly-charters` | Applies Constraints and Current Priorities to strategic bets |
-| `writing-product-strategy` | Incorporates Strategic Context for vision alignment |
-| `planning-gtm-launch` | References stakeholders and constraints for launch planning |
+## Session Guardrails
 
-**Tip:** Keep `my-context.md` updated quarterly. Stale context leads to misaligned outputs.
+Session guardrails (dependency hygiene, evidence discipline, auto-mirroring) are now automatic rules, not a skill. See `.claude/rules/system/session-guardrails.md`.
 
 ## How Skills Work
 
@@ -144,10 +167,18 @@ description: One-line description
 
 ### Invoking Skills
 
-**Two ways to invoke:**
+**Three ways to invoke:**
 
-1. **Via command** (shortcut):
+1. **Conversational (preferred):**
    ```
+   "What are customers saying?"
+   "Help me understand these docs"
+   "What should we focus on this quarter?"
+   ```
+
+2. **Via command** (shortcut):
+   ```
+   /discover
    /ktlo
    /voc
    /charters
@@ -155,19 +186,16 @@ description: One-line description
    /stakeholders
    /gtm
    /strategy
-   /review
+   /learn
+   /analyze
    ```
 
-2. **Direct invocation**:
+3. **Direct invocation**:
    ```
    "Run triaging-ktlo"
    "Run synthesizing-voc"
    "Run building-truth-base"
    ```
-
-**Commands vs Direct:**
-- Commands are shortcuts (defined in `commands/*.md`)
-- Direct invocation works for all skills (not just those with commands)
 
 ### What Skills Produce
 
@@ -176,41 +204,63 @@ Every skill generates:
 1. **Structured output** in `outputs/[type]/`
 2. **YAML metadata header** tracking sources and dependencies
 3. **Claims ledger** tagging evidence/assumptions
-4. **Versioned copy** in `history/[skill-name]/`
+4. **Versioned copy** in `history/[skill-name]/` (auto-mirrored)
 
 ## Skill Deep-Dives
+
+### discovery
+
+**Purpose:** Analyze inherited documents, prepare for stakeholder interviews, synthesize discovery signals
+
+**Modes:**
+- `--analyze-docs` - Extract structured insights from documents (EXPLICIT/INFERRED/IMPLICIT)
+- `--prep [role]` - Generate interview questions for sales, support, marketing, customer, engineering, or leadership
+- `--synthesize` - Combine all signals into validated themes and personas
+
+**Use when:** First week on a new product, before quarterly planning, or when preparing for stakeholder interviews.
+
+### learn
+
+**Purpose:** Close the feedback loop - log decisions, review launches, extract patterns
+
+**Modes:**
+- `--decision` - Log decision context, rationale, expected outcomes for later review
+- `--launch` - Post-launch retrospective comparing predicted vs actual outcomes
+- `--patterns` - Mine history for success/failure patterns, update learned rules
+
+**Use when:** After major decisions, 30/60/90 days post-launch, or weekly for pattern extraction.
+
+### analyze
+
+**Purpose:** Generate PM insights from structured data
+
+**Modes:**
+- `--data` - Python-based analysis of CSV/Excel (retention, funnel, segmentation)
+- `--kb` - Knowledge Base gap analysis (pain points, missing articles, AI opportunities)
+
+**Use when:** Have data files to analyze or KB exports to review.
 
 ### triaging-ktlo
 
 **Purpose:** Triage support backlog into prioritized buckets
-
-**Inputs:** `inputs/jira/*.csv` (Jira export)
-
-**Output:** `outputs/ktlo/ktlo-triage-YYYY-MM-DD.md`
 
 **What it does:**
 1. Reads Jira tickets from CSV
 2. Groups by theme (bugs, requests, tech debt)
 3. Prioritizes into tiers (P0: Now, P1: This quarter, P2: Backlog)
 4. Identifies patterns (top 3 themes)
-5. Generates actionable triage report
 
-**Use when:** Weekly or when backlog grows, to focus support work.
+**Use when:** Weekly or when backlog grows.
 
 ### synthesizing-voc
 
 **Purpose:** Extract themes from customer feedback
 
-**Inputs:** `inputs/voc/*.md` (interviews, surveys, feedback)
-
-**Output:** `outputs/insights/voc-synthesis-YYYY-MM-DD.md`
-
 **What it does:**
 1. Reads all VOC files (need min 3 sources)
 2. Extracts verbatim quotes
 3. Groups into themes
-4. Identifies pain points and unmet needs
-5. Quantifies patterns (e.g., "3/7 customers mentioned X")
+4. Quantifies patterns (e.g., "3/7 customers mentioned X")
 
 **Use when:** After customer calls or when planning features.
 
@@ -218,16 +268,11 @@ Every skill generates:
 
 **Purpose:** Create strategic bets for the quarter
 
-**Inputs:** `outputs/truth_base/`, `outputs/insights/`, `outputs/ktlo/`
-
-**Output:** `outputs/roadmap/Q1-YYYY-charters.md`
-
 **What it does:**
 1. Reads truth base, VOC synthesis, KTLO triage
 2. Generates 3-5 strategic bets
 3. Defines success metrics for each bet
-4. Identifies risks and dependencies
-5. Links to evidence (VOC quotes, KTLO themes)
+4. Links to evidence (VOC quotes, KTLO themes)
 
 **Use when:** Weekly for quarterly planning, or when priorities shift.
 
@@ -235,87 +280,49 @@ Every skill generates:
 
 **Purpose:** Turn charter bets into executable PRDs
 
-**Inputs:** `outputs/roadmap/Q1-YYYY-charters.md`
-
-**Output:** `outputs/delivery/prd-feature-name-YYYY-MM-DD.md`
-
 **What it does:**
 1. Reads charter to understand bet
 2. Generates problem statement
 3. Defines requirements (SHALL/SHOULD/MAY format)
-4. Specifies edge cases and error handling
-5. Creates acceptance criteria
-6. Links back to charter for traceability
+4. Creates acceptance criteria
 
 **Use when:** After charter is approved, before eng kickoff.
 
-### stakeholder-management
+## Common Workflows
 
-**Purpose:** Map stakeholders using power/interest grid
+### Daily Routine
 
-**Inputs:** User input (stakeholder list)
+```
+"What's on fire in support?"     # ~10 min: KTLO triage
+"What are customers saying?"     # ~10 min: VOC synthesis
+"Generate an exec update"        # ~10 min: Stakeholder update
+```
 
-**Output:** `outputs/stakeholders/stakeholder-map-YYYY-MM-DD.md`
+### Planning a Quarter
 
-**What it does:**
-1. Collects stakeholder names and roles
-2. Maps to power/interest grid (4 quadrants)
-3. Defines communication strategy per quadrant
-4. Tracks alignment status
-5. Creates action plan
+```
+1. Refresh foundation outputs (if stale)
+2. "What should we focus on this quarter?"  # Generate charters
+3. Review with stakeholders
+4. "Write me a PRD for [charter bet]"       # Turn into specs
+```
 
-**Use when:** Major initiative, cross-team project, or politics are complex.
+### Launching a Product
 
-### planning-gtm-launch
+```
+1. "Map the stakeholders"        # Power/interest grid
+2. "Plan the GTM launch"         # Launch plan
+3. Execute launch
+4. "How did the launch go?"      # 30-day retrospective
+```
 
-**Purpose:** Create comprehensive GTM launch plan
+### Learning Loop
 
-**Inputs:** Charter or spec
-
-**Output:** `outputs/gtm/gtm-initiative-YYYY-MM-DD.md`
-
-**What it does:**
-1. Analyzes market context (TAM/SAM/SOM)
-2. Defines positioning and messaging
-3. Creates 3-phase launch plan (pre/launch/post)
-4. Plans enablement (sales, CS, support)
-5. Defines success metrics
-
-**Use when:** Product/feature launch, new market entry, or repositioning.
-
-### writing-product-strategy
-
-**Purpose:** Write 3-5 year product strategy
-
-**Inputs:** Context (charters, VOC, competitive analysis)
-
-**Output:** `outputs/strategy/product-strategy-YYYY.md`
-
-**What it does:**
-1. Defines vision statement
-2. Analyzes market trends and threats
-3. Creates strategic pillars (3-5)
-4. Maps capability roadmap by year
-5. Identifies competitive moats
-
-**Use when:** Annual/bi-annual strategy planning, board presentations.
-
-### reviewing-launch-outcomes
-
-**Purpose:** Post-launch retrospective with lessons learned
-
-**Inputs:** Launch data, original GTM plan
-
-**Output:** `outputs/reviews/launch-review-initiative-YYYY-MM-DD.md`
-
-**What it does:**
-1. Compares predicted vs actual metrics
-2. Identifies what went well (success patterns)
-3. Identifies what went wrong (failure patterns)
-4. Extracts lessons learned
-5. Updates PM OS skills with improvements
-
-**Use when:** 30/60/90 days after launch, or after major initiative.
+```
+1. "Log this decision"           # After major choices
+2. "How did the launch go?"      # Post-launch review
+3. "What patterns have we learned?"  # Extract insights
+```
 
 ## Customization
 
@@ -323,162 +330,48 @@ Every skill generates:
 
 Skills are markdown files - you can edit them:
 
-1. **Read the skill**: `cat skills/triaging-ktlo/SKILL.md`
+1. **Read the skill**: Open `skills/[skill-name]/SKILL.md`
 2. **Edit to fit your workflow**: Adjust steps, add sections, change format
 3. **Test**: Run the modified skill, verify output
 4. **Commit**: Version control your changes
-
-**Example:** Add a "Tech Debt Impact" section to KTLO triage:
-```markdown
-## Step 4: Assess Tech Debt Impact
-For each tech debt ticket:
-- Estimate engineering weeks to fix
-- Identify systems affected
-- Calculate opportunity cost
-```
 
 ### Creating New Skills
 
 To add a new skill:
 
 1. **Create directory**: `mkdir skills/my-new-skill/`
-2. **Create SKILL.md**:
-   ```markdown
-   ---
-   name: my-new-skill
-   description: What this skill does
-   ---
-
-   # My New Skill
-
-   ## Overview
-   [Description]
-
-   ## When to Use
-   [Triggers]
-
-   ## Core Pattern
-   **Step 1:** [Action]
-   ...
-   ```
+2. **Create SKILL.md** with standard structure
 3. **Test**: "Run my-new-skill"
-4. **Optional: Add command**: Create `commands/my-skill.md` for `/my-skill` shortcut
-
-### Extending Skills
-
-Add domain-specific knowledge:
-
-**Example:** Add retail-specific context to VOC synthesis:
-```markdown
-## Retail-Specific VOC Patterns
-
-Look for these retail themes:
-- Assortment gaps (missing products)
-- Catalog quality (attribute completeness)
-- Supplier onboarding friction
-- Pricing competitiveness
-```
-
-## Common Workflows
-
-### Daily Routine
-
-```
-/ktlo              # 10 min: Triage support backlog
-/voc               # 10 min: Synthesize customer feedback
-/exec-update       # 10 min: Generate stakeholder update
-```
-
-### Planning a Quarter
-
-```
-1. Refresh foundation outputs (if stale)
-2. /charters       # Generate strategic bets
-3. Review with stakeholders
-4. Refine and re-run /charters
-5. Write PRDs from charters
-```
-
-### Launching a Product
-
-```
-1. /stakeholders   # Map key players
-2. /gtm            # Create launch plan
-3. Execute launch
-4. /review         # 30 days post-launch retrospective
-```
-
-## Common Issues
-
-### Issue: "Skill not found"
-
-**Problem:** Trying to invoke a skill that doesn't exist.
-
-**Solution:**
-1. Check available skills: `ls skills/`
-2. Verify skill name matches directory name
-3. Check if there's a command shortcut: `ls commands/`
-
-### Issue: "Skill ran but no output"
-
-**Problem:** Skill completed but output file missing.
-
-**Solution:**
-1. Check if inputs exist (skills need source data)
-2. Review error messages in skill execution
-3. Verify outputs/ directory exists
-4. Check if skill expects specific input format
-
-### Issue: "Output doesn't match my needs"
-
-**Problem:** Generated output isn't quite right for your workflow.
-
-**Solution:**
-1. Modify the skill file to fit your needs
-2. Add/remove sections in `SKILL.md`
-3. Re-run the skill with modifications
-4. Version control your customizations
-
-### Issue: "Learning system isn't updating skills"
-
-**Problem:** Patterns extracted but skills not using them.
-
-**Solution:**
-1. Check `.claude/rules/learned/` for pattern files
-2. Verify patterns are auto-loaded (they should be)
-3. Restart session to reload rules
-4. Learning improves future runs, not retroactively
-
-## Best Practices
-
-1. **Use skills consistently** - Don't reinvent workflows
-2. **Customize to fit** - Adapt skills to your domain
-3. **Track improvements** - Note what works, update skills
-4. **Share patterns** - Commit skill modifications to team repo
-5. **Version control** - Track skill evolution over time
+4. **Optional: Add command**: Create command file for `/my-skill` shortcut
 
 ## Integration with PM OS
 
 ```
-┌──────────┐
-│ Commands │ ← Quick shortcuts
-└────┬─────┘
-     │
-     ▼
-┌──────────┐
-│  Skills  │ ← Reusable PM workflows
-└────┬─────┘
-     │
-     ├────► Read inputs/
-     │
-     ├────► Generate outputs/
-     │
-     ├────► Copy to history/
-     │
-     └────► Update nexa/state.json + outputs/audit/auto-run-log.md
+┌─────────────────────┐
+│ Conversational      │ <- Preferred invocation
+│ Intent              │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Session Guardrails  │ <- Auto-applied rules
+│ (Routing + Hygiene) │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│     Skills          │ <- Reusable PM workflows
+└──────────┬──────────┘
+           │
+           ├────► Read inputs/
+           │
+           ├────► Generate outputs/
+           │
+           ├────► Auto-mirror to history/
+           │
+           └────► Update nexa/state.json + audit log
 ```
 
 **See also:**
-- [commands/README.md](../commands/README.md) - Command shortcuts
-- [outputs/README.md](../outputs/README.md) - Understanding results
 - [Main README](../README.md) - Getting started guide
+- [docs/GETTING_STARTED.md](../docs/GETTING_STARTED.md) - Onboarding

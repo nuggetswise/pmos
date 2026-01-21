@@ -18,7 +18,7 @@ commands/
 ├── stakeholders.md   # /stakeholders → stakeholder-management skill
 ├── gtm.md            # /gtm → planning-gtm-launch skill
 ├── strategy.md       # /strategy → writing-product-strategy skill
-├── review.md         # /review → reviewing-launch-outcomes skill
+├── review.md         # /review → learn --launch skill
 ├── brainstorm.md     # /brainstorm → brainstorming skill
 ├── execute-plan.md   # /execute-plan → executing-plans skill
 └── write-plan.md     # /write-plan → writing-plans skill
@@ -53,7 +53,7 @@ commands/
 | `/stakeholders` | stakeholder-management | Map stakeholders | ~30 min |
 | `/gtm` | planning-gtm-launch | Create GTM launch plan | ~60 min |
 | `/strategy` | writing-product-strategy | Write product strategy | ~90 min |
-| `/review` | reviewing-launch-outcomes | Post-launch retrospective | ~45 min |
+| `/review` | learn --launch | Post-launch retrospective | ~45 min |
 
 ### Planning Commands
 

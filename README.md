@@ -16,6 +16,7 @@ PM OS is a **file-based workflow system** that:
 - Tracks dependencies (know when outputs need refreshing)
 - Learns from history (extracts success/failure patterns over time)
 - Provides senior PM coverage (stakeholder mapping, GTM, strategy, reviews)
+- **[AG3]** Communication Engine for executive presence (storytelling, crisis/vision modes)
 
 **Why file-based?** No database, no server, no API - just files, skills, and Claude Code. Works offline, version controlled, shareable.
 
@@ -229,7 +230,7 @@ Use `outputs/audit/auto-run-log.md` and output timestamps to verify freshness be
 | `inputs/` | Source files (Jira, VOC, docs) | [inputs/README.md](inputs/README.md) |
 | `outputs/` | Current work products | [outputs/README.md](outputs/README.md) |
 | `history/` | Versioned output trail | [history/README.md](history/README.md) |
-| `skills/` | PM workflow library (17 skills) | [skills/README.md](skills/README.md) |
+| `skills/` | PM workflow library (15 skills) | [skills/README.md](skills/README.md) |
 | `commands/` | Quick shortcuts (11 commands) | [commands/README.md](commands/README.md) |
 | `.claude/` | Configuration & rules | [.claude/README.md](.claude/README.md) |
 
@@ -344,7 +345,7 @@ Every output follows these rules:
 | Task | Invoke | Output |
 |------|--------|--------|
 | Build product understanding | "Run building-truth-base" | outputs/truth_base/ |
-| Find KB gaps | "Run analyzing-kb-gaps" | outputs/insights/ |
+| Find KB gaps | "Run analyze --kb" | outputs/insights/ |
 | Write a PRD | "Run writing-prds-from-charters for [charter]" | outputs/delivery/ |
 | Prioritize work | "Run prioritizing-work" | outputs/roadmap/ |
 
@@ -513,6 +514,27 @@ Beyond IC-level (VOC, KTLO, charters, PRDs) to Senior PM:
 - Post-launch retrospectives (`/review`)
 
 **See:** [skills/README.md](skills/README.md#senior-pm-skills)
+
+### 5. Communication Engine (AG3)
+
+Executive presence capabilities for high-stakes situations:
+
+| Capability | Usage | What It Does |
+|------------|-------|--------------|
+| **Storytelling** | `--story-mode` | Context → Conflict → Resolution narrative |
+| **Crisis Mode** | `--mode crisis` | Calm, accountable, action-oriented tone |
+| **Vision Mode** | `--mode vision` | Inspiring, future-focused tone |
+| **Objection Handling** | `/reframe <objection>` | LAAR framework response |
+| **Bridge & Pivot** | `/pivot <curveball>` | ABC framework for curveballs |
+
+**Example:**
+```
+/exec-update --mode crisis
+/charters --story-mode --mode vision
+/reframe "The timeline is too aggressive"
+```
+
+**See:** [docs/AG3-architecture.md](docs/AG3-architecture.md) for full AG3 roadmap
 
 ---
 

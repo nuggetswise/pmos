@@ -3,4 +3,4 @@ description: "Review launch outcomes, analyze what worked/failed, and extract le
 disable-model-invocation: false
 ---
 
-Read and follow skills/reviewing-launch-outcomes/SKILL.md exactly as presented.
+Read and follow skills/learn/SKILL.md (--launch mode) exactly as presented.
