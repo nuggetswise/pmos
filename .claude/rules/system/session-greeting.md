@@ -35,7 +35,7 @@ The greeting reads from these sources:
 
 | Source | Data Extracted |
 |--------|----------------|
-| `nexa/state.json` | Daemon status, phase, current job, next action |
+| `nexa/state.json` | Daemon status, current job, next action |
 | `inputs/context/projects.md` | Active Initiatives table |
 | `inputs/context/challenges.md` | Active Blockers table |
 | `inputs/context/compass.md` | Mission, goals |
@@ -98,7 +98,6 @@ The learning loop is fully automated:
 📈 Output Quality: [avg]/5 [trend] ([N] ratings)
 
 🤖 Daemon: [status from state.json]
-🔄 Mode: [phase from state.json]
 📥 Current: [current_job or "idle"]
 📝 Latest: [brief.latest_delta or "none"]
 ➡️  Next: [next_action from state.json]
@@ -120,15 +119,6 @@ A new session is detected when:
 
 **Do NOT repeat greeting mid-conversation** - only at true session start.
 
-## Next Actions by Phase
-
-| Phase | Recommended Actions |
-|-------|---------------------|
-| OBSERVE | building-truth-base, synthesizing-voc, triaging-ktlo |
-| THINK | analyze --kb, competitive-analysis |
-| PLAN | generating-quarterly-charters, prioritizing-work |
-| BUILD | writing-prds-from-charters, verification-before-completion |
-
 ## Example Greetings
 
 ### Standard Greeting
@@ -141,7 +131,6 @@ A new session is detected when:
 📈 Output Quality: 4.2/5 ↑ (8 ratings)
 
 🤖 Daemon: stopped
-🔄 Mode: OBSERVE
 📥 Current: idle
 📝 Latest: none
 ➡️  Next: Run 'pm-os scan' to scan for new documents
@@ -166,7 +155,6 @@ Ready for your request.
 📈 Output Quality: 4.5/5 → (5 ratings)
 
 🤖 Daemon: running (hb: 2m ago)
-🔄 Mode: OBSERVE
 📥 Current: ingest (running)
 📝 Latest: Processed 3 customer feedback docs
 ➡️  Next: Run synthesizing-voc to analyze feedback

@@ -70,9 +70,14 @@ duration: [X] minutes
 
 ## Output Ratings
 
+**IMPORTANT: Only include ratings explicitly provided by the user during this session.**
+**NEVER self-assign ratings. Nexa does not rate its own work.**
+
 | Output | Rating | Feedback |
 |--------|--------|----------|
-| [file] | [1-5 or N/A] | [User comment if provided] |
+| [file] | [user-provided 1-5] | [User comment if provided] |
+
+**If no user-provided ratings this session:** Write "No outputs were rated by user this session"
 
 **Quality Trend:**
 - [If ratings exist: "Session avg: X/5, Overall avg: Y/5"]
@@ -94,9 +99,7 @@ duration: [X] minutes
 
 ## Session Metadata
 
-**Algorithm Phase at End:** [OBSERVE/THINK/PLAN/BUILD/VERIFY/LEARN]
-
-**Next Recommended Action:** [From nexa/state.json]
+**Next Recommended Action:** [From nexa/state.json or based on open items]
 
 **Files Modified:** [Count]
 

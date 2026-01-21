@@ -1,229 +1,93 @@
-# Decision Algorithm Enforcement
+# PM Decision Algorithm (Mental Model)
 
 ## Purpose
 
-Enforces the OBSERVE → THINK → PLAN → BUILD → EXECUTE → VERIFY → LEARN loop by:
-1. Tracking current phase in session state
-2. Checking prerequisites before running skills
-3. Recommending next skills based on current phase
+Describes the iterative PM workflow as a mental model. This is a **conceptual framework**, not an enforcement system.
 
-## Phase Definitions
+**Key change (2026-01-21):** Phases are no longer tracked or enforced. Skills use conversational context-gathering instead. See `.claude/rules/pm-core/context-gathering.md`.
 
-| Phase | Skills | Prerequisites | Outputs |
-|-------|--------|---------------|---------|
-| **OBSERVE** | discovery, building-truth-base, synthesizing-voc, triaging-ktlo | None (entry point) | doc-analysis.md, signals.md, truth-base.md, voc-synthesis.md, ktlo-triage.md |
-| **THINK** | analyze --kb, brainstorming, competitive-analysis | At least 1 OBSERVE output | insights/*.md |
-| **PLAN** | generating-quarterly-charters, prioritizing-work | Truth base OR VOC synthesis | charters.md, priorities.md |
-| **BUILD** | writing-prds-from-charters | Charter exists | prds/*.md |
-| **EXECUTE** | *(Engineering handoff - not PM OS controlled)* | PRD exists | - |
-| **VERIFY** | verification-before-completion | Output to verify | Verified output |
-| **LEARN** | learn --decision, learn --launch, learn --patterns | Completed work to learn from | decisions/*.md, reviews/*.md, learned/*.md |
-
-## Prerequisite Checks
-
-Before running any skill, check prerequisites:
-
-### OBSERVE Phase Skills
-```
-discovery:
-  REQUIRES: None (entry point for new PMs)
-  RECOMMEND: "Run before building-truth-base for better context"
-  MODES:
-    --analyze-docs: Reads outputs/ingest/ and inputs/
-    --prep [role]: Reads existing discovery outputs
-    --synthesize: Reads all discovery + VOC inputs
-
-building-truth-base:
-  REQUIRES: None (entry point)
-  RECOMMEND: "Consider running discovery first if you have inherited documents"
-
-synthesizing-voc:
-  REQUIRES: inputs/voc/*.md (interview notes, feedback)
-  IF MISSING: "Add VOC sources to inputs/voc/ or run /discover --prep first"
-
-triaging-ktlo:
-  REQUIRES: inputs/jira/*.csv or similar ticket export
-  IF MISSING: "Export Jira tickets to inputs/jira/"
-```
-
-### THINK Phase Skills
-```
-analyze --kb:
-  REQUIRES: outputs/truth_base/truth-base.md OR outputs/insights/voc-synthesis-*.md
-  IF MISSING: "Run building-truth-base or synthesizing-voc first (OBSERVE phase)"
-
-analyze --data:
-  REQUIRES: inputs/data/*.csv or *.xlsx files
-  IF MISSING: "Add data files to inputs/data/"
-
-brainstorming:
-  REQUIRES: None (can brainstorm anytime, but better with context)
-  RECOMMEND: "Consider running synthesizing-voc first for customer grounding"
-
-competitive-analysis:
-  REQUIRES: outputs/truth_base/truth-base.md
-  IF MISSING: "Run building-truth-base first to understand your product before comparing"
-```
-
-### PLAN Phase Skills
-```
-generating-quarterly-charters:
-  REQUIRES:
-    - outputs/truth_base/truth-base.md (OBSERVE)
-    - OR outputs/insights/voc-synthesis-*.md (OBSERVE)
-    - OR outputs/ktlo/ktlo-triage-*.md (OBSERVE)
-  IF ALL MISSING: "Run at least one OBSERVE skill first: building-truth-base, synthesizing-voc, or triaging-ktlo"
-  RECOMMEND: "Best results with all three OBSERVE outputs"
-
-prioritizing-work:
-  REQUIRES: Work items to prioritize (KTLO triage or charters)
-  IF MISSING: "Run triaging-ktlo or generating-quarterly-charters first"
-```
-
-### BUILD Phase Skills
-```
-writing-prds-from-charters:
-  REQUIRES: outputs/roadmap/*-charters.md
-  IF MISSING: "Run generating-quarterly-charters first (PLAN phase). PRDs must trace to charters."
-  HARD BLOCK: Cannot proceed without charter
-```
-
-### LEARN Phase Skills
-```
-learn --decision:
-  REQUIRES: Decision to track (none - can run anytime)
-  RECOMMEND: "Document decisions as they happen, not retroactively"
-
-learn --launch:
-  REQUIRES: Completed launch to review (GTM plan or charter exists)
-  RECOMMEND: "Run 30/60/90 days after launch for meaningful retrospective"
-
-learn --patterns:
-  REQUIRES: 5+ outputs in history/ for the skill being analyzed
-  IF MISSING: "Not enough history to extract patterns. Keep using PM OS and try again later."
-```
-
-## Phase Tracking in State
-
-Update `nexa/state.json` to reflect algorithm phase:
-- `phase`: OBSERVE / THINK / PLAN / BUILD / VERIFY / LEARN
-- `next_action`: recommended next skill or remediation
-
-## Enforcement Behavior
-
-### Before Running Any Skill
-
-1. Check prerequisites for the skill
-2. If prerequisites not met:
-   - **Soft block (THINK, LEARN):** Warn but allow override: "Missing [output]. Recommended to run [skill] first. Continue anyway?"
-   - **Hard block (BUILD):** Refuse: "Cannot run writing-prds-from-charters without a charter. Run generating-quarterly-charters first."
-3. Update session state with current phase
-
-### After Running Any Skill
-
-1. Update session state:
-   - Current Phase: [new phase based on skill completed]
-   - Completed Phases: [add to list]
-   - Recommended Next: [suggest next skill in loop]
-2. Show phase progress:
-   ```
-   ✅ OBSERVE complete (truth base, VOC, KTLO)
-   ✅ THINK complete (competitive analysis)
-   ▶️ PLAN in progress (charters: 2 of 3 bets defined)
-   ⏳ BUILD waiting (PRDs pending charters)
-   ```
-
-## Recommended Skill by Phase
-
-When user asks "What's next?" or runs `/status`:
-
-| Current Phase | Recommended Next | Why |
-|---------------|------------------|-----|
-| None (new PM) | OBSERVE: discovery | Analyze inherited docs, prep interviews |
-| None (established) | OBSERVE: building-truth-base | Start with product understanding |
-| OBSERVE done | THINK: analyze --kb | Generate insights from observations |
-| THINK done | PLAN: generating-quarterly-charters | Define strategic bets |
-| PLAN done | BUILD: writing-prds-from-charters | Turn bets into specs |
-| BUILD done | VERIFY: verification-before-completion | Validate the PRD |
-| VERIFY done | LEARN: learn --decision | Document what you learned |
-| LEARN done | OBSERVE: (new cycle) | Start fresh with new data |
-
-## Phase Transitions
+## The Loop (Conceptual)
 
 ```
-               ┌────────────────────────────────────────────┐
-               │                                            │
-               ▼                                            │
-    ┌──────────────────┐                                    │
-    │     OBSERVE      │ ◀── Entry point (building-truth-base, VOC, KTLO)
-    └────────┬─────────┘                                    │
-             │                                              │
-             ▼                                              │
-    ┌──────────────────┐                                    │
-    │      THINK       │ ◀── Requires OBSERVE output        │
-    └────────┬─────────┘                                    │
-             │                                              │
-             ▼                                              │
-    ┌──────────────────┐                                    │
-    │      PLAN        │ ◀── Requires OBSERVE or THINK      │
-    └────────┬─────────┘                                    │
-             │                                              │
-             ▼                                              │
-    ┌──────────────────┐                                    │
-    │      BUILD       │ ◀── HARD REQUIRES charter (PLAN)   │
-    └────────┬─────────┘                                    │
-             │                                              │
-             ▼                                              │
-    ┌──────────────────┐                                    │
-    │     VERIFY       │ ◀── Requires output to verify      │
-    └────────┬─────────┘                                    │
-             │                                              │
-             ▼                                              │
-    ┌──────────────────┐                                    │
-    │      LEARN       │────────────────────────────────────┘
-    └──────────────────┘     (feeds back to OBSERVE)
+┌─────────────────────────────────────────────────────────────┐
+│                    ITERATE until ideal state               │
+│                                                             │
+│    OBSERVE ──▶ THINK ──▶ PLAN ──▶ BUILD ──▶ EXECUTE        │
+│        ▲                                        │          │
+│        │                                        ▼          │
+│    LEARN ◀────────────── VERIFY ◀──────────────┘          │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-## Integration with Session Greeting
+This loop represents how PM work typically flows, but:
+- Work is often non-linear
+- You may skip or repeat phases
+- Context matters more than phase order
 
-In the Nexa greeting, show algorithm phase:
+## Skill Categories (Reference Only)
 
-```
-👋 Nexa here - PM OS ready.
+These categories help users understand what skills do, not to enforce order:
 
-📚 Loaded: 12 rules, 15 skills
+| Category | Skills | Typical Use |
+|----------|--------|-------------|
+| **Discovery** | discovery, building-truth-base, synthesizing-voc, triaging-ktlo | Understanding product/customers |
+| **Analysis** | analyze --kb, brainstorming, competitive-analysis | Generating insights |
+| **Planning** | generating-quarterly-charters, prioritizing-work | Defining what to build |
+| **Execution** | writing-prds-from-charters | Specifying how to build |
+| **Learning** | learn --decision, learn --launch, learn --patterns | Capturing knowledge |
 
-🔄 Algorithm Phase: PLAN
-   ✅ OBSERVE: truth base, VOC synthesis, KTLO triage
-   ✅ THINK: competitive analysis
-   ▶️ PLAN: Q1 charters (2/3 bets defined)
-   ⏳ BUILD: waiting for charters
+## Context Suggestions (Not Requirements)
 
-   Recommended: Finish charters, then run writing-prds-from-charters
+Skills work better with certain context, but users decide what's relevant:
 
-🔥 Active: Q1-2026-charters.md (hot, review by 2026-01-24)
-⚠️ Needs attention: None
+| Skill | Suggested Context | Why |
+|-------|-------------------|-----|
+| `/prd` | Charters, VOC, truth base | PRDs benefit from strategic context |
+| `/charters` | VOC, KTLO, truth base | Charters synthesize multiple inputs |
+| `/voc` | Raw interview notes | VOC needs customer voice |
+| `/compete` | Truth base, market research | Needs product baseline |
+| `/strategy` | Everything available | Strategy builds on all context |
 
-Ready for your request.
-```
+**Nexa asks what context to use** via the context-gathering protocol. Users are not blocked.
 
-## Override Protocol
+## What Changed
 
-User can override soft blocks by saying:
-- "Run [skill] anyway"
-- "Skip prerequisites"
-- "I understand the risk"
+### Old Model (Removed)
+- Phase field tracked in `nexa/state.json`
+- Hard blocks: "Cannot run /prd without charter"
+- Soft blocks: "Missing VOC, continue anyway?"
+- Phase transitions: "Advance to THINK?"
 
-Hard blocks (BUILD without PLAN) cannot be overridden - the output wouldn't make sense without prerequisites.
+### New Model (Current)
+- No phase tracking
+- No blocking
+- Skills ask: "What context should I use?"
+- User decides what's relevant
 
-## Why This Matters
+See `.claude/rules/pm-core/context-gathering.md` for the new protocol.
 
-Without enforcement:
-- PRDs get written without charters → scope creep, no traceability
-- Charters get written without VOC → bets disconnected from customer reality
-- Analysis happens without truth base → insights based on assumptions
+## Why This Changed
 
-With enforcement:
-- Every output traces back to evidence
-- PM loop is verifiable end-to-end
-- "How did we get here?" is always answerable
+> "VOC or truth base might not always be OBSERVE. This conversation doesn't fall into either. How would Nexa know which phase we're in?" - User
+
+The phase system assumed:
+1. Work fits neatly into phases (it doesn't)
+2. Nexa can detect what phase you're in (it can't)
+3. Blocking helps quality (it frustrates users)
+
+The new model:
+1. Recognizes work is non-linear
+2. Asks users what context they want
+3. Respects user agency
+
+## When to Reference This
+
+Use this document when:
+- Explaining the PM workflow to new users
+- Understanding how skills relate to each other
+- Thinking about what context might help a skill
+
+**Do NOT use this document for:**
+- Blocking skill execution
+- Tracking phase in state
+- Automated phase transitions

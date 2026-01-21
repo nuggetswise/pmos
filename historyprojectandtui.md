@@ -63,7 +63,7 @@ These features will be developed sequentially.
 ### Phase 2.1: Scaffolding and Technology Selection
 
 *   **Task 2.1.1: Choose and Integrate a TUI Framework**
-    *   **Action:** Select **`Ink`** as the TUI framework and add it to `nexa/package.json`.
+    *   **Action:** Select **Ink** (`https://github.com/vadimdemedes/ink`) as the TUI framework and add it to `nexa/package.json`.
 
 *   **Task 2.1.2: Create the TUI Application Entry Point**
     *   **Action:** Create the `pm-os ui` command to launch the TUI application (`nexa/src/ui.tsx`).
@@ -101,7 +101,7 @@ These features will be developed sequentially.
 
 ---
 
-## 4. Phase 4: Onboarding and Documentation
+## 4. Onboarding and Documentation
 
 **Objective:** To create a simple and reliable installation process for new users on all major operating systems.
 
@@ -124,4 +124,32 @@ These features will be developed sequentially.
         4.  **Link Command:** `npm link` (from within the `nexa` directory).
         5.  **Initialize:** `pm-os setup`
     *   **Requirement:** The guide must include notes for Windows users where necessary to ensure a smooth setup experience.
+
+---
+
+## Appendix: Impact and Refactoring Strategy
+
+This appendix clarifies how the major impacts identified in the initial analysis will be addressed by the tasks in this plan.
+
+### A.1 Core Logic Refactoring (`nexa/src/`)
+
+*   **Impact:** The current core application logic assumes the project is the current working directory. This is the highest-risk area of the refactoring.
+*   **Action Plan:**
+    *   **Task 1.1.2** (`Implement Active Project State`) and **Task 1.3.1** (`Refactor Existing Commands`) explicitly cover this.
+    *   A dedicated service or module will be created within `nexa/src` to manage the project context. This module will be responsible for reading `~/.claude/state.json` and providing the `active_project_path` to the rest of the application.
+    *   All file system access will be refactored to use this new service, removing all reliance on `process.cwd()`.
+
+### A.2 AI System Refactoring (`skills/` & `.claude/rules/`)
+
+*   **Impact:** All skill prompts and potentially some rules assume a single project context.
+*   **Action Plan:**
+    *   **Task 1.2.3** (`Update Core Prompting Logic`) directly addresses the modification of all `skills/**/SKILL.md` files to ensure they load both the local project context and the new global knowledge base.
+    *   During **Phase 1.3** (`Integration and Verification`), a specific review of all `.claude/rules/` will be conducted to identify and update any rules that contain hardcoded paths or brittle, single-project assumptions.
+
+### A.3 Documentation (`README.md`, etc.)
+
+*   **Impact:** Existing documentation will become outdated.
+*   **Action Plan:**
+    *   **Task 4.2** (`Create GETTING_STARTED.md`) covers the creation of the primary new user documentation.
+    *   A final action item within **Phase 4** will be to review and update the root `README.md` and any other key documentation to reflect the new multi-project architecture and point users to the new `GETTING_STARTED.md` guide.
 
