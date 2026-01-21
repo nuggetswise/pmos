@@ -106,10 +106,10 @@ See `.claude/rules/pm-core/post-skill-reflection.md` for full protocol.
 6. **Report capture completion** - Notify user: "📝 Captured learnings: [N] insights, [N] beads"
 
 **This is NON-NEGOTIABLE for:**
-- `generating-quarterly-charters` (PLAN phase)
-- `writing-prds-from-charters` (BUILD phase)
-- `writing-product-strategy` (strategic)
-- `competitive-analysis` (strategic)
+- `generating-quarterly-charters` (planning skill)
+- `writing-prds-from-charters` (execution skill)
+- `writing-product-strategy` (strategic skill)
+- `competitive-analysis` (strategic skill)
 
 **Why this matters:**
 - Without capture: Same insights re-discovered session after session, patterns invisible, quality not measurable

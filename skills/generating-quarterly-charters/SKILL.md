@@ -76,15 +76,28 @@ Produces engineering-focused summary:
 
 ## Core Pattern
 
-**Step 1: Gather Upstream Outputs**
+**Step 1: Gather Context**
 
-Read all available:
-- `outputs/truth_base/truth-base.md` - Product understanding
-- `outputs/insights/voc-synthesis-*.md` - Customer signals
-- `outputs/ktlo/ktlo-triage-*.md` - Operational burden
-- `outputs/insights/kb-gaps-*.md` - Documentation gaps
+Follow protocol in `.claude/rules/pm-core/context-gathering.md`:
 
-**If key inputs are missing or stale, report and ask user to refresh first.**
+1. **Detect available inputs** in outputs/ and inputs/:
+   - `outputs/truth_base/truth-base.md` - Product understanding
+   - `outputs/insights/voc-synthesis-*.md` - Customer signals
+   - `outputs/ktlo/ktlo-triage-*.md` - Operational burden
+   - `outputs/insights/kb-gaps-*.md` - Documentation gaps
+   - `inputs/voc/*.md` - Raw interview notes
+   - `inputs/context/*.md` - COMPASS context files
+
+2. **Present options to user** via AskUserQuestion:
+   - List each relevant file found with brief description
+   - Include option: "Point me to another document"
+   - Include option: "Describe what you need"
+
+3. **Read `.beads/insights.jsonl`** for relevant learnings from past charters
+
+4. **Proceed with selected context**
+
+**If user skips/describes:** Use their description as context, mark claims as Assumption in Claims Ledger.
 
 **Step 2: Synthesize Signals**
 

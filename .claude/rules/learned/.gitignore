@@ -1,0 +1,3 @@
+# Learned rules are user-specific and should not be version controlled
+*
+!.gitignore

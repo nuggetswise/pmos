@@ -18,12 +18,29 @@ A structured protocol for researching competitors that requires source attributi
 
 ## Core Pattern
 
-**Step 1: Define Scope**
+**Step 1: Gather Context**
 
-Gather from user:
-- List of competitors to analyze (or ask for suggestions)
-- Specific dimensions to compare (features, pricing, positioning, target market)
-- Purpose of analysis (inform roadmap, sales enablement, investor deck)
+Follow protocol in `.claude/rules/pm-core/context-gathering.md`:
+
+1. **Detect available inputs** in outputs/ and inputs/:
+   - `outputs/truth_base/truth-base.md` - Our product baseline
+   - `outputs/roadmap/*.md` - Current strategic direction
+   - `inputs/context/compass.md` - Mission and goals
+   - Any existing competitive analyses in `outputs/insights/`
+
+2. **Present options to user** via AskUserQuestion:
+   - List each relevant file found with brief description
+   - Ask: "Which competitors should I analyze?"
+   - Ask: "What dimensions to compare?" (features, pricing, positioning, market)
+   - Ask: "What's the purpose?" (roadmap, sales, investor deck)
+   - Include option: "Point me to another document"
+   - Include option: "Describe what you need"
+
+3. **Read `.beads/insights.jsonl`** for relevant learnings from past competitive analyses
+
+4. **Proceed with selected context and user-provided scope**
+
+**If user skips/describes:** Use their description as context, mark claims as Assumption in Claims Ledger.
 
 **Step 2: Research Protocol**
 

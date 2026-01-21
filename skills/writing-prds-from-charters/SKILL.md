@@ -87,13 +87,27 @@ Produces engineering-focused spec:
 
 ## Core Pattern
 
-**Step 1: Load the Charter**
+**Step 1: Gather Context**
 
-Read the specific charter from `outputs/roadmap/Qx-YYYY-charters.md`.
+Follow protocol in `.claude/rules/pm-core/context-gathering.md`:
 
-Also read:
-- Any relevant VOC from `outputs/insights/voc-synthesis-*.md`
-- Any relevant KB from `inputs/knowledge_base/`
+1. **Detect available inputs** in outputs/ and inputs/:
+   - `outputs/roadmap/Qx-YYYY-charters.md` - Quarterly charters
+   - `outputs/insights/voc-synthesis-*.md` - VOC synthesis
+   - `outputs/truth_base/truth-base.md` - Product understanding
+   - `inputs/knowledge_base/` - Knowledge base articles
+   - `inputs/voc/*.md` - Raw customer feedback
+
+2. **Present options to user** via AskUserQuestion:
+   - List each relevant charter/VOC/truth base file found
+   - Include option: "Point me to another document"
+   - Include option: "Describe what you need"
+
+3. **Read `.beads/insights.jsonl`** for relevant learnings from past PRDs
+
+4. **Proceed with selected context**
+
+**If user skips/describes:** Use their description as context, mark claims as Assumption in Claims Ledger.
 
 **Step 2: Validate Charter Completeness**
 
@@ -317,8 +331,56 @@ downstream: []
 
 **Step 8: Copy to History & Update Tracker**
 
-- Copy to `history/writing-prds-from-charters/[name]-prd-YYYY-MM-DD.md`
+- Run `pm-os mirror --quiet` to copy to `history/writing-prds-from-charters/[name]-prd-YYYY-MM-DD.md`
 - Update `nexa/state.json` and append to `outputs/audit/auto-run-log.md`
+
+**Step 9: Post-Skill Reflection (MANDATORY)**
+
+Follow protocol in `.claude/rules/pm-core/post-skill-reflection.md`:
+
+1. **Extract key learnings** (3-5 insights):
+   - What requirements were clearest vs most ambiguous?
+   - What edge cases were hardest to specify?
+   - How well did telemetry map to success metrics?
+   - What rollout challenges were identified?
+   - Connections to past PRDs?
+
+2. **Create learning entry:**
+   - Write to `history/learnings/YYYY-MM-DD-writing-prds-from-charters.md`
+   - Use template from post-skill-reflection rule
+
+3. **Create insight beads:**
+   - For each significant, reusable insight
+   - Append to `.beads/insights.jsonl`
+   - Types: insight (new learning), pattern (recurring theme), question (raised)
+
+4. **Request output rating:**
+   ```
+   Rate this PRD (1-5, or 'skip'):
+   1 - Needs major revision
+   2 - Below expectations
+   3 - Meets expectations
+   4 - Exceeds expectations
+   5 - Outstanding, exactly what I needed
+   ```
+   - If rated: Create output-rating bead
+   - Capture any qualitative feedback
+
+5. **Detect decisions:**
+   - PRD creation = high confidence decision
+   - Auto-log: "Converted charter [name] to PRD with [N] requirements"
+   - Write to `outputs/decisions/YYYY-MM-DD-prd-[charter-name].md`
+
+6. **Report completion:**
+   ```
+   ✅ PRD complete → outputs/delivery/prds/[name]-prd.md
+      Mirrored to history/writing-prds-from-charters/[name]-prd-YYYY-MM-DD.md
+
+   📝 Captured learnings: [N] insights, [N] beads → history/learnings/YYYY-MM-DD-writing-prds-from-charters.md
+   📋 Logged decision: PRD for [charter name] → outputs/decisions/
+
+   Rate this PRD (1-5, or 'skip'): [prompt for rating]
+   ```
 
 ## Quick Reference
 
