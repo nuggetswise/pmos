@@ -5,6 +5,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import * as url from 'url';
+
+export const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 /**
  * Compute SHA-256 hash of file contents
@@ -127,9 +130,34 @@ export function getProjectRoot(): string {
   return path.resolve(__dirname, '..', '..');
 }
 
+
 /**
  * Resolve path relative to project root
  */
 export function resolveProjectPath(relativePath: string): string {
   return path.resolve(getProjectRoot(), relativePath);
+}
+
+/**
+ * Recursively find files created after a given date.
+ */
+export async function findFilesAfter(dirPath: string, startDate: Date): Promise<string[]> {
+  let results: string[] = [];
+  try {
+    const dirents = await fs.promises.readdir(dirPath, { withFileTypes: true });
+    for (const dirent of dirents) {
+      const res = path.resolve(dirPath, dirent.name);
+      if (dirent.isDirectory()) {
+        results = results.concat(await findFilesAfter(res, startDate));
+      } else {
+        const stats = await fs.promises.stat(res);
+        if (stats.mtime > startDate) {
+          results.push(res);
+        }
+      }
+    }
+  } catch (error) {
+    // Ignore errors from missing directories, etc.
+  }
+  return results;
 }

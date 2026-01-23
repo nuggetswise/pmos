@@ -45,6 +45,18 @@ These might be decisions - ask before logging:
 | Completed multi-step task | "Finished implementing Option D" |
 | Changed direction mid-task | "Actually, let's do X instead" |
 
+**Planning & Analysis Triggers (also Medium Confidence):**
+
+| Trigger | Example |
+|---------|---------|
+| Planning conversation >15 min | "Create the Phase 1 implementation plan" |
+| Read 5+ files for analysis | "Read these rules to find coverage gaps" |
+| Strategic discussion with options | "Here are 3 approaches: Option A vs B vs C" |
+| Architectural analysis | "Analyzing the capture system architecture" |
+| Protocol design | "Designing continuous capture for conversations" |
+
+**Prompt for planning:** "This planning discussion generated architectural insights. Log as decision?"
+
 **Behavior:** Ask user with simple prompt:
 ```
 This looks like a trackable decision: [brief description]

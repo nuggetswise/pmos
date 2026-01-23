@@ -7,7 +7,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as XLSX from 'xlsx';
-import { ExtractionResult } from '../types';
+import { ExtractionResult } from '../types.js';
 
 /**
  * Extract text from CSV files

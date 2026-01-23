@@ -10,17 +10,23 @@
  *   search  - Search filenames/paths and full text
  *   mirror  - Copy outputs to history/
  *   learn   - Analyze history and write learned rules
+ *   summarize-session - Generate a draft session summary
+ *   session-start - Record the start of a session
  *   init    - Initialize state.json
  */
 
-import { loadState, updateState, setNextAction, setCurrentJob, completeCurrentJob, logError } from './state';
-import { getFilesToProcess } from './scanner';
-import { ingestFiles } from './ingest';
-import { startWatch } from './watch';
-import { relativeTime, truncate, generateJobId, isoNow } from './utils';
-import { runSearch } from './search';
-import { mirrorOutputsToHistory } from './mirror';
-import { runLearning, runLearningAuto } from './learn';
+import { loadState, updateState, setNextAction, setCurrentJob, completeCurrentJob, logError } from './state.js';
+import { getFilesToProcess } from './scanner.js';
+import { ingestFiles } from './ingest.js';
+import { startWatch } from './watch.js';
+import { relativeTime, truncate, generateJobId, isoNow } from './utils.js';
+import { runSearch } from './search.js';
+import { mirrorOutputsToHistory } from './mirror.js';
+import { runLearning, runLearningAuto } from './learn.js';
+import { summarizeSession } from './summarize.js';
+import { render } from 'ink';
+import React from 'react';
+import App from './ui.js';
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
@@ -52,8 +58,20 @@ async function main(): Promise<void> {
       await runLearn(args.slice(1));
       break;
 
+    case 'summarize-session':
+      await runSummarize();
+      break;
+
+    case 'session-start':
+      await runSessionStart();
+      break;
+
     case 'init':
       await initState();
+      break;
+
+    case 'ui':
+      await runUi();
       break;
 
     case 'help':
@@ -188,6 +206,36 @@ async function runLearn(args: string[]): Promise<void> {
   }
 }
 
+async function runSummarize(): Promise<void> {
+  const jobId = generateJobId('summarize');
+  await setCurrentJob('summarize', jobId, ['session']);
+  try {
+    await summarizeSession(jobId);
+    await completeCurrentJob(true);
+    await setNextAction('Review draft session summary in history/sessions/');
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+    await logError({
+      timestamp: isoNow(),
+      job_id: jobId,
+      source_path: 'session',
+      error_message: errorMsg,
+    });
+    await completeCurrentJob(false);
+    throw error;
+  }
+}
+
+async function runSessionStart(): Promise<void> {
+  await updateState({ session_start_time: isoNow() });
+  console.log(`Session start time recorded: ${isoNow()}`);
+}
+
+async function runUi(): Promise<void> {
+  const { waitUntilExit } = render(React.createElement(App));
+  await waitUntilExit();
+}
+
 /**
  * Print status (5-line brief)
  */
@@ -259,7 +307,10 @@ Commands:
   search    Search filenames/paths and full text
   mirror    Copy outputs to history/
   learn     Analyze history and write learned rules
+  summarize-session  Generate a draft session summary
+  session-start    Record the start of a session
   init      Initialize state.json
+  ui        Launch the interactive TUI
   help      Show this help message
 
 Examples:
@@ -270,6 +321,7 @@ Examples:
   pm-os mirror    # Mirror outputs to history/
   pm-os learn synthesizing-voc  # Learn patterns from history
   pm-os learn --auto            # Run weekly learning across skills
+  pm-os summarize-session       # Create a draft summary of the session
 
 Configuration:
   Copy nexa/sources.example.yaml to nexa/sources.local.yaml

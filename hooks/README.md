@@ -2,40 +2,133 @@
 
 ## Overview
 
-This directory contains scripts that automate and enhance the PM OS by hooking into specific events, such as the start of a session. These hooks are the foundation of the system's "proactive assistant" capabilities.
+This directory contains scripts that automate and enhance PM OS by hooking into specific Claude Code events. These hooks are the foundation of the system's "proactive assistant" capabilities.
 
-## How It Works
+## Configuration
 
-The hooks are defined and triggered by the `hooks.json` file. An external runner (part of the IDE or editor plugin) monitors for events (like a new session starting) and uses the `run-hook.cmd` wrapper to execute the appropriate scripts.
+**IMPORTANT:** Claude Code reads hooks from settings files, NOT from `hooks.json` in this directory.
 
-This architecture allows for event-driven automation, such as providing a status update at the start of a session or running a learning process on a schedule.
+### Settings File Locations (in order of precedence)
 
-## File Descriptions
+1. `~/.claude/settings.json` - User-level settings (applies to all projects)
+2. `.claude/settings.json` - Project-level settings (version controlled)
+3. `.claude/settings.local.json` - Local project settings (not committed)
 
-### `hooks.json`
+### Current Configuration
 
-The central manifest for all hooks. It maps events (e.g., `SessionStart`) to the scripts that should be executed when that event occurs. Currently, it triggers both `session-start.sh` and `weekly-learning.sh` upon session start.
+The hooks are configured in both `~/.claude/settings.json` (for this user) and `.claude/settings.json` (for portability). See the [Claude Code Hooks Documentation](https://code.claude.com/docs/en/hooks) for the full specification.
 
-### `run-hook.cmd`
-
-A cross-platform wrapper script that can execute shell scripts (`.sh`) in both Windows (via Git Bash) and Unix-like environments (macOS, Linux). This allows the core logic to be written once in portable shell scripts.
+## Available Hooks
 
 ### `session-start.sh`
 
-This is a critical script that runs at the beginning of every user session. Its primary jobs are:
-1.  Read the `nexa/state.json` file to get the current status of the PM OS (current phase, next recommended action, last job status, etc.).
-2.  Construct a special `<session-greeting>` context block that is injected into the AI's prompt.
-3.  Mandate the exact greeting and status report that the AI **must** display as its very first output, ensuring the user always has immediate context.
+**Event:** `SessionStart` (startup, resume, clear, compact)
+
+This is a critical script that runs at the beginning of every user session. Its jobs are:
+1. Run `pm-os session-start` to record the session start time
+2. Run `pm-os scan` in background to pick up new documents
+3. Read `nexa/state.json` to get current PM OS status
+4. Construct a `<session-greeting>` context block injected into Claude
+5. Mandate the exact greeting format the AI must display
+
+### `prompt-detector.sh`
+
+**Event:** `UserPromptSubmit` (every user message)
+
+Detects session-end phrases in user messages and triggers session capture:
+1. Reads the user's prompt from stdin (JSON format per Claude Code hooks spec)
+2. Checks for patterns like "goodbye", "thanks", "done for today"
+3. If detected, runs `pm-os summarize-session` to create a draft summary
+4. Outputs JSON with `hookSpecificOutput` to inject context telling Claude to complete the summary
+
+### `session-end.sh`
+
+**Event:** `SessionEnd` (actual session termination)
+
+Runs when the session actually terminates (user closes terminal, runs `/exit`, etc.):
+1. Runs `pm-os summarize-session` synchronously
+2. Outputs JSON with `hookSpecificOutput` for context injection
+
+**Note:** `SessionEnd` only fires on actual termination, not when user says "goodbye". Use `prompt-detector.sh` (via `UserPromptSubmit`) for phrase detection.
 
 ### `weekly-learning.sh`
 
-This script implements the automated, long-term learning loop for the PM OS. When triggered, it:
-1.  Checks if at least 7 days have passed since the last learning run by reading the timestamp in `.claude/learning-last-run`.
-2.  Checks if there are enough documents in the `history/` directory to make learning worthwhile.
-3.  If both conditions are met, it executes the `pm-os learn --auto` command, which analyzes the user's past work and generates new, personalized rules in the `.claude/rules/learned/` directory.
+**Event:** `SessionStart`
+
+Implements the automated, long-term learning loop:
+1. Checks if at least 7 days have passed since the last learning run
+2. Checks if there are enough documents in `history/` to make learning worthwhile
+3. If conditions met, executes `pm-os learn --auto` to generate personalized rules
+
+## Hook Output Format
+
+Per Claude Code hooks spec, hooks output JSON with `hookSpecificOutput`:
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "<context-tag>Content injected into Claude...</context-tag>"
+  }
+}
+```
+
+This `additionalContext` gets injected into Claude's context, allowing hooks to provide information or instructions.
+
+## Environment Variables
+
+Available in hook commands (per Claude Code docs):
+
+- `CLAUDE_PROJECT_DIR` - Absolute path to project root
+- `CLAUDE_CODE_REMOTE` - "true" if remote (web), empty if local CLI
+- `CLAUDE_ENV_FILE` - (SessionStart/Setup only) File for persisting environment variables
+
+## File Descriptions
+
+| File | Purpose |
+|------|---------|
+| `hooks.json` | **DEPRECATED** - Documentation only, not read by Claude Code |
+| `run-hook.cmd` | Cross-platform wrapper for running .sh scripts |
+| `session-start.sh` | Session start greeting and status injection |
+| `prompt-detector.sh` | Detects "goodbye" phrases, triggers session capture |
+| `session-end.sh` | Runs on actual session termination |
+| `weekly-learning.sh` | Weekly automated learning trigger |
 
 ## Adding New Hooks
 
-To add a new automated behavior:
-1.  Create a new shell script (e.g., `my-new-hook.sh`) with the desired logic.
-2.  Add a new entry in `hooks.json` to define when your script should be triggered.
+1. Create a new shell script in this directory
+2. Add the hook configuration to `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "EventName": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/hooks/your-script.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+3. Also update `~/.claude/settings.json` for user-level configuration
+4. Update this README with documentation
+
+## Testing Hooks
+
+Enable debug mode to see hook execution:
+
+```bash
+claude --debug
+```
+
+This shows which hooks are registered, execution details, and output/errors.
+
+## References
+
+- [Claude Code Hooks Documentation](https://code.claude.com/docs/en/hooks)

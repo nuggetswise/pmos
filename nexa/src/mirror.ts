@@ -5,9 +5,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { glob } from 'glob';
-import { ensureDir, getProjectRoot } from './utils';
-import { parseFrontmatter, extractDateFromMeta } from './frontmatter';
-import { appendAuditLog } from './audit';
+import { ensureDir, getProjectRoot } from './utils.js';
+import { parseFrontmatter, extractDateFromMeta } from './frontmatter.js';
+import { appendAuditLog } from './audit.js';
 
 export type MirrorResult = {
   mirrored: number;

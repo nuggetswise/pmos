@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "PM OS CLI - Document scanning, extraction, and state management",
   "main": "dist/index.js",
+  "type": "module",
   "bin": {
     "pm-os": "./dist/index.js"
   },
@@ -16,7 +17,11 @@
     "mirror": "node dist/index.js mirror",
     "learn": "node dist/index.js learn"
   },
-  "keywords": ["pm", "product-management", "cli"],
+  "keywords": [
+    "pm",
+    "product-management",
+    "cli"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -33,6 +38,9 @@
     "@types/glob": "^8.1.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.10.0",
+    "@types/react": "^19.2.9",
+    "ink": "^6.6.0",
+    "react": "^19.2.3",
     "typescript": "^5.3.0"
   },
   "engines": {

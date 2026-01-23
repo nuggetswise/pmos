@@ -7,7 +7,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { glob } from 'glob';
-import { getProjectRoot } from './utils';
+import { getProjectRoot } from './utils.js';
 
 type SearchResult = {
   path: string;

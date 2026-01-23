@@ -18,24 +18,38 @@ Converts raw Voice of Customer data into decision-grade themes and opportunities
 
 ## Core Pattern
 
-**Step 1: Validate Sources**
+**Step 1: Gather Context**
 
-1. List all files in `inputs/voc/`
+Follow protocol in `.claude/rules/pm-core/context-gathering.md`:
+1. Detect available inputs in `inputs/voc/` and previous VOC syntheses in `outputs/insights/`
+2. Present options to user via AskUserQuestion:
+   - [List VOC files found: transcripts, tickets, surveys]
+   - [List previous VOC syntheses if found]
+   - [Point me to another document]
+   - [Describe the feedback you want me to analyze]
+3. Read `.beads/insights.jsonl` for relevant VOC patterns
+4. Proceed with selected context
+
+**If user selects sources:** Validate that at least 3 sources are provided.
+
+**Step 2: Validate Sources**
+
+1. List all selected files
 2. Count total sources
 3. **If fewer than 3 sources:**
    - State: "Insufficient sources (found N, need 3+)"
    - List what you found
-   - STOP and ask user for more data
+   - Ask user for more data or to proceed with caveat
 4. Read each file completely
 
-**Step 2: Tag Verbatims (Internal)**
+**Step 3: Tag Verbatims (Internal)**
 
 Create a mental index:
 - Verbatim Quote → Source File → User/Segment (if known)
 
 **DO NOT** summarize or paraphrase at this stage.
 
-**Step 3: Identify Themes**
+**Step 4: Identify Themes**
 
 Find patterns appearing in **3+ separate sources**. For each theme:
 
@@ -47,7 +61,7 @@ Find patterns appearing in **3+ separate sources**. For each theme:
 | Segment | Only if explicitly stated |
 | Impact | Only if user explicitly stated |
 
-**Step 4: Generate Output**
+**Step 5: Generate Output**
 
 Write to `outputs/insights/voc-synthesis-YYYY-MM-DD.md`:
 
@@ -112,10 +126,20 @@ downstream:
 | ... | Evidence | [file:line] |
 ```
 
-**Step 5: Copy to History & Update Tracker**
+**Step 6: Copy to History & Update Tracker**
 
-- Copy to `history/synthesizing-voc/voc-synthesis-YYYY-MM-DD.md`
+- Run `pm-os mirror --quiet` to copy to `history/synthesizing-voc/`
 - Update `nexa/state.json` and append to `outputs/audit/auto-run-log.md`
+
+**Step 7: Post-Skill Reflection**
+
+Follow protocol in `.claude/rules/pm-core/post-skill-reflection.md`:
+1. Extract 3-5 key learnings from this VOC synthesis
+2. Create learning entry in `history/learnings/YYYY-MM-DD-synthesizing-voc.md`
+3. Create insight beads in `.beads/insights.jsonl`
+4. Request output rating (1-5 or skip)
+5. Detect and log any decisions made
+6. Report capture completion to user
 
 ## Quick Reference
 

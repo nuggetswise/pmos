@@ -9,6 +9,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 STATE_PATH="${PLUGIN_ROOT}/nexa/state.json"
 
+# --- AUTO CAPTURE ---
+# Run scanner in the background to pick up new/modified files.
+if [[ -f "${PLUGIN_ROOT}/nexa/dist/index.js" ]]; then
+    (cd "${PLUGIN_ROOT}" && node nexa/dist/index.js session-start >/dev/null 2>&1)
+    (cd "${PLUGIN_ROOT}" && node nexa/dist/index.js scan >/dev/null 2>&1 &)
+fi
+# --- END AUTO CAPTURE ---
+
 # Defaults (used if state.json missing or partial)
 phase="OBSERVE"
 next_action="Run pm-os scan to ingest new sources"

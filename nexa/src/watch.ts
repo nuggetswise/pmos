@@ -6,11 +6,11 @@
 
 import * as path from 'path';
 import chokidar from 'chokidar';
-import { loadSources, updateDaemonStatus, updateHeartbeat } from './state';
-import { expandPath, computeHash, getQuickFingerprint } from './utils';
-import { routeToJobType } from './scanner';
-import { ingestFile } from './ingest';
-import { loadInputRules } from './state';
+import { loadSources, updateDaemonStatus, updateHeartbeat } from './state.js';
+import { expandPath, computeHash, getQuickFingerprint } from './utils.js';
+import { routeToJobType } from './scanner.js';
+import { ingestFile } from './ingest.js';
+import { loadInputRules } from './state.js';
 
 let watcher: chokidar.FSWatcher | null = null;
 let heartbeatInterval: NodeJS.Timeout | null = null;

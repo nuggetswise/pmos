@@ -1,4 +1,5 @@
 {
+  "_comment": "DEPRECATED: This file is for documentation only. Claude Code reads hooks from ~/.claude/settings.json or .claude/settings.json",
   "hooks": {
     "SessionStart": [
       {
@@ -6,11 +7,31 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start.sh"
+            "command": "$CLAUDE_PROJECT_DIR/hooks/run-hook.cmd session-start.sh"
           },
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" weekly-learning.sh"
+            "command": "$CLAUDE_PROJECT_DIR/hooks/run-hook.cmd weekly-learning.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/hooks/prompt-detector.sh"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/hooks/run-hook.cmd session-end.sh"
           }
         ]
       }

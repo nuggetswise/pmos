@@ -13,6 +13,7 @@ export interface State {
   ingest_index: IngestEntry[];
   last_job: LastJob | null;
   errors: ErrorEntry[];
+  session_start_time: string | null;
 }
 
 // Error log entry
@@ -44,6 +45,7 @@ export type JobType =
   | 'ingest'
   | 'mirror'
   | 'learn'
+  | 'summarize'
   | 'delta-feedback'
   | 'delta-ops'
   | 'delta-roadmap'

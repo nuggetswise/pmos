@@ -6,11 +6,11 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { extractFile } from './extractors';
-import { addIngestEntry, getOutputPaths, setCurrentJob, completeCurrentJob, logError } from './state';
-import { generateJobId, isoNow, ensureDir } from './utils';
-import { ScanResult, JobType } from './types';
-import { appendAuditLog } from './audit';
+import { extractFile } from './extractors/index.js';
+import { addIngestEntry, getOutputPaths, setCurrentJob, completeCurrentJob, logError } from './state.js';
+import { generateJobId, isoNow, ensureDir } from './utils.js';
+import { ScanResult, JobType } from './types.js';
+import { appendAuditLog } from './audit.js';
 
 /**
  * Ingest a single file

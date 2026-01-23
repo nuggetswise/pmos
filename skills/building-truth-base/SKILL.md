@@ -18,16 +18,29 @@ Creates a Day-1 shared map of the product: what it is, who it serves, current ro
 
 ## Core Pattern
 
-**Step 1: Gather Available Sources**
+**Step 1: Gather Context**
 
-Read all files in:
+Follow protocol in `.claude/rules/pm-core/context-gathering.md`:
+1. Detect available inputs in `inputs/roadmap_deck/`, `inputs/product_demo/`, `inputs/knowledge_base/`
+2. Check for existing truth base in `outputs/truth_base/`
+3. Present options to user via AskUserQuestion:
+   - [List documents found: strategy decks, demos, KB articles]
+   - [Show existing truth base if updating]
+   - [Point me to another document]
+   - [Describe the product you want me to document]
+4. Read `.beads/insights.jsonl` for relevant product patterns
+5. Proceed with selected context
+
+**Step 2: Gather Available Sources**
+
+Read all selected files in:
 - `inputs/roadmap_deck/` - strategy slides, PDFs
 - `inputs/product_demo/` - demo notes, walkthroughs
 - `inputs/knowledge_base/` - KB articles about the product
 
 If sources are missing, list what's needed and ask user to provide.
 
-**Step 2: Extract Key Information**
+**Step 3: Extract Key Information**
 
 From sources, identify:
 1. What the product is (1 paragraph)
@@ -37,11 +50,11 @@ From sources, identify:
 5. Current roadmap themes (from deck)
 6. Known constraints (tech debt, compliance, trust issues)
 
-**Step 3: Identify Unknowns**
+**Step 4: Identify Unknowns**
 
 List 10-15 open questions you cannot answer from the sources. These become your investigation priorities.
 
-**Step 4: Generate Output**
+**Step 5: Generate Output**
 
 Write to `outputs/truth_base/truth-base.md` with metadata header:
 
@@ -115,13 +128,23 @@ downstream:
 | **low** | Weak source, speculation, conflicting signals |
 ```
 
-**Step 5: Copy to History**
+**Step 6: Copy to History**
 
-Copy output to `history/building-truth-base/truth-base-YYYY-MM-DD.md`
+Run `pm-os mirror --quiet` to copy to `history/building-truth-base/`
 
-**Step 6: Update Staleness Tracker**
+**Step 7: Update Staleness Tracker**
 
 Update `nexa/state.json` and append to `outputs/audit/auto-run-log.md` with the new output and its sources.
+
+**Step 8: Post-Skill Reflection**
+
+Follow protocol in `.claude/rules/pm-core/post-skill-reflection.md`:
+1. Extract 3-5 key learnings from building this truth base
+2. Create learning entry in `history/learnings/YYYY-MM-DD-building-truth-base.md`
+3. Create insight beads in `.beads/insights.jsonl`
+4. Request output rating (1-5 or skip)
+5. Detect and log any decisions made
+6. Report capture completion to user
 
 ## Quick Reference
 

@@ -18,9 +18,21 @@ Transforms a chaotic KTLO (Keep The Lights On) backlog into a structured product
 
 ## Core Pattern
 
-**Step 1: Load Jira Export**
+**Step 1: Gather Context**
 
-Read files in `inputs/jira/` (CSV preferred, but accept HTML/PDF/MD).
+Follow protocol in `.claude/rules/pm-core/context-gathering.md`:
+1. Detect available inputs in `inputs/jira/` and previous KTLO triages in `outputs/ktlo/`
+2. Present options to user via AskUserQuestion:
+   - [List Jira exports found: CSV, HTML, PDF, MD]
+   - [Show previous KTLO triages if found]
+   - [Point me to another document]
+   - [Describe the backlog you want me to triage]
+3. Read `.beads/insights.jsonl` for relevant KTLO patterns (recurring themes, past triages)
+4. Proceed with selected context
+
+**Step 2: Load Jira Export**
+
+Read selected files in `inputs/jira/` (CSV preferred, but accept HTML/PDF/MD).
 
 Required columns (or equivalents):
 - Issue key, Summary, Status, Priority
@@ -31,7 +43,7 @@ Required columns (or equivalents):
 
 If columns are missing, note what's unknown.
 
-**Step 2: Categorize into 5 Buckets**
+**Step 3: Categorize into 5 Buckets**
 
 | Bucket | Definition | Signals |
 |--------|------------|---------|
@@ -41,7 +53,7 @@ If columns are missing, note what's unknown.
 | **4. Paper Cuts (UX Friction)** | Annoyances that don't break things | "confusing", "should be easier", "unexpected behavior" |
 | **5. Tech Debt Blocking Roadmap** | Can't build new things until fixed | Dependencies mentioned, "refactor needed", "legacy" |
 
-**Step 3: Score and Rank**
+**Step 4: Score and Rank**
 
 For each issue, note:
 - Which bucket(s) it belongs to
@@ -49,7 +61,7 @@ For each issue, note:
 - Recency (last updated)
 - Volume (linked tickets, duplicates)
 
-**Step 4: Generate Output**
+**Step 5: Generate Output**
 
 Write to `outputs/ktlo/ktlo-triage-YYYY-MM-DD.md`:
 
@@ -120,10 +132,21 @@ downstream:
 | [Issue affects X customers] | Evidence/Unknown | [from ticket or "Not stated"] |
 ```
 
-**Step 5: Copy to History & Update Tracker**
+**Step 6: Copy to History & Update Tracker**
 
-- Copy to `history/triaging-ktlo/ktlo-triage-YYYY-MM-DD.md`
+- Run `pm-os mirror --quiet` to copy to `history/triaging-ktlo/`
 - Update `nexa/state.json` and append to `outputs/audit/auto-run-log.md`
+
+**Step 7: Post-Skill Reflection**
+
+Follow protocol in `.claude/rules/pm-core/post-skill-reflection.md`:
+1. Extract 3-5 key learnings from this KTLO triage (recurring themes, systemic issues)
+2. Create learning entry in `history/learnings/YYYY-MM-DD-triaging-ktlo.md`
+3. Create insight beads in `.beads/insights.jsonl`
+4. Detect and log any decisions made
+5. Report capture completion to user
+
+**Note:** Rating prompt is optional for KTLO triage (operational, not strategic).
 
 ## Quick Reference
 

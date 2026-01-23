@@ -7,7 +7,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import mammoth from 'mammoth';
-import { ExtractionResult } from '../types';
+import { ExtractionResult } from '../types.js';
 
 /**
  * Extract text from DOCX files

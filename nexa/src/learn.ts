@@ -1,13 +1,15 @@
 /**
- * Learning runner for history-based patterns
+ * Learning Engine
+ *
+ * Analyzes history to generate learned rules.
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
 import { glob } from 'glob';
-import { ensureDir, generateJobId, getProjectRoot, isoNow } from './utils';
-import { parseFrontmatter } from './frontmatter';
-import { appendAuditLog } from './audit';
+import { ensureDir, generateJobId, getProjectRoot, isoNow } from './utils.js';
+import { parseFrontmatter } from './frontmatter.js';
+import { appendAuditLog } from './audit.js';
 
 const STOPWORDS = new Set([
   'a',

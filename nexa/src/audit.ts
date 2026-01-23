@@ -4,7 +4,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { ensureDir, isoNow, getProjectRoot } from './utils';
+import { ensureDir, isoNow, getProjectRoot } from './utils.js';
 
 const AUDIT_HEADER = `# Auto-Run Audit Log
 

@@ -4,13 +4,13 @@
  * Routes file types to appropriate extractors.
  */
 
-import { ExtractionResult } from '../types';
-import { getExtension } from '../utils';
-import { extractMarkdown } from './markdown';
-import { extractCsv } from './csv';
-import { extractDocx } from './docx';
-import { extractPdf } from './pdf';
-import { extractPptx } from './pptx';
+import { ExtractionResult } from '../types.js';
+import { getExtension } from '../utils.js';
+import { extractMarkdown } from './markdown.js';
+import { extractCsv } from './csv.js';
+import { extractDocx } from './docx.js';
+import { extractPdf } from './pdf.js';
+import { extractPptx } from './pptx.js';
 
 /**
  * Extract text from a file based on its extension

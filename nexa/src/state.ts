@@ -10,15 +10,19 @@ import * as path from 'path';
 import * as yaml from 'js-yaml';
 import {
   State,
-  SourcesConfig,
-  InputRulesConfig,
+  Source,
   IngestEntry,
   Job,
-  JobType,
-  LastJob,
+  InputRule,
   ErrorEntry,
-} from './types';
-import { isoNow, getProjectRoot } from './utils';
+  JobType,
+  SourcesConfig,
+  InputRulesConfig,
+  DaemonStatus,
+  Brief,
+  LastJob,
+} from './types.js';
+import { isoNow, getProjectRoot, __dirname } from './utils.js';
 
 // Paths
 const NEXA_DIR = path.resolve(__dirname, '..');
@@ -50,6 +54,7 @@ function defaultState(): State {
     ingest_index: [],
     last_job: null,
     errors: [],
+    session_start_time: null,
   };
 }
 
@@ -114,7 +119,7 @@ export async function loadInputRules(): Promise<InputRulesConfig> {
  */
 export function isAlreadyIngested(state: State, sourcePath: string, hash: string): boolean {
   return state.ingest_index.some(
-    (entry) => entry.source_path === sourcePath && entry.content_hash === hash
+    (entry: IngestEntry) => entry.source_path === sourcePath && entry.content_hash === hash
   );
 }
 
@@ -125,7 +130,7 @@ export async function addIngestEntry(entry: IngestEntry): Promise<void> {
   const state = await loadState();
 
   // Remove any existing entry for the same source path
-  const filtered = state.ingest_index.filter((e) => e.source_path !== entry.source_path);
+  const filtered = state.ingest_index.filter((e: IngestEntry) => e.source_path !== entry.source_path);
   filtered.push(entry);
 
   state.ingest_index = filtered;
@@ -258,6 +263,6 @@ export function findByPathAndFingerprint(
   fingerprint: string
 ): IngestEntry | undefined {
   return state.ingest_index.find(
-    (entry) => entry.source_path === sourcePath && entry.fingerprint === fingerprint
+    (entry: IngestEntry) => entry.source_path === sourcePath && entry.fingerprint === fingerprint
   );
 }

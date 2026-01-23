@@ -121,6 +121,37 @@ See `.claude/rules/pm-core/post-skill-reflection.md` for full protocol.
 
 This is what makes Nexa a 2nd brain, not just a chatbot.
 
+### 8. Continuous Capture During Planning
+
+**During planning/analysis sessions (not formal skills):**
+
+Planning, architecture, and investigation discussions generate valuable insights but don't trigger post-skill reflection. Use continuous capture to ensure these insights are preserved.
+
+**Enable continuous capture when detecting:**
+- "Plan", "Design", "Review", "Analyze", "Investigate", "Help me understand"
+- "What's the approach", "How should we", "What are the options"
+
+**Prompt for capture every 10 minutes OR after 3 significant insights:**
+```
+📝 Capture insights from this planning discussion?
+
+Key insights so far:
+1. [Insight 1]
+2. [Insight 2]
+3. [Insight 3]
+
+[Yes / Add more / Wait until end]
+```
+
+**If user says "Yes":**
+1. Create learning entry: `history/learnings/YYYY-MM-DD-planning-[topic].md`
+2. Create insight beads in `.beads/insights.jsonl`
+3. Ask: "Does this contain an architectural decision?" → if yes, log decision
+
+**User can disable:** "Skip capture prompts this session"
+
+See `.claude/rules/system/auto-capture.md` for full protocol.
+
 ## Structured PM Outputs
 
 All generated PM outputs must include:

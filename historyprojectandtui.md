@@ -1,11 +1,11 @@
-# Plan: Multi-Project Management and Terminal User Interface (TUI)
+# Plan: Multi-Project Management
 
 ## 1. Overview
 
 This plan details the implementation of two major architectural features for the PM OS:
 
 1.  **Multi-Project Management:** A hybrid architecture that provides both strong project isolation for active work and a global knowledge base for cross-project learning.
-2.  **Terminal User Interface (TUI):** A rich, persistent, and dynamic dashboard for interacting with the active project, as inspired by the `pai-v23-hero.png` image.
+
 
 These features will be developed sequentially.
 
@@ -20,6 +20,9 @@ These features will be developed sequentially.
 *   **Task 1.1.1: Define the Workspace Directory Structure**
     *   **Action:** Establish `~/PM_OS_Workspace/` as the default root for all projects.
     *   **Action:** Each project will be a subdirectory (e.g., `~/PM_OS_Workspace/project-superpowers/`) containing the full PM OS structure (`inputs/`, `outputs/`, `history/`, etc.).
+
+
+
 
 *   **Task 1.1.2: Implement Active Project State**
     *   **Action:** Create a state file at `~/.claude/state.json` to store the absolute path to the currently active project.
@@ -60,44 +63,69 @@ These features will be developed sequentially.
 
 **Objective:** To build a rich, terminal-based dashboard that serves as the primary, interactive interface for the PM OS.
 
-### Phase 2.1: Scaffolding and Technology Selection
+**Core Technical Challenge:** The chosen `ink` library is a modern ES Module (ESM), but the `nexa` project is a CommonJS (CJS) module. This conflict must be resolved before any UI code can be successfully integrated.
 
-*   **Task 2.1.1: Choose and Integrate a TUI Framework**
-    *   **Action:** Select **Ink** (`https://github.com/vadimdemedes/ink`) as the TUI framework and add it to `nexa/package.json`.
+**Strategic Decision:** A one-time migration of the `nexa` project to ES Modules will be performed. This aligns the project with the standards of its dependencies and modern Node.js best practices, ensuring future maintainability.
 
-*   **Task 2.1.2: Create the TUI Application Entry Point**
-    *   **Action:** Create the `pm-os ui` command to launch the TUI application (`nexa/src/ui.tsx`).
+---
 
-*   **Task 2.1.3: Build the Static UI Layout**
-    *   **Action:** Create placeholder panels for "AI Statusline," "Context," "Memory," "Learning," and a command input box.
+### Phase 2.A: Project Modernization (ESM Migration Prerequisite)
 
-### Phase 2.2: Dynamic and Interactive Widgets
+**Goal:** Get the `nexa` project to build successfully as a modern ES Module project. This is a foundational refactoring task.
 
-*   **Task 2.2.1: Connect TUI to Project State**
-    *   **Action:** The TUI will read `~/.claude/state.json` on startup to identify and display data from the active project.
+*   **Task 2.A.1: Configure Project for ESM**
+    *   **File:** `nexa/package.json`
+    *   **Change:** Add the property `"type": "module"` to define the project as an ES Module.
+    *   **File:** `nexa/tsconfig.json`
+    *   **Change:** Update the `compilerOptions` to set `"module": "Node16"`, `"moduleResolution": "Node16"`, and `"jsx": "react-jsx"`.
 
-*   **Task 2.2.2: Implement Interactive Project Dashboard**
-    *   **Action:** Create a new "Project Dashboard" widget in the TUI.
-    *   **Action:** This widget will parse and display the tables from the active project's `inputs/context/projects.md` file.
-    *   **Action:** The user will be able to navigate the tables (initiatives, focus, etc.) with arrow keys and press keys (e.g., `e` to edit status, `n` to add a new item).
-    *   **Action:** When changes are made in the TUI, the application will automatically rewrite the `projects.md` file with the updated data. This makes the Markdown file a persistence layer that the user no longer needs to edit by hand.
+*   **Task 2.A.2: Refactor for ESM Syntax**
+    *   **File(s):** All `.ts` files in `nexa/src/` and its subdirectories.
+    *   **Change:** Append the `.js` file extension to all relative import paths (e.g., `import { X } from './state'` becomes `import { X } from './state.js'`).
+    *   **File:** `nexa/src/utils.ts` (and any other files using `__dirname`).
+    *   **Change:** Replace the CJS-specific `__dirname` variable with the standard ESM equivalent: `const __dirname = path.dirname(url.fileURLToPath(import.meta.url));`.
 
-*   **Task 2.2.3: Implement Other Dynamic Widgets**
-    *   **Action:** Build out the other widgets (Context, Memory, Learning) to display real-time data from the active project.
+*   **Task 2.A.3: Validate Migration**
+    *   **Action:** From the project root, run `npm run build --prefix nexa`.
+    *   **Success Criteria:** The command must complete with zero compilation errors.
 
-*   **Task 2.2.4: Implement File Watching for Real-Time Updates**
-    *   **Action:** Use a library like `chokidar` to watch the active project. When files change, the relevant TUI widgets will automatically re-render.
+---
 
-### Phase 2.3: Command Execution and Interactivity
+### Phase 2.B: TUI Feature Implementation
 
-*   **Task 2.3.1: Implement the Command Input Component**
-    *   **Action:** Build the logic for the command input box.
+**Goal:** Build the TUI on the stable ESM foundation.
 
-*   **Task 2.3.2: Execute Commands as Child Processes**
-    *   **Action:** Execute `nexa` commands entered in the TUI as child processes, passing the active project context.
+*   **Task 2.B.1: Install Dependencies & Create Entrypoint**
+    *   **Action:** Run `npm install ink react @types/react --save-dev` from the `nexa` directory to ensure all dependencies are present.
+    *   **File (New):** `nexa/src/ui.tsx`
+    *   **Content:** Create a basic, static TUI layout scaffold using Ink components. This will serve as the foundation for dynamic widgets.
 
-*   **Task 2.3.3: Display Command Output**
-    *   **Action:** Create a scrollable panel to stream the `stdout` and `stderr` from command execution.
+*   **Task 2.B.2: Wire up the `ui` Command**
+    *   **File:** `nexa/src/index.ts`
+    *   **Change:** Add a `case 'ui':` to the main switch statement. This case will import the main `App` component from `./ui.js` and use Ink's `render()` function to start the application.
+
+*   **Task 2.B.3: Implement Dynamic "Project Dashboard" Widget**
+    *   **File:** `nexa/src/ui.tsx`
+    *   **Changes:**
+        1.  Add logic to read and parse the `inputs/context/projects.md` file.
+        2.  Use Ink components to render the data in a structured way (e.g., a table).
+        3.  Implement `useInput` from Ink to handle keyboard events for navigation and editing.
+        4.  Add file system logic to write updated data back to `projects.md` upon user action.
+
+*   **Task 2.B.4: Implement Other Dynamic Widgets & File Watching**
+    *   **File:** `nexa/src/ui.tsx`
+    *   **Action:** Add the `chokidar` library if it's not already a dependency.
+    *   **Changes:**
+        1.  Build out the UI structure for the "Context," "Memory," and "Learning" panels.
+        2.  Implement file-watching logic using `chokidar` to monitor the active project directory for changes.
+        3.  When a file changes, trigger a state update to re-render the relevant TUI widget.
+
+*   **Task 2.B.5: Implement Command Execution**
+    *   **File:** `nexa/src/ui.tsx`
+    *   **Changes:**
+        1.  Create a dedicated component for command input.
+        2.  Use Node.js's `child_process.spawn` to execute `nexa` commands entered by the user.
+        3.  Create a scrollable panel component to stream `stdout` and `stderr` from the spawned child process, displaying real-time command output.
 
 ---
 

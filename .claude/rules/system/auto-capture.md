@@ -14,6 +14,7 @@ Capture happens **automatically** at these moments:
 | Decision made | Decision context, rationale, expected outcome | `history/decisions/` |
 | Session end (explicit) | Session summary, key takeaways | `history/sessions/` |
 | Significant insight | Atomic insight (bead) | `.beads/insights.jsonl` |
+| Planning/Analysis conversation | Architectural insights, coverage gaps, approach decisions | `history/learnings/` |
 
 ## Capture Protocol
 
@@ -168,6 +169,73 @@ Claude: VOC synthesis complete. Key finding: Sync speed appears in both VOC (3/7
 📝 Learning captured → history/learnings/2026-01-20-synthesizing-voc.md
 ```
 
+## Continuous Capture During Planning Conversations
+
+### When It Applies
+
+Planning and analysis work that doesn't involve formal skill execution or file modifications:
+- Architecture discussions
+- Strategy planning
+- Approach design
+- Investigation and analysis
+- Evaluating options
+
+### Detection Triggers
+
+**Session Start Detection** - If user's first message contains:
+- "Plan", "Design", "Analyze", "Investigate", "Help me understand"
+- "What's the approach", "How should we", "What are the options"
+
+→ Flag as planning session, enable continuous capture
+
+**Mid-Conversation Triggers** (every 10 min OR 3 insights):
+- Read 5+ files for analysis
+- Discussed 3+ significant insights/patterns
+- Evaluated multiple approaches/options
+- 10+ minutes of planning conversation
+
+### Capture Prompt Format
+
+```
+📝 Capture insights from this planning discussion?
+
+Key insights so far:
+1. [Insight 1]
+2. [Insight 2]
+3. [Insight 3]
+
+[Yes - capture now / Add more / Wait until session end]
+```
+
+**If "Yes":**
+1. Create learning entry: `history/learnings/YYYY-MM-DD-planning-[topic].md`
+2. Create insight beads (3-5 beads)
+3. Ask: "Does this contain a decision? (architectural choice, approach selection)"
+4. If yes: Create decision log
+
+**If "Add more":** Continue accumulating, prompt again after 3 more insights OR 10 min
+
+**If "Wait until session end":** Hold insights, capture at session end
+
+### Precedence Rules
+
+1. Formal skill executed → Post-Skill Reflection (always)
+2. Files modified → Decision Detection (always)
+3. Planning/analysis → Continuous Capture (this section)
+4. Session end → Session End Capture (always)
+
+### Anti-Patterns
+
+| Anti-Pattern | Why It Fails | Instead |
+|--------------|--------------|---------|
+| Prompting too frequently | User fatigue | Max 1 prompt per 10 min |
+| Capturing trivial insights | Dilutes signal | Only significant insights |
+| Interrupting during execution | Breaks flow | Prompt BETWEEN tasks |
+
+### User Preferences
+
+User can disable with: "Skip capture prompts this session"
+
 ## Why This Matters
 
 Without auto-capture:
@@ -181,3 +249,11 @@ With auto-capture:
 - Patterns emerge across sessions
 - Future decisions are informed by past learnings
 - PM judgment improves systematically
+
+**Coverage now complete:**
+```
+Formal Skills → Post-Skill Reflection ✅
+Implementation → Decision Detection ✅
+Planning/Analysis → Continuous Capture ✅
+Session End → Session End Capture ✅
+```

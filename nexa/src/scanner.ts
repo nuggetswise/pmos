@@ -13,9 +13,9 @@ import {
   loadInputRules,
   isAlreadyIngested,
   findByPathAndFingerprint,
-} from './state';
-import { computeHash, isStable, expandPath, getExtension, getQuickFingerprint } from './utils';
-import { ScanResult, JobType, InputRule } from './types';
+} from './state.js';
+import { computeHash, isStable, expandPath, getExtension, getQuickFingerprint } from './utils.js';
+import { ScanResult, JobType, InputRule } from './types.js';
 
 /**
  * Scan all registered sources for files to process
