@@ -7,11 +7,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/hooks/run-hook.cmd session-start.sh"
+            "command": "node \"$CLAUDE_PROJECT_DIR/nexa/dist/hooks/lifecycle/LoadContext.hook.js\""
           },
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/hooks/run-hook.cmd weekly-learning.sh"
+            "command": "node \"$CLAUDE_PROJECT_DIR/nexa/dist/hooks/scheduled/WeeklyLearning.hook.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/nexa/dist/hooks/scheduled/StalenessCheck.hook.js\""
           }
         ]
       }
@@ -21,17 +25,32 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/hooks/prompt-detector.sh"
+            "command": "node \"$CLAUDE_PROJECT_DIR/nexa/dist/hooks/workflow/PromptDetector.hook.js\""
           }
         ]
       }
     ],
-    "SessionEnd": [
+    "Stop": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/hooks/run-hook.cmd session-end.sh"
+            "command": "node \"$CLAUDE_PROJECT_DIR/nexa/dist/hooks/lifecycle/SessionSummary.hook.js\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/nexa/dist/hooks/workflow/AutoMirror.hook.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/nexa/dist/hooks/guardrails/EvidenceCheck.hook.js\""
           }
         ]
       }
