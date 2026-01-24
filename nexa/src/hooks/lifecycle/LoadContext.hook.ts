@@ -39,12 +39,14 @@ import {
   readAllCompassFiles,
   extractActiveWork,
   extractBlockers,
-  calculateQualityTrend,
-  formatQualityTrend,
   buildGreetingBlock,
   buildSessionProtocol,
   formatImportantContext,
 } from '../lib/index.js';
+import {
+  calculateQualityTrend,
+  formatQualityTrend,
+} from '../../beads/index.js';
 import { getProjectRoot } from '../../utils.js';
 
 export const meta: HookMeta = {

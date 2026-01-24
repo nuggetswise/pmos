@@ -44,6 +44,7 @@ import { WeeklyLearningHook } from './scheduled/WeeklyLearning.hook.js';
 import { StalenessCheckHook } from './scheduled/StalenessCheck.hook.js';
 import { ScopeValidatorHook } from './guardrails/ScopeValidator.hook.js';
 import { EvidenceCheckHook } from './guardrails/EvidenceCheck.hook.js';
+import { ExtractBeadsFromOutputHook } from './lifecycle/ExtractBeadsFromOutput.hook.js';
 import type { HookDefinition } from './types.js';
 
 /**
@@ -52,6 +53,7 @@ import type { HookDefinition } from './types.js';
 export const HOOKS: Record<string, HookDefinition> = {
   'load-context': LoadContextHook,
   'session-summary': SessionSummaryHook,
+  'extract-beads-from-output': ExtractBeadsFromOutputHook,
   'auto-mirror': AutoMirrorHook,
   'post-skill-signal': PostSkillSignalHook,
   'rating-capture': RatingCaptureHook,

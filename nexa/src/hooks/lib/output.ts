@@ -214,6 +214,20 @@ ACTION REQUIRED: You MUST use the Read tool to read ${summaryPath}, then use the
 }
 
 /**
+ * Format output for Stop hooks
+ *
+ * Stop hooks use systemMessage instead of hookSpecificOutput
+ */
+export function formatStopOutput(content: string, tag?: string): object {
+  const tagName = tag || 'session-end';
+  const wrappedContent = `<${tagName}>\n${content}\n</${tagName}>`;
+
+  return {
+    systemMessage: wrappedContent,
+  };
+}
+
+/**
  * Build auto-mirror notification
  */
 export function buildAutoMirrorNotification(

@@ -45,6 +45,7 @@ export type JobType =
   | 'ingest'
   | 'mirror'
   | 'learn'
+  | 'learn-patterns'
   | 'summarize'
   | 'delta-feedback'
   | 'delta-ops'

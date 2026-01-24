@@ -37,7 +37,7 @@ import {
   getSessionDuration,
   clearSessionStartTime,
   buildSessionEndSignal,
-  formatContextInjection,
+  formatStopOutput,
 } from '../lib/index.js';
 import { getProjectRoot, ensureDir, isoNow } from '../../utils.js';
 
@@ -88,10 +88,10 @@ export async function run(ctx: HookContext): Promise<HookResult> {
     await clearSessionStartTime();
     filesModified.push('nexa/state.json');
 
-    // 7. Build context injection
+    // 7. Build Stop hook output (uses systemMessage, not hookSpecificOutput)
     const relativePath = `history/sessions/${summaryFileName}`;
     const signal = buildSessionEndSignal(relativePath);
-    const output = formatContextInjection('session:shutdown', signal, 'session-end-detected');
+    const output = formatStopOutput(signal, 'session-end-detected');
 
     return {
       success: true,
@@ -102,7 +102,7 @@ export async function run(ctx: HookContext): Promise<HookResult> {
   } catch (error) {
     // Graceful degradation
     const signal = buildSessionEndSignal(null);
-    const output = formatContextInjection('session:shutdown', signal, 'session-end-detected');
+    const output = formatStopOutput(signal, 'session-end-detected');
 
     return {
       success: false,

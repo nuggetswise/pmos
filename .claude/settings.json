@@ -26,6 +26,10 @@
           {
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR/nexa/dist/hooks/workflow/PromptDetector.hook.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/nexa/dist/hooks/workflow/RatingCapture.hook.js\""
           }
         ]
       }
@@ -51,6 +55,10 @@
           {
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR/nexa/dist/hooks/guardrails/EvidenceCheck.hook.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/nexa/dist/hooks/lifecycle/ExtractBeadsFromOutput.hook.js\""
           }
         ]
       }

@@ -6,3 +6,4 @@
 
 export { LoadContextHook } from './LoadContext.hook.js';
 export { SessionSummaryHook } from './SessionSummary.hook.js';
+export { ExtractBeadsFromOutputHook } from './ExtractBeadsFromOutput.hook.js';
