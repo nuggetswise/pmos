@@ -8,6 +8,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { getProjectRoot, isoNow, ensureDir } from '../utils.js';
 import type { Bead, BeadType } from './types.js';
+import { appendBeadSafe as appendBeadSafeInternal } from './bead-append-safe.js';
+import { readBeadsSafe } from './bead-reader.js';
 
 /**
  * Get path to beads file
@@ -45,13 +47,12 @@ export async function ensureBeadsDir(): Promise<void> {
 }
 
 /**
- * Append a bead to the insights file
+ * Append a bead to the insights file (SAFE - uses file locking)
+ *
+ * Delegates to appendBeadSafe from bead-append-safe.ts for concurrent write safety
  */
 export async function appendBead(bead: Bead): Promise<void> {
-  await ensureBeadsDir();
-  const beadsPath = getBeadsPath();
-  const line = JSON.stringify(bead) + '\n';
-  await fs.promises.appendFile(beadsPath, line);
+  await appendBeadSafeInternal(bead);
 }
 
 /**
@@ -133,17 +134,11 @@ export async function createDecisionBead(
 }
 
 /**
- * Read all beads from the file
+ * Read all beads from the file (safe - skips corrupted lines)
  */
 export async function readAllBeads(): Promise<Bead[]> {
-  const beadsPath = getBeadsPath();
-  try {
-    const content = await fs.promises.readFile(beadsPath, 'utf-8');
-    const lines = content.trim().split('\n').filter(line => line.trim());
-    return lines.map(line => JSON.parse(line) as Bead);
-  } catch {
-    return [];
-  }
+  const result = await readBeadsSafe();
+  return result.beads;
 }
 
 /**
@@ -190,25 +185,26 @@ export async function calculateQualityTrend(): Promise<QualityTrend> {
     new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
 
-  // Take last 10 ratings
-  const recent = sorted.slice(0, 10);
+  // Take last 50 ratings (performance optimization - keeps session start fast)
+  const recent = sorted.slice(0, 50);
   const allRatings = recent.map(b => b.rating!).filter(r => r !== undefined);
   const average = allRatings.length > 0
     ? allRatings.reduce((a, b) => a + b, 0) / allRatings.length
     : null;
 
-  // Calculate trend if we have at least 6 ratings
+  // Calculate trend if we have at least 10 ratings (need 5+5 for comparison)
   let trend: 'up' | 'down' | 'stable' | null = null;
   let recentAverage: number | null = null;
   let previousAverage: number | null = null;
 
-  if (allRatings.length >= 6) {
-    const recentFive = allRatings.slice(0, 5);
-    const previousFive = allRatings.slice(5, 10);
+  if (allRatings.length >= 10) {
+    const halfPoint = Math.floor(allRatings.length / 2);
+    const recentHalf = allRatings.slice(0, halfPoint);
+    const previousHalf = allRatings.slice(halfPoint, halfPoint * 2);
 
-    recentAverage = recentFive.reduce((a, b) => a + b, 0) / recentFive.length;
-    previousAverage = previousFive.length > 0
-      ? previousFive.reduce((a, b) => a + b, 0) / previousFive.length
+    recentAverage = recentHalf.reduce((a, b) => a + b, 0) / recentHalf.length;
+    previousAverage = previousHalf.length > 0
+      ? previousHalf.reduce((a, b) => a + b, 0) / previousHalf.length
       : null;
 
     if (previousAverage !== null) {

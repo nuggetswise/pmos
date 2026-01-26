@@ -1,7 +1,7 @@
 ---
 dimension: PREFERENCES
 description: Communication style, output formats, working style
-last_updated: 2026-01-17
+
 ---
 
 # PREFERENCES: Your Style
@@ -14,7 +14,7 @@ last_updated: 2026-01-17
 | Length | Concise - get to the point |
 | Format | Tables preferred over paragraphs for comparisons |
 | Emojis | Minimal - only for status indicators (✅ 🔴 🟡) |
-| Jargon | Use PM terminology (VOC, KTLO, GTM) - I know it |
+| Jargon | Use PM terminology as I know it |
 
 ## Output Preferences
 

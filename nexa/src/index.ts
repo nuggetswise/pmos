@@ -13,6 +13,8 @@
  *   summarize-session - Generate a draft session summary
  *   session-start - Record the start of a session
  *   init    - Initialize state.json
+ *   repair-beads - Repair corrupted .beads/insights.jsonl
+ *   hook-status - Show recent hook execution activity
  */
 
 import { loadState, updateState, setNextAction, setCurrentJob, completeCurrentJob, logError } from './state.js';
@@ -26,6 +28,8 @@ import { runLearning, runLearningAuto } from './learn.js';
 import { runPatternLearning } from './pattern-learning.js';
 import { summarizeSession } from './summarize.js';
 import { createInsightBead, createDecisionBead } from './beads/index.js';
+import { repairBeads } from './commands/repair-beads.js';
+import { hookStatus } from './commands/hook-status.js';
 import { render } from 'ink';
 import React from 'react';
 import App from './ui.js';
@@ -75,12 +79,24 @@ async function main(): Promise<void> {
       await runSessionStart();
       break;
 
+    case 'clear-pending-summary':
+      await runClearPendingSummary();
+      break;
+
     case 'init':
       await initState();
       break;
 
     case 'beads-create':
       await runBeadsCreate(args.slice(1));
+      break;
+
+    case 'repair-beads':
+      await repairBeads();
+      break;
+
+    case 'hook-status':
+      await hookStatus({ limit: parseInt(args[1]) || 10 });
       break;
 
     case 'ui':
@@ -321,6 +337,11 @@ async function runSummarize(): Promise<void> {
 async function runSessionStart(): Promise<void> {
   await updateState({ session_start_time: isoNow() });
   console.log(`Session start time recorded: ${isoNow()}`);
+}
+
+async function runClearPendingSummary(): Promise<void> {
+  await updateState({ pending_summary: null });
+  console.log('Pending summary cleared.');
 }
 
 async function runUi(): Promise<void> {

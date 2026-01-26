@@ -1,14 +1,13 @@
 ---
 dimension: COMPASS
 description: Mission, Goals, Beliefs - Your guiding direction
-last_updated: 2026-01-18
 ---
 
 # COMPASS: Mission, Goals, Beliefs
 
 ## Mission Statement
 
-Transform Active Catalog from a PO-enablement tool into a **rich product content hub** that leverages Business Network scale as a competitive moat, driving growth through AI-enabled capabilities.
+Shape the future of enterprise collaboration by transforming Active Catalog from a PO-enablement tool into a **rich product content hub** through AI-first Information Management solutions. This involves leveraging Business Network scale as a competitive moat, driving growth through AI-enabled capabilities, accelerating onboarding, and enabling real-time transaction validation.
 
 ## Role
 
@@ -17,6 +16,7 @@ Transform Active Catalog from a PO-enablement tool into a **rich product content
 | Title | Lead Product Manager |
 | Scope | Active Catalog product line (end-to-end ownership) |
 | Reports To | Senior Director, Business Network |
+| Context | First PM in 5 years; critical to identify customer pain points, align stakeholders, define strategy, and achieve business goals. |
 | Team | Dev, Sales, PS, Product Marketing, UX (cross-functional) |
 
 ## Goals (This Quarter)
@@ -26,6 +26,9 @@ Transform Active Catalog from a PO-enablement tool into a **rich product content
 | Assess competitive position vs Syndigo, PIM tools | Competitive analysis complete, gaps identified | Not Started |
 | Restart product management via customer discovery | 10+ customer interviews, win-loss analysis | In Progress |
 | Define future vision and growth strategy | Vision doc approved by leadership | Not Started |
+| Conduct customer interviews and usage data audit | Initial insights gathered | Not Started |
+| Align on vision document and product charter | Aligned document | Not Started |
+| Validate hypotheses and select technology | Clear recommendations | Not Started |
 
 ## Long-Term Goals (This Year)
 
@@ -41,6 +44,7 @@ Transform Active Catalog from a PO-enablement tool into a **rich product content
 2. **Evidence over opinion** - Win-loss analysis, customer discovery before bets
 3. **Leverage BN network** - Use Business Network scale as competitive moat
 4. **AI as unlock** - Prioritize AI-enabled capabilities for differentiation
+5. **Three-legged stool framework** - Focus on building great products, driving wide adoption, and achieving commercial success.
 
 ## Domain Knowledge
 
@@ -51,6 +55,10 @@ Transform Active Catalog from a PO-enablement tool into a **rich product content
 | Agile/Scrum | OpenText Business Network ecosystem |
 | Cloud platforms | Retail/CPG domain specifics |
 | Customer discovery | |
+| B2B ecosystems | |
+| Retail/Brands/CPG industry expertise | |
+| Market analysis, competitive research | |
+| UX/UI principles | |
 
 ## Key Stakeholders
 
@@ -58,18 +66,21 @@ Transform Active Catalog from a PO-enablement tool into a **rich product content
 |------|------|---------------------|------------------|
 | VP | Executive Sponsor | Growth metrics, commercial success, adoption | Data-backed investment cases, clear ROI |
 | Senior Director | Manager | Future vision, strategic bets, BN integration | Strategic roadmap, customer evidence |
-| Business Team | GTM Partners | PO enablement → product content hub positioning | Proof points, customer success stories |
+| Product Marketing | GTM Partners | Product positioning, messaging, adoption | Proof points, customer success stories, market insights |
+| Sales Team | Revenue | Competitive positioning, customer pain points, adoption | Win-loss analysis, differentiation, sales enablement |
+| Professional Services | Implementation, Customer Success | Product usability, deployment challenges, customer feedback | Clear documentation, training, early feedback loops |
 | Engineering | Delivery | Scope clarity, technical feasibility, debt reduction | Clear requirements, realistic timelines |
-| Sales/CS | Revenue | Competitive positioning, customer pain points | Win-loss analysis, differentiation |
+| Business Team | GTM Partners | PO enablement → product content hub positioning | Proof points, customer success stories |
 
 ## Strategic Context
 
 ### Growth Vectors (from Senior Director)
 - **New customers/categories:** Expand beyond GS1 soft goods to hard goods, groceries
 - **More value for existing:** Faster onboarding, better capabilities, improved UX
+- **Land-and-expand strategy:** Active Catalog → B2B integration → broader BN products
 
 ### AI Opportunities
-- Supplier side: Increase velocity of SKU creation/publication
+- Supplier side: Increase velocity of SKU creation/publication (multimodal data extraction to accelerate supplier onboarding)
 - Retailer side: Contextual Gen-AI discovery across suppliers/SKUs
 - Semantic search: Handle variations (black vs BLK vs BLK.)
 - Auto-extraction: PDFs, images, CSVs for faster supplier onboarding
@@ -78,6 +89,7 @@ Transform Active Catalog from a PO-enablement tool into a **rich product content
 - Competitors (Syndigo, PIM tools) have strong apps but lack BN's network scale
 - Position Active Catalog as more than PO enablement: rich product content hub
 - Support land-and-expand: Catalog → Trading Grid/B2B → other BN products
+- Platform currently lacks AI innovation despite 5+ years of market evolution. Need to differentiate.
 
 ## Primary Metrics (How I'm Judged)
 
@@ -87,3 +99,7 @@ Transform Active Catalog from a PO-enablement tool into a **rich product content
 | Usage/volume increase | TBD | TBD | Baseline needed |
 | Adoption of new capabilities | TBD | TBD | Baseline needed |
 | Commercial success (customers paying more) | TBD | TBD | Baseline needed |
+| Reduced chargebacks for retailers | TBD | TBD | Baseline needed |
+| Faster time-to-publish for suppliers | TBD | TBD | Baseline needed |
+| Network adoption enabling land-and-expand | TBD | TBD | Baseline needed |
+| Onboarding time reduction | TBD | 6% | Not Started |

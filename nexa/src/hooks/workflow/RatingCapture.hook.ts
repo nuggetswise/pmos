@@ -33,7 +33,6 @@
 import type { HookDefinition, HookContext, HookResult, HookMeta, OutputRatedPayload } from '../types.js';
 import {
   logHookComplete,
-  formatContextInjection,
 } from '../lib/index.js';
 import { createRatingBead } from '../../beads/index.js';
 import { parseFrontmatter } from '../../frontmatter.js';
@@ -107,14 +106,10 @@ export async function run(ctx: HookContext): Promise<HookResult> {
       `Rating ${rating}/5 for ${skillName}`
     );
 
-    // 5. Build confirmation
-    const confirmation = `📊 Recorded rating: ${rating}/5 → .beads/insights.jsonl
+    // 5. Build confirmation (use systemMessage format)
+    const confirmation = `📊 Recorded rating: ${rating}/5 for ${skillName}`;
 
-Bead ID: ${bead.id}
-Skill: ${skillName}
-Sentiment: ${bead.sentiment}`;
-
-    const output = formatContextInjection('output:rated', confirmation, 'rating-captured');
+    const output = { systemMessage: confirmation };
 
     return {
       success: true,

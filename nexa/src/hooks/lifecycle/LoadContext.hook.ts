@@ -30,6 +30,7 @@
  */
 
 import * as path from 'path';
+import * as fs from 'fs';
 import { spawn } from 'child_process';
 import type { HookDefinition, HookContext, HookResult, HookMeta } from '../types.js';
 import {
@@ -41,7 +42,7 @@ import {
   extractBlockers,
   buildGreetingBlock,
   buildSessionProtocol,
-  formatImportantContext,
+  formatSessionStartOutput,
 } from '../lib/index.js';
 import {
   calculateQualityTrend,
@@ -115,22 +116,21 @@ export async function run(ctx: HookContext): Promise<HookResult> {
     // 7. Build session protocol
     const sessionProtocol = buildSessionProtocol();
 
-    // 8. Combine context
-    const fullContext = `You have PM OS.
+    // 8. Check for pending summary from previous session
+    let pendingSummaryBlock = '';
+    if (state.pending_summary) {
+      pendingSummaryBlock = `Pending summary from previous session: ${state.pending_summary}`;
+      filesRead.push(state.pending_summary);
+    }
 
-<session-greeting>
-${greetingBlock}
-</session-greeting>
-
-<session-protocol>
-${sessionProtocol}
-</session-protocol>`;
+    // 9. Combine context (no XML wrappers - plain content)
+    const fullContext = `${greetingBlock}${pendingSummaryBlock ? '\n\n' + pendingSummaryBlock : ''}`;
 
     // 9. Start background scan
     triggerBackgroundScan();
 
-    // 10. Format output
-    const output = formatImportantContext('SessionStart', fullContext);
+    // 10. Format output (SessionStart hooks use systemMessage format)
+    const output = formatSessionStartOutput(fullContext);
 
     return {
       success: true,
@@ -140,13 +140,9 @@ ${sessionProtocol}
     };
   } catch (error) {
     // Graceful degradation - return minimal greeting
-    const minimalContext = `You have PM OS.
+    const minimalContext = `PM OS is ready. Run 'pm-os status' for current state.`;
 
-<session-greeting>
-PM OS is ready. Run 'pm-os status' for current state.
-</session-greeting>`;
-
-    const output = formatImportantContext('SessionStart', minimalContext);
+    const output = formatSessionStartOutput(minimalContext);
 
     return {
       success: false,
@@ -156,6 +152,35 @@ PM OS is ready. Run 'pm-os status' for current state.
       filesModified,
     };
   }
+}
+
+/**
+ * Find the most recent incomplete session summary
+ */
+async function findIncompleteSummary(): Promise<string | null> {
+  const root = getProjectRoot();
+  const sessionsDir = path.join(root, 'history', 'sessions');
+
+  try {
+    const files = await fs.promises.readdir(sessionsDir);
+    // Sort by name descending (newest first since filenames are date-based)
+    const summaryFiles = files
+      .filter(f => f.endsWith('-summary.md'))
+      .sort()
+      .reverse();
+
+    // Check the most recent one for incomplete markers
+    if (summaryFiles.length > 0) {
+      const mostRecent = path.join(sessionsDir, summaryFiles[0]);
+      const content = await fs.promises.readFile(mostRecent, 'utf-8');
+      if (content.includes('<!-- AI:')) {
+        return `history/sessions/${summaryFiles[0]}`;
+      }
+    }
+  } catch {
+    // Directory doesn't exist or other error - ignore
+  }
+  return null;
 }
 
 /**

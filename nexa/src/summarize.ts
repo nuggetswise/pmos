@@ -1,8 +1,8 @@
 /**
  * Implements the "summarize-session" command.
- * This command gathers session data and scaffolds a draft summary file.
+ * This command gathers session data and generates a complete summary file.
  *
- * Enhanced to gather ACTUAL session data from:
+ * Gathers ACTUAL session data from:
  * - nexa/state.json (last_job, errors, brief)
  * - outputs/audit/auto-run-log.md (operations during session)
  * - git status (files changed during session)
@@ -37,6 +37,65 @@ async function getGitChanges(root: string): Promise<string[]> {
   } catch {
     return [];
   }
+}
+
+/**
+ * Count beads created during this session
+ */
+async function getSessionBeads(root: string, since: Date): Promise<{ beadsCount: number; decisionsCount: number; ratingsCount: number }> {
+  const beadsPath = path.join(root, '.beads', 'insights.jsonl');
+  let beadsCount = 0;
+  let decisionsCount = 0;
+  let ratingsCount = 0;
+
+  try {
+    const content = await fs.promises.readFile(beadsPath, 'utf-8');
+    const lines = content.split('\n').filter(line => line.trim());
+
+    for (const line of lines) {
+      try {
+        const bead = JSON.parse(line);
+        const beadDate = new Date(bead.created_at || '');
+
+        if (beadDate >= since) {
+          beadsCount++;
+          if (bead.type === 'decision') decisionsCount++;
+          if (bead.type === 'output-rating') ratingsCount++;
+        }
+      } catch {
+        // Skip malformed JSON lines
+      }
+    }
+  } catch {
+    // File doesn't exist or can't be read
+  }
+
+  return { beadsCount, decisionsCount, ratingsCount };
+}
+
+/**
+ * Count learning entries created during this session
+ */
+async function getSessionLearnings(root: string, since: Date): Promise<number> {
+  const learningsDir = path.join(root, 'history', 'learnings');
+  let count = 0;
+
+  try {
+    const files = await fs.promises.readdir(learningsDir);
+
+    for (const file of files) {
+      const filePath = path.join(learningsDir, file);
+      const stat = await fs.promises.stat(filePath);
+
+      if (stat.mtime >= since) {
+        count++;
+      }
+    }
+  } catch {
+    // Directory doesn't exist or can't be read
+  }
+
+  return count;
 }
 
 /**
@@ -109,7 +168,13 @@ export async function summarizeSession(jobId: string): Promise<void> {
   const outputsDir = path.join(root, 'outputs');
   const recentFiles = await findFilesAfter(outputsDir, sessionStartTime);
 
-  // 5. Calculate session duration
+  // 5. Get beads (insights, decisions, ratings) created this session
+  const { beadsCount, decisionsCount, ratingsCount } = await getSessionBeads(root, sessionStartTime);
+
+  // 6. Get learning entries created this session
+  const learningsCount = await getSessionLearnings(root, sessionStartTime);
+
+  // 7. Calculate session duration
   const durationMinutes = Math.round((sessionEndTime.getTime() - sessionStartTime.getTime()) / 60000);
 
   // 6. Build the summary with ACTUAL data
@@ -147,8 +212,8 @@ export async function summarizeSession(jobId: string): Promise<void> {
     ? topThemes.map((t: string) => `- ${t}`).join('\n')
     : '- (No themes detected)';
 
-  // Build the draft summary
-  const draft = `---
+  // Build the summary (complete - no placeholders)
+  const summary = `---
 session_start: ${sessionStartTime.toISOString().slice(0, 16).replace('T', ' ')}
 session_end: ${sessionEndTime.toISOString().slice(0, 16).replace('T', ' ')}
 duration: ${durationMinutes} minutes
@@ -178,19 +243,12 @@ ${themesSection}
 ### Errors
 ${errorsSection}
 
-## Key Decisions Made
+## Insights Captured
 
-| Decision | Rationale | Location |
-|----------|-----------|----------|
-| (AI: Fill from session conversation - NOT from general context) | | |
-
-## Open Items for Next Session
-
-### Follow-Up Actions
-- (AI: Fill ONLY from this session's actual work - NOT from projects.md)
-
-### Questions Raised
-- (AI: Fill ONLY questions that emerged in THIS conversation)
+**Learnings:**
+- Learning entries: ${learningsCount}
+- Insight beads: ${beadsCount}
+- Output ratings: ${ratingsCount}
 
 ## Session Metadata
 
@@ -202,20 +260,23 @@ ${errorsSection}
 
 **Outputs Created:** ${recentFiles.length}
 
----
-*Note: Sections marked "(AI: Fill...)" should be completed by Claude based on actual session activity, NOT from general project context files like projects.md or challenges.md.*
+**Capture Stats:**
+- Learning entries: ${learningsCount}
+- Insight beads: ${beadsCount}
+- Decision logs: ${decisionsCount}
+- Output ratings: ${ratingsCount}
 `;
 
-  // 7. Write the draft file
+  // 7. Write the summary file
   const historySessionDir = path.join(root, 'history', 'sessions');
   await ensureDir(historySessionDir);
 
-  const summaryFilename = `${sessionEndTime.toISOString().replace(/[:.]/g, '-')}-summary-DRAFT.md`;
+  const summaryFilename = `${sessionEndTime.toISOString().replace(/[:.]/g, '-')}-summary.md`;
   const summaryPath = path.join(historySessionDir, summaryFilename);
 
-  await fs.promises.writeFile(summaryPath, draft);
+  await fs.promises.writeFile(summaryPath, summary);
 
-  console.log(`Draft session summary written to: ${path.relative(root, summaryPath)}`);
+  console.log(`Session summary written to: ${path.relative(root, summaryPath)}`);
 
   // 8. Reset session start time in state
   await updateState({ session_start_time: null });

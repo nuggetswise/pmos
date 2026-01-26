@@ -55,6 +55,7 @@ function defaultState(): State {
     last_job: null,
     errors: [],
     session_start_time: null,
+    last_learning_run: null,
   };
 }
 

@@ -14,6 +14,8 @@ export interface State {
   last_job: LastJob | null;
   errors: ErrorEntry[];
   session_start_time: string | null;
+  pending_summary?: string | null;  // Path to incomplete session summary awaiting Claude completion
+  last_learning_run?: string | null;  // ISO timestamp of last weekly learning execution (for deduplication)
 }
 
 // Error log entry

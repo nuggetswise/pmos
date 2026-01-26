@@ -116,24 +116,7 @@ export function buildGreetingBlock(data: GreetingData): string {
     ? data.blockers.join(', ')
     : '(none)';
 
-  return `You are Nexa, operating PM OS. At session start, greet the user with the runtime state from nexa/state.json.
-
-**YOUR CONTEXT IS LOADED - Use it to inform EVERY response:**
-
-## Runtime State
-Phase: ${data.phase}
-Next Action: ${data.nextAction}
-Last Job: ${data.lastJobId} (${data.lastJobResult})
-Last Finished: ${data.lastJobFinished}
-Ingested Sources: ${data.ingestCount}
-Errors: ${data.errorCount}
-Recent Source: ${recentSourceDisplay}
-
----
-
-**MANDATORY GREETING - YOUR FIRST OUTPUT MUST BE:**
-
-\`\`\`
+  return `
 👋 Nexa here - PM OS ready.
 
 📚 Loaded: ${data.compassLoaded} context dimensions
@@ -157,9 +140,7 @@ ${activeWorkDisplay}
    Blockers: ${blockersDisplay}
 
 Ready for your request.
-\`\`\`
-
-**ABSOLUTE REQUIREMENT:** You MUST output this greeting BEFORE doing anything else. Even if the user's first message is an action request, you output the greeting FIRST, then address their request. No exceptions. This is not optional.`;
+`;
 }
 
 /**
@@ -196,21 +177,9 @@ This is NON-NEGOTIABLE for PLAN/BUILD phase skills.`;
  */
 export function buildSessionEndSignal(summaryPath: string | null): string {
   if (summaryPath) {
-    return `Session end detected. A draft summary was created at ${summaryPath}.
-
-CRITICAL RULES FOR FILLING IN THE SUMMARY:
-1. ONLY fill in sections where you have ACTUAL data from THIS session
-2. For 'Outputs Created' - ONLY list files YOU actually created/modified this session
-3. For 'Skills Executed' - ONLY list skills YOU actually ran (e.g., /charters, /prd)
-4. For 'Key Decisions Made' - ONLY decisions explicitly discussed this session
-5. For 'Open Items' - ONLY items that emerged from THIS session's work
-6. DO NOT pull generic data from projects.md, challenges.md, or other COMPASS context files
-7. If you don't have specific data for a section, write '(No data from this session)' - do NOT infer
-
-ACTION REQUIRED: You MUST use the Read tool to read ${summaryPath}, then use the Edit tool to fill in the AI sections with actual session data, then acknowledge the session end.`;
+    return `Session summary saved to ${summaryPath}. Have a great day!`;
   }
-
-  return 'Session end detected. Complete any pending capture and acknowledge the session end to the user.';
+  return 'Session ending. Goodbye!';
 }
 
 /**
@@ -218,12 +187,20 @@ ACTION REQUIRED: You MUST use the Read tool to read ${summaryPath}, then use the
  *
  * Stop hooks use systemMessage instead of hookSpecificOutput
  */
-export function formatStopOutput(content: string, tag?: string): object {
-  const tagName = tag || 'session-end';
-  const wrappedContent = `<${tagName}>\n${content}\n</${tagName}>`;
-
+export function formatStopOutput(content: string): object {
   return {
-    systemMessage: wrappedContent,
+    systemMessage: content,
+  };
+}
+
+/**
+ * Format output for SessionStart hooks
+ *
+ * SessionStart hooks use systemMessage instead of hookSpecificOutput
+ */
+export function formatSessionStartOutput(content: string): object {
+  return {
+    systemMessage: content,
   };
 }
 

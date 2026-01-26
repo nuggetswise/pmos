@@ -53,6 +53,11 @@ export interface HookScope {
 }
 
 /**
+ * Error severity levels for hook failures
+ */
+export type ErrorSeverity = 'fatal' | 'degraded' | 'info';
+
+/**
  * Context passed to hook run function
  */
 export interface HookContext {
@@ -133,8 +138,12 @@ export interface HookResult {
   success: boolean;
   /** Message to inject into Claude's context (optional) */
   contextInjection?: string;
+  /** System message to display to user (preferred over contextInjection) */
+  systemMessage?: string;
   /** Error message if failed */
   error?: string;
+  /** Error severity level (determines user visibility) */
+  errorSeverity?: ErrorSeverity;
   /** Files modified by this hook */
   filesModified?: string[];
   /** Files read by this hook */

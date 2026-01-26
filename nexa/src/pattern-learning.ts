@@ -13,6 +13,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Bead, BeadType } from './beads/types.js';
 import { readAllBeads, readRatingBeads, calculateQualityTrend } from './beads/repository.js';
+import { getProjectRoot } from './utils.js';
 
 // ============================================================================
 // Types
@@ -502,7 +503,8 @@ function analyzeQualityPatterns(beads: Bead[]): Pattern[] {
  * Write learned patterns to rules file
  */
 async function writeLearnedPatterns(patterns: Pattern[], result: PatternResult): Promise<void> {
-  const outputPath = path.join(process.cwd(), '.claude', 'rules', 'learned', 'quality-patterns.md');
+  const projectRoot = getProjectRoot();
+  const outputPath = path.join(projectRoot, '.claude', 'rules', 'learned', 'quality-patterns.md');
 
   // Ensure directory exists
   const dir = path.dirname(outputPath);

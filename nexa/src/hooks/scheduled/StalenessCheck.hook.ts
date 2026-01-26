@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import type { HookDefinition, HookContext, HookResult, HookMeta, ScheduledPayload } from '../types.js';
-import { formatContextInjection, logHookComplete } from '../lib/index.js';
+import { formatSessionStartOutput, logHookComplete } from '../lib/index.js';
 import { getProjectRoot } from '../../utils.js';
 import { parseFrontmatter } from '../../frontmatter.js';
 import { glob } from 'glob';
@@ -67,9 +67,9 @@ export async function run(ctx: HookContext): Promise<HookResult> {
       };
     }
 
-    // 4. Build staleness report
+    // 4. Build staleness report (use SessionStart format for hooks triggered at startup)
     const report = buildStalenessReport(staleOutputs);
-    const output = formatContextInjection('time:daily', report, 'staleness-warning');
+    const output = formatSessionStartOutput(report);
 
     await logHookComplete(
       meta.id,
@@ -247,6 +247,10 @@ if (process.argv[1]?.endsWith('StalenessCheck.hook.js')) {
     } else {
       console.log('{}');
     }
+  }).catch(err => {
+    // Gracefully handle any unhandled errors in the async block
+    console.error(`StalenessCheck hook failed unexpectedly: ${err instanceof Error ? err.message : String(err)}`);
+    console.log('{}'); // Output empty JSON to not break the chain
   });
 }
 

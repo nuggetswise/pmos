@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { State, JobType } from '../../types.js';
 import { getProjectRoot, isoNow } from '../../utils.js';
+import { updateStateAtomic, saveStateAtomic } from './atomic-state.js';
 
 /**
  * Get path to state file
@@ -72,20 +73,19 @@ export async function loadState(): Promise<State> {
 
 /**
  * Save state to disk
+ * @deprecated Use saveStateAtomic from atomic-state.ts instead
  */
 export async function saveState(state: State): Promise<void> {
-  const statePath = getStatePath();
-  await fs.promises.writeFile(statePath, JSON.stringify(state, null, 2) + '\n');
+  await saveStateAtomic(state);
 }
 
 /**
- * Update specific fields in state
+ * Update specific fields in state (SAFE - uses atomic operations)
+ *
+ * Replaces unsafe read-modify-write pattern with atomic mutex-protected updates
  */
 export async function updateState(updates: Partial<State>): Promise<State> {
-  const state = await loadState();
-  const newState = { ...state, ...updates };
-  await saveState(newState);
-  return newState;
+  return await updateStateAtomic(state => ({ ...state, ...updates }));
 }
 
 /**
@@ -120,20 +120,21 @@ export async function setNextAction(action: string): Promise<void> {
 }
 
 /**
- * Update last job
+ * Update last job (SAFE - uses atomic operations)
  */
 export async function updateLastJob(
   jobId: string,
   result: 'ok' | 'failed'
 ): Promise<void> {
-  const state = await loadState();
-  state.last_job = {
-    id: jobId,
-    result,
-    finished_at: isoNow(),
-  };
-  state.current_job = null;
-  await saveState(state);
+  await updateStateAtomic(state => ({
+    ...state,
+    last_job: {
+      id: jobId,
+      result,
+      finished_at: isoNow(),
+    },
+    current_job: null,
+  }));
 }
 
 /**
